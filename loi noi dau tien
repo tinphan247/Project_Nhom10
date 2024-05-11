@@ -1,1 +1,92 @@
-// bye world
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+struct SinhVien
+{
+	int stt;
+	int mssv;
+	char* ten;
+	char* ho;
+	char* gender;
+	int ngay, thang, nam;
+	long int cccd;
+	SinhVien* next;
+};
+struct Lop
+{
+	SinhVien* danhsachsv;
+};
+bool kiemtrangaysinh(int ngay, int thang, int nam)
+{
+	if (ngay < 1 || ngay > 31 || thang < 1 || thang >12 || nam < 1)
+	{
+		return false;
+	}
+	if (thang == 2)
+	{
+		if ((nam % 4 == 0 && nam % 100 != 0) || nam % 400 == 0)
+		{
+			if (ngay > 29)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if (ngay > 28)
+			{
+				return false;
+			}
+		}
+	}
+	else if (thang == 4 || thang == 6 || thang == 9 || thang == 11)
+	{
+		if (ngay > 30)
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if (ngay > 31)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+void taosv(int &STT, int &MSSV, char ten[], char ho[], char gender[], int &ngay, int &thang, int &nam,long int &cccd)
+{
+    cout << "Nhap vao so thu tu:";
+    cin >> STT;
+	cin.ignore();
+    cout << "Nhap vao ho cua sinh vien:";
+	cin.getline(ho, 10);
+    cout << "Nhap vao ten cua sinh vien:";
+    cin.getline(ten,30);
+    cout << "Nhap vao mssv:";
+    cin >> MSSV;
+    do
+    {
+		cin.ignore();
+        cout << "Nhap vao gioi tinh sinh vien (Nam/Nu):";
+        cin.getline(gender,5);
+    } while (strcmp(gender,"Nam")!=0 && strcmp(gender, "Nu") != 0&&strcmp(gender, "nam") != 0 && strcmp(gender, "nu") != 0);
+	do
+	{
+		cout << "Nhap vao ngay thang nam sinh cua sinh vien:" << endl;
+		cout << "Nhap vao ngay:";
+		cin >> ngay;
+		cout << "Nhap vao thang:";
+		cin >> thang;
+		cout << "Nhap vao nam:";
+		cin >> nam;
+		if (kiemtrangaysinh(ngay, thang, nam) == false)
+		{
+			cout << "Ngay sinh khong hop le,vui long nhap lai" << endl;
+		}
+	} while (kiemtrangaysinh(ngay, thang, nam) == false);
+    cout << "Nhap vao so cccd cua sinh vien:";
+    cin >> cccd;
+}
