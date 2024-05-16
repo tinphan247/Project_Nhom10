@@ -1,0 +1,73 @@
+CSC10002 – Dự án thưởng
+Hệ thống quản lý khóa học
+Có 2 loại người dùng trong hệ thống.
+Các cán bộ giảng dạy như chị Lê Thị Anh Thảo, chị Nguyễn Thị Minh Phúc, chị.
+Hoàng Thanh Tú...
+Sinh viên: tại APCS, CLC, VP...
+Người dùng phải đăng nhập vào hệ thống.
+Sau đó, anh ấy/cô ấy có thể xem thông tin hồ sơ của chính mình, thay đổi mật khẩu hoặc đăng xuất khỏi hệ thống.
+Vào đầu năm học (thường vào tháng 9), một học sinh
+nhân viên sẽ:
+1. Tạo năm học (2020-2021 chẳng hạn)
+2. Tạo một số lớp học cho sinh viên năm thứ nhất. Ví dụ: lớp 20APCS1, lớp 20APCS2,
+lớp 20CLC1..., lớp 20CLC11, lớp 20VP...
+3. Thêm sinh viên năm thứ nhất mới vào lớp năm thứ nhất.
+4. Để nhập liệu nhanh, anh ấy/cô ấy có thể nhập tệp CSV chứa tất cả học sinh trong một lớp cụ thể vào
+hệ thống, thay vì thêm từng cái một: Không, Mã sinh viên, Tên, Họ,
+Giới tính, Ngày sinh và ID xã hội.
+5. Không cần tuyển thêm sinh viên năm 2, năm 3, năm 4 vì những
+số học sinh đã được bổ sung vào những năm trước.
+Một năm học có 3 học kỳ: Học kỳ 1 (Mùa thu), Học kỳ 2 (Mùa hè) và Học kỳ 3
+(Mùa thu).
+Vào đầu học kỳ, một nhân viên học thuật sẽ:
+6. Tạo học kỳ: 1, 2 hoặc 3, năm học, ngày bắt đầu, ngày kết thúc. Chọn năm học
+mà học kỳ mới được tạo thuộc về. Học kỳ được tạo sẽ là học kỳ hiện tại /
+học kỳ mặc định cho tất cả các hành động dưới đây.
+7. Thêm một khóa học vào học kỳ này: id khóa học, tên khóa học, tên lớp, tên giáo viên,
+số tín chỉ, số lượng sinh viên tối đa trong khóa học (mặc định là 50), ngày học
+trong tuần và buổi học mà khóa học sẽ được thực hiện (THÁNG / TUE / WED / THU /
+Thứ Sáu/Thứ Bảy, S1 (07:30), S2 (09:30), S3(13:30) và S4 (15:30)). Một khóa học sẽ được giảng dạy trong
+chỉ một buổi trong một tuần.
+8. Sau đó, anh ấy/cô ấy sẽ tải lên tệp CSV chứa danh sách học viên đã đăng ký khóa học.
+9. Xem danh sách các khóa học.
+10. Cập nhật thông tin khóa học.
+11. Thêm học viên vào khóa học.
+
+12. Loại bỏ một học sinh khỏi khóa học.
+13. Xóa khóa học.
+Trong một học kỳ, sinh viên vẫn có thể:
+14. Xem danh sách các khóa học của anh ấy/cô ấy. Anh ấy / cô ấy sẽ học các khóa học này trong học kỳ này.
+Bất cứ lúc nào, một nhân viên học tập có thể:
+15. Xem danh sách các lớp học.
+16. Xem danh sách học sinh trong lớp (ví dụ: 20APCS1...)
+17. Xem danh sách các khóa học.
+18. Xem danh sách học viên trong khóa học
+Vào cuối học kỳ, một nhân viên học tập có thể:
+19. Xuất danh sách sinh viên trong khóa học sang tệp CSV
+20. Nhập bảng điểm của một khóa học. Một bảng điểm sẽ có ít nhất những điều sau đây
+các cột: Không, Mã số sinh viên, Họ tên sinh viên, Tổng điểm, Điểm cuối kỳ, Điểm giữa kỳ và
+Dấu hiệu khác. (Một nhân viên học thuật sẽ xuất danh sách sinh viên trong một khóa học và
+gửi file CSV cho giáo viên, giáo viên sẽ nhập kết quả học sinh vào file này, gửi đi
+quay lại nhân viên, sau đó nhân viên sẽ nhập bảng điểm vào hệ thống)
+21. Xem bảng điểm của một khóa học.
+22. Cập nhật kết quả của học sinh.
+23. Xem bảng điểm của một lớp, bao gồm điểm tổng kết của tất cả các môn học trong học kỳ, điểm trung bình GPA
+trong học kỳ này và điểm trung bình chung.
+Khi bảng điểm đã được công bố (bởi đội ngũ giảng viên
+thành viên), một học sinh có thể:
+24. Xem bảng điểm của anh ấy/cô ấy.
+Yêu cầu kỹ thuật
+1. Các tệp văn bản và tệp nhị phân đều ổn. Cơ sở dữ liệu không được phép.
+2. Ngôn ngữ C++.
+3. Chỉ cho phép mảng phân bổ động và danh sách liên kết.
+4. Cho phép char[], char* và chuỗi.
+5. Sử dụng Git để kiểm soát các phiên bản mã nguồn của bạn. (Các) thành viên phải có ít nhất 20 cam kết
+và phải lây lan trong ít nhất 15 ngày khác nhau.
+Nộp hồ sơ
+
+6. Báo cáo mô tả việc lưu trữ dữ liệu và cấu trúc mã nguồn của bạn
+7. Mã nguồn.
+8. Video hướng dẫn sử dụng, tải lên Youtube dưới dạng danh sách phát.
+9. Danh sách nhiệm vụ được mỗi thành viên trong nhóm lập ra.
+10. Trình bày (sau)
+
