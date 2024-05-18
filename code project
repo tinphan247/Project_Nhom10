@@ -90,3 +90,34 @@ void taosv(int &STT, int &MSSV, char ten[], char ho[], char gender[], int &ngay,
     cout << "Nhap vao so cccd cua sinh vien:";
     cin >> cccd;
 }
+void themsvvaolop(Lop& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam,long int& cccd)
+{
+	SinhVien* temp = lop.danhsachsv;
+	if (temp == nullptr)
+	{
+		lop.danhsachsv = new SinhVien;
+		temp = lop.danhsachsv;
+	}
+	else
+	{
+		while (temp->next != nullptr) 
+		{
+			temp = temp->next;
+		}
+		temp->next = new SinhVien;
+		temp = temp->next;
+	}
+	temp->cccd = cccd;
+	temp->gender = new char[strlen(gender) + 1];
+	strcpy_s(temp->gender, strlen(gender) + 1, gender);
+	temp->ho = new char[strlen(ho) + 1];
+	strcpy_s(temp->ho, strlen(ho) + 1, ho);
+	temp->ten = new char[strlen(ten) + 1];
+	strcpy_s(temp->ten, strlen(ten) + 1, ten);
+	temp->ngay = ngay;
+	temp->thang = thang;
+	temp->nam = nam;
+	temp->next = nullptr;
+	temp->stt = STT;
+	temp->mssv = MSSV;
+}
