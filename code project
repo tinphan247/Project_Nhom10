@@ -121,3 +121,92 @@ void themsvvaolop(Lop& lop, int& STT, int& MSSV, char ten[], char ho[], char gen
 	temp->stt = STT;
 	temp->mssv = MSSV;
 }
+struct hocky
+{
+	int thutu;
+	char ngaybatdau[11];
+	char ngayketthuc[11];
+	char chonhocky[30];
+	hocky* kitieptheo;
+};
+struct namhoc
+{
+	char thoigiannamhoc[30];
+	hocky* Hocky;
+	namhoc* tieptheo;
+};
+struct listnamhoc
+{
+	namhoc* phead;
+};
+void taonamhoc( listnamhoc& L,namhoc*& N)
+{
+	N = new namhoc();
+	cout << "Nhap vao thoi gian hoc(VD:2020-2021):";
+		cin>>N->thoigiannamhoc;
+		if (L.phead == NULL)
+		{
+			L.phead = N;
+		}
+		else 
+		{
+			namhoc* temp = L.phead;
+			while (temp->tieptheo != NULL)
+			{
+				temp = temp->tieptheo;
+			}
+			temp->tieptheo = N;
+		}
+		N->tieptheo = NULL;
+		N->Hocky = NULL;
+}
+void taohocky(hocky*& H, listnamhoc& L)
+{
+	H = new hocky();
+	cout << "Chon nam hoc:" << endl;
+	namhoc* temp = L.phead;
+	while (temp != NULL)
+	{
+		cout << temp->thoigiannamhoc << endl;
+		temp = temp->tieptheo;
+	}
+	cin.ignore(); 
+	cin.getline(H->chonhocky, 30);
+	cout << "Chon thu tu cua hoc ki(1-3):";
+	do
+	{
+		cin >> H->thutu;
+		if (H->thutu < 1 || H->thutu>3)
+		{
+			cout << "Hoc ky khong hop le,vui long nhap lai" << endl;
+		}
+	} while (H->thutu < 1 || H->thutu>3);
+	cout << "Nhap vao ngay bat dau(VD 01/01/2024):";
+	cin >> H->ngaybatdau;
+	cout << "Nhap vao ngay ket thuc(VD 01/01/2024):";
+	cin >> H->ngayketthuc;
+	H->kitieptheo = NULL;
+	temp = L.phead;
+	while (temp != NULL)
+	{
+		if (strcmp(temp->thoigiannamhoc, H->chonhocky) == 0)
+		{
+			if (temp->Hocky == NULL)
+			{
+				temp->Hocky = H;
+			}
+			else
+			{
+				hocky* temphocky = temp->Hocky;
+				while (temphocky != NULL)
+				{
+					temphocky = temphocky->kitieptheo;
+				}
+				temphocky->kitieptheo = H;
+			}
+			cout << "Da them 1 hoc ky vao nam hoc " << temp->thoigiannamhoc << endl;
+			break;
+		}
+		temp = temp->tieptheo;
+	}
+}
