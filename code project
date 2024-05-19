@@ -16,6 +16,8 @@ struct SinhVien
 struct Lop
 {
 	SinhVien* danhsachsv;
+	Lop* loptieptheo;
+	char tenlop[20];
 };
 bool kiemtrangaysinh(int ngay, int thang, int nam)
 {
