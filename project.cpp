@@ -1,5 +1,4 @@
 #include "project.h"
-
 bool kiemtrangaysinh(int ngay, int thang, int nam)
 {
 	if (ngay < 1 || ngay > 31 || thang < 1 || thang >12 || nam < 1)
@@ -73,13 +72,13 @@ void taosv(int &STT, int &MSSV, char ten[], char ho[], char gender[], int &ngay,
     cout << "Nhap vao so cccd cua sinh vien:";
     cin >> cccd;
 }
-void themsvvaolop(Lop& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam,long int& cccd)
+void themsvvaolop(Lop*& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam,long int& cccd)
 {
-	SinhVien* temp = lop.danhsachsv;
+	SinhVien* temp = lop->danhsachsv;
 	if (temp == nullptr)
 	{
-		lop.danhsachsv = new SinhVien;
-		temp = lop.danhsachsv;
+		lop->danhsachsv = new SinhVien;
+		temp = lop->danhsachsv;
 	}
 	else
 	{
@@ -116,13 +115,13 @@ void taonamhoc( listnamhoc& L,namhoc*& N)
 		else 
 		{
 			namhoc* temp = L.phead;
-			while (temp->tieptheo != NULL)
+			while (temp->next != NULL)
 			{
-				temp = temp->tieptheo;
+				temp = temp->next;
 			}
-			temp->tieptheo = N;
+			temp->next = N;
 		}
-		N->tieptheo = NULL;
+		N->next = NULL;
 		N->Hocky = NULL;
 }
 void taohocky(hocky*& H, listnamhoc& L)
@@ -133,7 +132,7 @@ void taohocky(hocky*& H, listnamhoc& L)
 	while (temp != NULL)
 	{
 		cout << temp->thoigiannamhoc << endl;
-		temp = temp->tieptheo;
+		temp = temp->next;
 	}
 	cin.ignore(); 
 	cin.getline(H->chonhocky, 30);
@@ -150,7 +149,7 @@ void taohocky(hocky*& H, listnamhoc& L)
 	cin >> H->ngaybatdau;
 	cout << "Nhap vao ngay ket thuc(VD 01/01/2024):";
 	cin >> H->ngayketthuc;
-	H->kitieptheo = NULL;
+	H->next = NULL;
 	temp = L.phead;
 	while (temp != NULL)
 	{
@@ -165,13 +164,46 @@ void taohocky(hocky*& H, listnamhoc& L)
 				hocky* temphocky = temp->Hocky;
 				while (temphocky != NULL)
 				{
-					temphocky = temphocky->kitieptheo;
+					temphocky = temphocky->next;
 				}
-				temphocky->kitieptheo = H;
+				temphocky->next = H;
 			}
 			cout << "Da them 1 hoc ky vao nam hoc " << temp->thoigiannamhoc << endl;
 			break;
 		}
-		temp = temp->tieptheo;
+		temp = temp->next;
+	}
+}
+//Yêu cầu số 9
+void themlopmoivaodanhsachcaclop(Lop*& CTT,danhsachlop& DS)
+{
+	CTT = new Lop();
+	cout << "Nhap vao ten lop: ";
+	cin >> CTT->tenlop;
+	CTT->next = NULL;
+	if (DS.head == NULL)
+	{
+		DS.head = CTT;
+	}
+	else 
+	{
+		Lop* temp = DS.head;
+		while (temp->next != NULL) 
+		{
+			temp = temp->next;
+		}
+		temp->next = CTT;
+	}
+
+	cout << "Da them 1 lop moi vao danh sach cac lop" << endl;
+}
+void xemdanhsachcaclop(danhsachlop& DS)
+{
+	cout << "Danh sach cac lop:" << endl;
+	Lop* temp = DS.head;
+	while (temp != NULL)
+	{
+		cout << temp->tenlop << endl;
+		temp = temp->next;
 	}
 }
