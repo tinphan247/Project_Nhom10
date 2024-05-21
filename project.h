@@ -1,3 +1,6 @@
+#ifndef _PROJECT_H
+#define _PROJECT_H
+
 #include <iostream>
 #include <cstring>
 using namespace std;
@@ -42,3 +45,5 @@ void taosv(int &STT, int &MSSV, char ten[], char ho[], char gender[], int &ngay,
 void themsvvaolop(Lop& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam,long int& cccd);
 void taonamhoc( listnamhoc& L,namhoc*& N);
 void taohocky(hocky*& H, listnamhoc& L);
+
+#endif
