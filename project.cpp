@@ -1,7 +1,4 @@
-#include <iostream>
-#include <cstring>
-using namespace std;
-
+#include "project.h"
 struct SinhVien
 {
 	int stt;
