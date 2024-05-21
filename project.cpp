@@ -1,21 +1,5 @@
 #include "project.h"
-struct SinhVien
-{
-	int stt;
-	int mssv;
-	char* ten;
-	char* ho;
-	char* gender;
-	int ngay, thang, nam;
-	long int cccd;
-	SinhVien* next;
-};
-struct Lop
-{
-	SinhVien* danhsachsv;
-	Lop* loptieptheo;
-	char tenlop[20];
-};
+
 bool kiemtrangaysinh(int ngay, int thang, int nam)
 {
 	if (ngay < 1 || ngay > 31 || thang < 1 || thang >12 || nam < 1)
@@ -120,24 +104,6 @@ void themsvvaolop(Lop& lop, int& STT, int& MSSV, char ten[], char ho[], char gen
 	temp->stt = STT;
 	temp->mssv = MSSV;
 }
-struct hocky
-{
-	int thutu;
-	char ngaybatdau[11];
-	char ngayketthuc[11];
-	char chonhocky[30];
-	hocky* kitieptheo;
-};
-struct namhoc
-{
-	char thoigiannamhoc[30];
-	hocky* Hocky;
-	namhoc* tieptheo;
-};
-struct listnamhoc
-{
-	namhoc* phead;
-};
 void taonamhoc( listnamhoc& L,namhoc*& N)
 {
 	N = new namhoc();
@@ -207,38 +173,5 @@ void taohocky(hocky*& H, listnamhoc& L)
 			break;
 		}
 		temp = temp->tieptheo;
-	}
-}
-//Yêu cầu số 9
-void themlopmoivaodanhsachcaclop(Lop*& CTT,danhsachlop& DS)
-{
-	CTT = new Lop();
-	cout << "Nhap vao ten lop: ";
-	cin >> CTT->tenlop;
-	CTT->loptieptheo = NULL;
-	if (DS.head == NULL)
-	{
-		DS.head = CTT;
-	}
-	else 
-	{
-		Lop* temp = DS.head;
-		while (temp->loptieptheo != NULL) 
-		{
-			temp = temp->loptieptheo;
-		}
-		temp->loptieptheo = CTT;
-	}
-
-	cout << "Da them 1 lop moi vao danh sach cac lop" << endl;
-}
-void xemdanhsachcaclop(danhsachlop& DS)
-{
-	cout << "Danh sach cac lop:" << endl;
-	Lop* temp = DS.head;
-	while (temp != NULL)
-	{
-		cout << temp->tenlop << endl;
-		temp = temp->loptieptheo;
 	}
 }
