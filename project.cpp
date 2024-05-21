@@ -209,3 +209,36 @@ void taohocky(hocky*& H, listnamhoc& L)
 		temp = temp->tieptheo;
 	}
 }
+//Yêu cầu số 9
+void themlopmoivaodanhsachcaclop(Lop*& CTT,danhsachlop& DS)
+{
+	CTT = new Lop();
+	cout << "Nhap vao ten lop: ";
+	cin >> CTT->tenlop;
+	CTT->loptieptheo = NULL;
+	if (DS.head == NULL)
+	{
+		DS.head = CTT;
+	}
+	else 
+	{
+		Lop* temp = DS.head;
+		while (temp->loptieptheo != NULL) 
+		{
+			temp = temp->loptieptheo;
+		}
+		temp->loptieptheo = CTT;
+	}
+
+	cout << "Da them 1 lop moi vao danh sach cac lop" << endl;
+}
+void xemdanhsachcaclop(danhsachlop& DS)
+{
+	cout << "Danh sach cac lop:" << endl;
+	Lop* temp = DS.head;
+	while (temp != NULL)
+	{
+		cout << temp->tenlop << endl;
+		temp = temp->loptieptheo;
+	}
+}
