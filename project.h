@@ -19,8 +19,11 @@ struct SinhVien
 struct Lop
 {
 	SinhVien* danhsachsv;
-	Lop* loptieptheo;
 	char tenlop[20];
+    Lop* next;
+};
+struct danhsachlop{
+    Lop* head;
 };
 struct hocky
 {
@@ -28,13 +31,13 @@ struct hocky
 	char ngaybatdau[11];
 	char ngayketthuc[11];
 	char chonhocky[30];
-	hocky* kitieptheo;
+	hocky* next;
 };
 struct namhoc
 {
 	char thoigiannamhoc[30];
 	hocky* Hocky;
-	namhoc* tieptheo;
+	namhoc* next;
 };
 struct listnamhoc
 {
@@ -42,8 +45,10 @@ struct listnamhoc
 };
 bool kiemtrangaysinh(int ngay, int thang, int nam);
 void taosv(int &STT, int &MSSV, char ten[], char ho[], char gender[], int &ngay, int &thang, int &nam,long int &cccd);
-void themsvvaolop(Lop& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam,long int& cccd);
+void themsvvaolop(Lop*& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam,long int& cccd);
 void taonamhoc( listnamhoc& L,namhoc*& N);
 void taohocky(hocky*& H, listnamhoc& L);
+void themlopmoivaodanhsachcaclop(Lop*& CTT,danhsachlop& DS);
+void xemdanhsachcaclop(danhsachlop& DS);
 
 #endif
