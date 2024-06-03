@@ -1,4 +1,4 @@
-﻿#include "project.h"
+#include "project.h"
 int main()
 {
 	{
@@ -11,8 +11,8 @@ int main()
 		hocky* H;
 		listnamhoc L;
 		L.phead = NULL;
-		danhsachlop DS;
-		DS.head = NULL;
+		danhsachcaclop* DS=new danhsachcaclop();
+		DS->head =NULL;
 		do
 		{
 			cout << "Nhap vao yeu cau muon lam:" << endl;
@@ -42,11 +42,11 @@ int main()
 			{
 				taosv(STT, MSSV, ten, ho, gender, ngay, thang, nam, cccd);
 				themsvvaolop(CTT, STT, MSSV, ten, ho, gender, ngay, thang, nam, cccd);
-				cout << "Thong tin hoc sinh trong lop CTT5:" << endl;
-				cout << "So thu tu:" << CTT->danhsachsv->stt << endl;
-				cout << "Ho va ten:" << CTT->danhsachsv->ho << " " << CTT->danhsachsv->ten << endl;
-				cout << "So can cuoc cong dan:" << CTT->danhsachsv->cccd << endl;
-				cout << "Ngay sinh:" << CTT->danhsachsv->ngay << "/" << CTT->danhsachsv->thang << "/" << CTT->danhsachsv->nam << endl;
+				cout << "Thong tin hoc sinh trong lop "<<CTT->tenlop<<":" << endl;
+				cout << "So thu tu:" << CTT->ds->phead->stt << endl;
+				cout << "Ho va ten:" << CTT->ds->phead->ho << " " << CTT->ds->phead->ten << endl;
+				cout << "So can cuoc cong dan:" << CTT->ds->phead->cccd << endl;
+				cout << "Ngay sinh:" << CTT->ds->phead->ngay << "/" << CTT->ds->phead->thang << "/" << CTT->ds->phead->nam << endl;
 			}
 		} while (menu != 0);
 	}

@@ -1,4 +1,4 @@
-﻿#include "project.h"
+#include "project.h"
 bool kiemtrangaysinh(int ngay, int thang, int nam)
 {
 	if (ngay < 1 || ngay > 31 || thang < 1 || thang >12 || nam < 1)
@@ -74,11 +74,15 @@ void taosv(int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay,
 }
 void themsvvaolop(Lop*& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam, long int& cccd)
 {
-	SinhVien* temp = lop->danhsachsv;
+	if (lop->ds == NULL)
+	{
+		lop->ds = new danhsachsv();
+	}
+	SinhVien* temp = lop->ds->phead;
 	if (temp == nullptr)
 	{
-		lop->danhsachsv = new SinhVien;
-		temp = lop->danhsachsv;
+		lop->ds->phead = new SinhVien;
+		temp = lop->ds->phead;
 	}
 	else
 	{
@@ -88,6 +92,7 @@ void themsvvaolop(Lop*& lop, int& STT, int& MSSV, char ten[], char ho[], char ge
 		}
 		temp->next = new SinhVien;
 		temp = temp->next;
+		lop->ds->ptail = temp;
 	}
 	temp->cccd = cccd;
 	temp->gender = new char[strlen(gender) + 1];
@@ -175,19 +180,19 @@ void taohocky(hocky*& H, listnamhoc& L)
 	}
 }
 //Yêu cầu số 9
-void themlopmoivaodanhsachcaclop(Lop*& CTT, danhsachlop& DS)
+void themlopmoivaodanhsachcaclop(Lop*& CTT, danhsachcaclop*& DS)
 {
 	CTT = new Lop();
 	cout << "Nhap vao ten lop: ";
 	cin >> CTT->tenlop;
 	CTT->next = NULL;
-	if (DS.head == NULL)
+	if (DS->head == NULL)
 	{
-		DS.head = CTT;
+		DS->head = CTT;
 	}
 	else
 	{
-		Lop* temp = DS.head;
+		Lop* temp = DS->head;
 		while (temp->next != NULL)
 		{
 			temp = temp->next;
@@ -197,13 +202,74 @@ void themlopmoivaodanhsachcaclop(Lop*& CTT, danhsachlop& DS)
 
 	cout << "Da them 1 lop moi vao danh sach cac lop" << endl;
 }
-void xemdanhsachcaclop(danhsachlop& DS)
+void xemdanhsachcaclop(danhsachcaclop*& DS)
 {
 	cout << "Danh sach cac lop:" << endl;
-	Lop* temp = DS.head;
+	Lop* temp = DS->head;
 	while (temp != NULL)
 	{
 		cout << temp->tenlop << endl;
 		temp = temp->next;
+	}
+}
+void xemdanhsachkhoahoc(ListCourses*& LC)
+{
+	cout << "Danh sach cac khoa hoc hien tai:" << endl;
+	Course* temp = LC->head;
+	while (temp != NULL)
+	{
+		cout << temp->courseName << endl;
+		temp = temp->next;
+	}
+}
+//Yeu cau 12
+void xoasvkhoikhoahoc(ListCourses*& LC)
+{
+	char arr[50];
+	cout << "Chon khoa hoc muon xoa hoc sinh:" << endl;
+	Course* temp = LC->head;
+	while (temp != NULL)
+	{
+		cout << temp->courseName << endl;
+	}
+	cin.getline(arr, 50);
+	temp = LC->head;
+	while (temp != NULL)
+	{
+		if (strcmp(temp->courseName, arr) == 0)
+		{
+			break;
+		}
+		temp = temp->next;
+	}
+	cout << "Chon ten sinh vien muon xoa:" << endl;
+	SinhVien* phu = temp->dssv->phead;
+	while (phu != NULL)
+	{
+		cout << phu->ten << endl;
+		phu = phu->next;
+	}
+	char ten[50];
+	cin.getline(ten, 50);
+	phu = temp->dssv->phead;
+	SinhVien* prephu = NULL;
+	while (phu != NULL)
+	{
+		if (strcmp(phu->ten, ten) == 0)
+		{
+			if (phu == temp->dssv->phead)
+			{
+				temp->dssv->phead = temp->dssv->phead->next;
+				delete phu;
+			}
+			else
+			{
+				prephu->next = phu->next;
+				delete phu;
+			}
+			break;
+		}
+		prephu = phu;
+		phu = phu->next;
 	}
 }
