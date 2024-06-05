@@ -87,4 +87,6 @@ void themlopmoivaodanhsachcaclop(Lop*& CTT, danhsachcaclop*& DS);
 void xemdanhsachcaclop(danhsachcaclop*& DS);
 void xemdanhsachkhoahoc(ListCourses*& LC);
 void xoasvkhoikhoahoc(ListCourses*& LC);
+void xembangdiemcua1khoahoc(Student*& st, Course*& c, ListStudent*& lst);
+void xemdanhsachhocvientrongkhoa(Course*& c);
 #endif
