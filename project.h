@@ -50,5 +50,6 @@ void taonamhoc( listnamhoc& L,namhoc*& N);
 void taohocky(hocky*& H, listnamhoc& L);
 void themlopmoivaodanhsachcaclop(Lop*& CTT,danhsachlop& DS);
 void xemdanhsachcaclop(danhsachlop& DS);
-
+void xemdanhsachkhoahoc(ListCourses*& LC);
+void xoasvkhoikhoahoc(ListCourses*& LC);
 #endif
