@@ -38,23 +38,24 @@ bool kiemtrangaysinh(int ngay, int thang, int nam)
 	}
 	return true;
 }
-void taosv(int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam, long int& cccd)
+void taosv(string& MSSV, string &ten, string &ho, string& gender, int& ngay, int& thang, int& nam, string &cccd)
 {
-	cout << "Nhap vao so thu tu:";
-	cin >> STT;
 	cin.ignore();
 	cout << "Nhap vao ho cua sinh vien:";
-	cin.getline(ho, 10);
+	getline(cin, ho);
+	
 	cout << "Nhap vao ten cua sinh vien:";
-	cin.getline(ten, 30);
+	getline(cin, ten);
+	
 	cout << "Nhap vao mssv:";
-	cin >> MSSV;
+	getline(cin, MSSV);
+	
 	do
 	{
-		cin.ignore();
 		cout << "Nhap vao gioi tinh sinh vien (Nam/Nu):";
-		cin.getline(gender, 5);
-	} while (strcmp(gender, "Nam") != 0 && strcmp(gender, "Nu") != 0 && strcmp(gender, "nam") != 0 && strcmp(gender, "nu") != 0);
+		getline(cin, gender);
+	} while (gender!= "Nam" && gender!= "Nu" && gender!= "nam" && gender!="nu");
+	
 	do
 	{
 		cout << "Nhap vao ngay thang nam sinh cua sinh vien:" << endl;
@@ -70,43 +71,37 @@ void taosv(int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay,
 		}
 	} while (kiemtrangaysinh(ngay, thang, nam) == false);
 	cout << "Nhap vao so cccd cua sinh vien:";
-	cin >> cccd;
+	cin.ignore();
+	getline(cin, cccd);
 }
-void themsvvaolop(Lop*& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam, long int& cccd)
-{
-	if (lop->ds == NULL)
+void themsvvaolop(Lop*& lop, string& MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int &nam, string& cccd) {
+	if (lop->ds == NULL) 
 	{
-		lop->ds = new danhsachsv();
+		lop->ds = new Listsv();
+		lop->ds->phead = lop->ds->ptail = nullptr;
 	}
 	SinhVien* temp = lop->ds->phead;
+	SinhVien* new_sv = new SinhVien();
+	new_sv->mssv = MSSV;
+	new_sv->ten = ten;
+	new_sv->ho = ho;
+	new_sv->gender = gender;
+	new_sv->ngay = ngay;
+	new_sv->thang = thang;
+	new_sv->nam = nam;
+	new_sv->cccd = cccd;
+	new_sv->next = nullptr;
+
 	if (temp == nullptr)
 	{
-		lop->ds->phead = new SinhVien;
-		temp = lop->ds->phead;
+		lop->ds->phead = lop->ds->ptail = new_sv;
 	}
-	else
+	else 
 	{
-		while (temp->next != nullptr)
-		{
-			temp = temp->next;
-		}
-		temp->next = new SinhVien;
-		temp = temp->next;
-		lop->ds->ptail = temp;
+		lop->ds->ptail->next = new_sv;
+		lop->ds->ptail = new_sv;
 	}
-	temp->cccd = cccd;
-	temp->gender = new char[strlen(gender) + 1];
-	strcpy_s(temp->gender, strlen(gender) + 1, gender);
-	temp->ho = new char[strlen(ho) + 1];
-	strcpy_s(temp->ho, strlen(ho) + 1, ho);
-	temp->ten = new char[strlen(ten) + 1];
-	strcpy_s(temp->ten, strlen(ten) + 1, ten);
-	temp->ngay = ngay;
-	temp->thang = thang;
-	temp->nam = nam;
-	temp->next = nullptr;
-	temp->stt = STT;
-	temp->mssv = MSSV;
+	cout <<ho<< new_sv->ho <<"kk"<< endl;
 }
 void taonamhoc(listnamhoc& L, namhoc*& N)
 {
@@ -255,7 +250,7 @@ void xoasvkhoikhoahoc(ListCourses*& LC)
 	SinhVien* prephu = NULL;
 	while (phu != NULL)
 	{
-		if (strcmp(phu->ten, ten) == 0)
+		if (phu->ten== ten)
 		{
 			if (phu == temp->dssv->phead)
 			{
@@ -283,24 +278,24 @@ void xemdanhsachhocvientrongkhoa(Course*& c)
 		temp = temp->next;
 	}
 }
-void xembangdiemcua1khoahoc(Student*&st,Course*& c,ListStudent*&lst)
-{
-	Student* temp = lst->head;
-	while (temp != NULL)
-	{
-		Course* phu = temp->enrolledCourses.head;
-		while (phu != NULL)
-		{
-			if (strcmp(phu->courseName,c->courseName)==0)
-			{
-				cout << temp->firstName << " " << temp->lastName << ":" << endl;
-				cout<<"Diem cong:" <<temp->courseMark.otherMark<< endl;
-				cout << "Diem giua ki:" << temp->courseMark.midtermMark << endl;
-				cout << "Diem cuoi ki:" << temp->courseMark.finalMark << endl;
-				cout << "Diem tong ket:" << temp->courseMark.totalMark << endl;
-			}
-			phu = phu->next;
-		}
-		temp = temp->next;
-	}
-}
+//void xembangdiemcua1khoahoc(Student*&st,Course*& c,ListStudent*&lst)
+//{
+//	Student* temp = lst->head;
+//	while (temp != NULL)
+//	{
+//		Course* phu = temp->enrolledCourses.head;
+//		while (phu != NULL)
+//		{
+//			if (strcmp(phu->courseName,c->courseName)==0)
+//			{
+//				cout << temp->firstName << " " << temp->lastName << ":" << endl;
+//				cout<<"Diem cong:" <<temp->courseMark.otherMark<< endl;
+//				cout << "Diem giua ki:" << temp->courseMark.midtermMark << endl;
+//				cout << "Diem cuoi ki:" << temp->courseMark.finalMark << endl;
+//				cout << "Diem tong ket:" << temp->courseMark.totalMark << endl;
+//			}
+//			phu = phu->next;
+//		}
+//		temp = temp->next;
+//	}
+//}
