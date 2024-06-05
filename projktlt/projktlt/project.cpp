@@ -291,7 +291,7 @@ void xembangdiemcua1khoahoc(Student*&st,Course*& c,ListStudent*&lst)
 		Course* phu = temp->enrolledCourses.head;
 		while (phu != NULL)
 		{
-			if (phu->courseName == c->courseName)
+			if (strcmp(phu->courseName,c->courseName)==0)
 			{
 				cout << temp->firstName << " " << temp->lastName << ":" << endl;
 				cout<<"Diem cong:" <<temp->courseMark.otherMark<< endl;
