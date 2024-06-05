@@ -273,3 +273,34 @@ void xoasvkhoikhoahoc(ListCourses*& LC)
 		phu = phu->next;
 	}
 }
+void xemdanhsachhocvientrongkhoa(Course*& c)
+{
+	SinhVien* temp = c->dssv->phead;
+	cout << "Danh sach hoc vien cua khoa hoc la:" << endl;
+	while (temp != NULL)
+	{
+		cout << temp->ho << " " << temp->ten << endl;
+		temp = temp->next;
+	}
+}
+void xembangdiemcua1khoahoc(Student*&st,Course*& c,ListStudent*&lst)
+{
+	Student* temp = lst->head;
+	while (temp != NULL)
+	{
+		Course* phu = temp->enrolledCourses.head;
+		while (phu != NULL)
+		{
+			if (phu->courseName == c->courseName)
+			{
+				cout << temp->firstName << " " << temp->lastName << ":" << endl;
+				cout<<"Diem cong:" <<temp->courseMark.otherMark<< endl;
+				cout << "Diem giua ki:" << temp->courseMark.midtermMark << endl;
+				cout << "Diem cuoi ki:" << temp->courseMark.finalMark << endl;
+				cout << "Diem tong ket:" << temp->courseMark.totalMark << endl;
+			}
+			phu = phu->next;
+		}
+		temp = temp->next;
+	}
+}
