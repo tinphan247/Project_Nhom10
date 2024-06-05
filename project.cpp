@@ -207,3 +207,64 @@ void xemdanhsachcaclop(danhsachlop& DS)
 		temp = temp->next;
 	}
 }
+void xemdanhsachkhoahoc(ListCourses*& LC)
+{
+	cout << "Danh sach cac khoa hoc hien tai:" << endl;
+	Course* temp = LC->head;
+	while (temp != NULL)
+	{
+		cout << temp->courseName << endl;
+		temp = temp->next;
+	}
+}
+//Yeu cau 12
+void xoasvkhoikhoahoc(ListCourses*& LC)
+{
+	char arr[50];
+	cout << "Chon khoa hoc muon xoa hoc sinh:" << endl;
+	Course* temp = LC->head;
+	while (temp != NULL)
+	{
+		cout << temp->courseName << endl;
+	}
+	cin.getline(arr, 50);
+	temp = LC->head;
+	while (temp != NULL)
+	{
+		if (strcmp(temp->courseName, arr) == 0)
+		{
+			break;
+		}
+		temp = temp->next;
+	}
+	cout << "Chon ten sinh vien muon xoa:" << endl;
+	SinhVien* phu = temp->dssv->phead;
+	while (phu != NULL)
+	{
+		cout << phu->ten << endl;
+		phu = phu->next;
+	}
+	char ten[50];
+	cin.getline(ten, 50);
+	phu = temp->dssv->phead;
+	SinhVien* prephu = NULL;
+	while (phu != NULL)
+	{
+		if (strcmp(phu->ten, ten) == 0)
+		{
+			if (phu == temp->dssv->phead)
+			{
+				temp->dssv->phead = temp->dssv->phead->next;
+				delete phu;
+			}
+			else
+			{
+				prephu->next = phu->next;
+				delete phu;
+			}
+			break;
+		}
+		prephu = phu;
+		phu = phu->next;
+	}
+}
