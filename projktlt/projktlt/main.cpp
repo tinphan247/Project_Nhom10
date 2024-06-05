@@ -2,9 +2,9 @@
 int main()
 {
 	{
-		int STT, MSSV, ngay, thang, nam;
-		long int cccd;
-		char ten[30], ho[10], gender[5];
+		string  MSSV;
+		int ngay, thang, nam;
+		string ten, ho, gender,cccd;
 		Lop* CTT = NULL;
 		int menu;
 		namhoc* N;
@@ -40,13 +40,19 @@ int main()
 			}
 			else if (menu == 5)
 			{
-				taosv(STT, MSSV, ten, ho, gender, ngay, thang, nam, cccd);
-				themsvvaolop(CTT, STT, MSSV, ten, ho, gender, ngay, thang, nam, cccd);
-				cout << "Thong tin hoc sinh trong lop "<<CTT->tenlop<<":" << endl;
-				cout << "So thu tu:" << CTT->ds->phead->stt << endl;
-				cout << "Ho va ten:" << CTT->ds->phead->ho << " " << CTT->ds->phead->ten << endl;
-				cout << "So can cuoc cong dan:" << CTT->ds->phead->cccd << endl;
-				cout << "Ngay sinh:" << CTT->ds->phead->ngay << "/" << CTT->ds->phead->thang << "/" << CTT->ds->phead->nam << endl;
+				if (DS->head != NULL)
+				{
+					taosv( MSSV, ten, ho, gender, ngay, thang, nam, cccd);
+					themsvvaolop(CTT, MSSV, ten, ho, gender, ngay, thang, nam, cccd);
+					cout << "Thong tin hoc sinh trong lop " << CTT->tenlop << ":" << endl;
+					cout << "Ho va ten:" << CTT->ds->phead->ho << " " << CTT->ds->phead->ten << endl;
+					cout << "So can cuoc cong dan:" << CTT->ds->phead->cccd << endl;
+					cout << "Ngay sinh:" << CTT->ds->phead->ngay << "/" << CTT->ds->phead->thang << "/" << CTT->ds->phead->nam << endl;
+				}
+				else
+				{
+					cout << "Khong co lop de them sinh vien" << endl;
+				}
 			}
 		} while (menu != 0);
 	}
