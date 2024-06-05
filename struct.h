@@ -14,7 +14,6 @@ struct User {
 	int academicYear;
 	bool isStaff;
 	Date dateOfBirth;
-	User* prev;
 	User* next;
 };
 struct Course {
@@ -27,7 +26,6 @@ struct Course {
 	int academicYear;
 	string wDay;
 	string session[2];
-	Course* prev;
 	Course* next;
 };
 struct ListCourses {
@@ -62,7 +60,6 @@ struct Student {
 	ListCourses enrolledCourses;
 	CourseMark courseMark;
 	SemesterMark semesterMark;
-	Student* prev;
 	Student* next;
 };
 struct ListStudent {
@@ -81,7 +78,6 @@ struct Semester {
 struct Class {
 	string className;
 	fs::path path;
-	Class* prev;
 	Class* next;
 };
 struct ListClasses {
