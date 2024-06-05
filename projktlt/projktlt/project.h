@@ -1,9 +1,11 @@
 #ifndef _PROJECT_H
 #define _PROJECT_H
-
+#include <filesystem>
 #include <iostream>
 #include <cstring>
+#include <string>
 using namespace std;
+namespace fs = std::filesystem;
 struct Date {
 	int year;
 	int month;
@@ -12,27 +14,26 @@ struct Date {
 };
 struct SinhVien
 {
-	int stt;
-	int mssv;
-	char* ten;
-	char* ho;
-	char* gender;
+	string mssv;
+	string ten;
+	string ho;
+	string gender;
 	int ngay, thang, nam;
-	long int cccd;
+	string cccd;
 	SinhVien* next;
 };
-struct danhsachsv
+struct Listsv
 {
 	SinhVien* phead;
 	SinhVien* ptail;
 };
 struct Lop
 {
-	danhsachsv* ds;
+	Listsv* ds;
 	char tenlop[20];
 	Lop* next;
 };
-struct danhsachcaclop
+struct danhsachcaclop 
 {
 	Lop* head;
 };
@@ -49,7 +50,7 @@ struct Course
 	string session[2];
 	Course* prev;
 	Course* next;
-	danhsachsv* dssv;
+	Listsv* dssv;
 };
 struct ListCourses
 {
@@ -78,15 +79,17 @@ struct listnamhoc
 {
 	namhoc* phead;
 };
+
+
 bool kiemtrangaysinh(int ngay, int thang, int nam);
-void taosv(int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam, long int& cccd);
-void themsvvaolop(Lop*& lop, int& STT, int& MSSV, char ten[], char ho[], char gender[], int& ngay, int& thang, int& nam, long int& cccd);
+void taosv(string &MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string &cccd);
+void themsvvaolop(Lop*& lop, string &MSSV, string& ten, string &ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
 void taonamhoc(listnamhoc& L, namhoc*& N);
 void taohocky(hocky*& H, listnamhoc& L);
 void themlopmoivaodanhsachcaclop(Lop*& CTT, danhsachcaclop*& DS);
 void xemdanhsachcaclop(danhsachcaclop*& DS);
 void xemdanhsachkhoahoc(ListCourses*& LC);
 void xoasvkhoikhoahoc(ListCourses*& LC);
-void xembangdiemcua1khoahoc(Student*& st, Course*& c, ListStudent*& lst);
-void xemdanhsachhocvientrongkhoa(Course*& c);
+//void xembangdiemcua1khoahoc(Student*& st, Course*& c, ListStudent*& lst);
+//void xemdanhsachhocvientrongkhoa(Course*& c);
 #endif
