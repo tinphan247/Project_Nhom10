@@ -80,6 +80,7 @@ struct ListNamHoc
 
 
 bool kiemtrangaysinh(int ngay, int thang, int nam);
+int dayofweek(int day, int month, int year);
 void taosv(string &MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string &cccd);
 void themsvvaolop(Class*& lop, string &MSSV, string& ten, string &ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
 void taonamhoc(ListNamHoc& L, NamHoc*& N);
