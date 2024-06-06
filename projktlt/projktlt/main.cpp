@@ -12,6 +12,13 @@ int main()
 		ListNamHoc L;
 		L.phead = NULL;
 		ListClass* DS=new ListClass();
+
+		ListCourses ListC;
+		InitList(ListC);
+		Course* newCourse = new Course;
+		string id,CourseName,ClassName,GVName,wDay,Session;
+		int AcademicYear,Credits;
+
 		DS->head =NULL;
 		do
 		{
@@ -21,6 +28,7 @@ int main()
 			cout << "(3):Them 1 lop moi vao danh sach cac lop" << endl;
 			cout << "(4):Xem danh sach cac lop" << endl;
 			cout << "(5):Them 1 sinh vien vao lop" << endl;
+			cout << "(6) Them khoa hoc"<<endl;
 			cin >> menu;
 			if (menu == 1)
 			{
@@ -53,6 +61,11 @@ int main()
 				{
 					cout << "Khong co lop de them sinh vien" << endl;
 				}
+			}
+			else if(menu == 6){
+				newCourse = InputCourse(id,CourseName,ClassName,GVName,AcademicYear,Credits,wDay,Session);
+				AddCourse(ListC,newCourse);
+				OutputListCourses(ListC);
 			}
 		} while (menu != 0);
 	}
