@@ -314,3 +314,96 @@ void xemdanhsachkhoahoc(ListCourses*& LC)
 //		temp = temp->next;
 //	}
 //}
+// 7. Thêm một khóa học vào học kỳ này: id khóa học, tên khóa học, tên lớp, tên giáo viên,
+// số tín chỉ, số lượng sinh viên tối đa trong khóa học (mặc định là 50), ngày học
+// trong tuần và buổi học mà khóa học sẽ được thực hiện (THÁNG / TUE / WED / THU /
+// Thứ Sáu/Thứ Bảy, S1 (07:30), S2 (09:30), S3(13:30) và S4 (15:30)). Một khóa học sẽ được giảng dạy trong
+// chỉ một buổi trong một tuần.
+void InitList(ListCourses &list){
+	list.head = NULL;
+	list.tail = NULL;
+	list.size = 0;
+}
+Course* InputCourse(string id,string CourseName,string ClassName,string GVName,int AcademicYear,int Credits,string wDay,string Session){
+	Course* newCourse = new Course;
+	cout<<"Nhap khoa hoc"<<endl;
+	cout<<"Nhap id khoa hoc: ";
+	cin>>id;
+	cin.ignore();
+	cout<<"Nhap ten khoa hoc: ";
+	getline(cin,CourseName);
+	cout<<"Nhap ten lop: ";
+	cin>>ClassName;
+	cin.ignore();
+	cout<<"Nhap ten Giao Vien: ";
+	getline(cin,GVName);
+	cout<<"Nhap Academic Year: ";
+	cin>>AcademicYear;
+	cout<<"Nhap so tin chi: ";
+	cin>>Credits;
+	cout<<"Nhap week day (Mon/Tue...): ";
+	cin>>wDay;
+	cout<<"Nhap Session [S1 (07:30), S2 (09:30), S3(13:30), S4 (15:30)]: ";
+	cin>>Session;
+	newCourse->id = id;
+    newCourse->courseName = CourseName;
+    newCourse->teacherName = GVName;
+    newCourse->ClassName = ClassName; 
+	newCourse->academicYear=AcademicYear;
+    newCourse->Credits = Credits; 
+    newCourse->wDay = wDay;
+    newCourse->session = Session;
+    newCourse->next = NULL;
+    return newCourse;
+}
+void AddCourse(ListCourses& List,Course* newCourse){
+	if (newCourse == NULL) return;
+    if (List.head == NULL) {
+        List.head = newCourse;
+        List.tail = newCourse;
+    } else {
+        List.tail->next = newCourse;
+        List.tail = newCourse;
+    }
+    List.size++;
+}
+void OutputListCourses(ListCourses List) {
+    if (List.head == NULL) {
+        cout << "Danh sach trong." << endl;
+        return;
+    }
+    
+    // Tạo đường kẻ ngang
+    cout << setfill('-') << setw(120) << "-" << endl;
+    
+    // Tiêu đề
+    cout << setfill(' ') << setw(10) << "ID"
+         << "|" << setw(20) << "Ten khoa hoc"
+         << "|" << setw(15) << "Lop"
+         << "|" << setw(20) << "Giao vien"
+         << "|" << setw(10) << "So tin chi"
+         << "|" << setw(15) << "SL sinh vien"
+         << "|" << setw(10) << "Ngay hoc"
+         << "|" << setw(15) << "Buoi hoc" << endl;
+    
+    // Tạo đường kẻ ngang tiếp theo
+    cout << setfill('-') << setw(120) << "-" << endl;
+    
+    Course* current = List.head;
+    while (current != NULL) {
+        cout << setfill(' ') << setw(10) << current->id
+             << "|" << setw(20) << current->courseName
+             << "|" << setw(15) << current->ClassName
+             << "|" << setw(20) << current->teacherName
+             << "|" << setw(10) << current->Credits
+             << "|" << setw(15) << "50" // Số lượng sinh viên tối đa, mặc định là 50
+             << "|" << setw(10) << current->wDay
+             << "|" << setw(15) << current->session << endl;
+        current = current->next;
+    }
+    
+    // Tạo đường kẻ ngang cuối cùng
+    cout << setfill('-') << setw(120) << "-" << endl;
+}
+
+
