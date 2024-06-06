@@ -18,6 +18,7 @@ int main()
 		Course* newCourse = new Course;
 		string id,CourseName,ClassName,GVName,wDay,Session;
 		int AcademicYear,Credits;
+		int sl_Courses;
 
 		DS->head =NULL;
 		do
@@ -63,9 +64,15 @@ int main()
 				}
 			}
 			else if(menu == 6){
+				cout<<"Nhap so luong khoa hoc: ";
+				cin>>sl_Courses;
+				for(int i = 0;i < sl_Courses;i++){
 				newCourse = InputCourse(id,CourseName,ClassName,GVName,AcademicYear,Credits,wDay,Session);
 				AddCourse(ListC,newCourse);
+				newCourse = NULL;
+				system("cls");
 				OutputListCourses(ListC);
+				}
 			}
 		} while (menu != 0);
 	}
