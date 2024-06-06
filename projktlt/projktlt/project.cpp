@@ -38,6 +38,22 @@ bool kiemtrangaysinh(int ngay, int thang, int nam)
 	}
 	return true;
 }
+int dayofweek(int day, int month, int year) {
+    // Lưu trữ các giá trị đặc biệt tương ứng với từng tháng
+    static int month_values[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+
+    // Nếu tháng là tháng 1 hoặc 2, giảm năm đi 1
+    if (month < 3) {
+        year -= 1;
+    }
+
+    // Áp dụng công thức Zeller's Congruence để tính ngày của tuần
+    int result = (year + year / 4 - year / 100 + year / 400 + month_values[month - 1] + day) % 7;
+
+    // Kết quả từ 0 đến 6, với 0 là Chủ Nhật, 1 là Thứ Hai, và tiếp tục...
+    return result;
+}
+
 void taosv(string& MSSV, string &ten, string &ho, string& gender, int& ngay, int& thang, int& nam, string &cccd)
 {
 	cin.ignore();
