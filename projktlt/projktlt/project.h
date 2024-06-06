@@ -1,6 +1,7 @@
 #ifndef _PROJECT_H
 #define _PROJECT_H
 #include <iostream>
+#include <iomanip>
 #include <cstring>
 #include <string>
 using namespace std;
@@ -14,14 +15,14 @@ struct Date {
 struct Course
 {
 	string id;
-	char courseName[50];
+	string courseName;
 	string teacherName;
-	int credits;
+	string ClassName;
+	int Credits;
 	int maxStudents = 50;
-	int numberRegistered = 0;
 	int academicYear;
 	string wDay;
-	string session[2];
+	string session;
 	Course* next;
 };
 struct 	ListCourses
@@ -29,7 +30,6 @@ struct 	ListCourses
 {
 	Course* head;
 	Course* tail;
-	Date startDate, endDate;
 	int size;
 };
 struct SinhVien
@@ -91,4 +91,10 @@ void xemdanhsachkhoahoc(ListCourses*& LC);
 void xoasvkhoikhoahoc(ListCourses*& LC);
 //void xembangdiemcua1khoahoc(Student*& st, Course*& c, ListStudent*& lst);
 //void xemdanhsachhocvientrongkhoa(Course*& c);
+//7
+void InitList(ListCourses &list);
+Course* InputCourse(string id,string CourseName,string ClassName,string GVName,int AcademicYear,int Credits,string wDay,string Session);
+void AddCourse(ListCourses& List,Course* newCourse);
+void OutputListCourses(ListCourses List);
+
 #endif
