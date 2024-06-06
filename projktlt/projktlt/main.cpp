@@ -5,13 +5,13 @@ int main()
 		string  MSSV;
 		int ngay, thang, nam;
 		string ten, ho, gender,cccd;
-		Lop* CTT = NULL;
+		Class* CTT = NULL;
 		int menu;
-		namhoc* N;
-		hocky* H;
-		listnamhoc L;
+		NamHoc* N;
+		Semester* H;
+		ListNamHoc L;
 		L.phead = NULL;
-		danhsachcaclop* DS=new danhsachcaclop();
+		ListClass* DS=new ListClass();
 		DS->head =NULL;
 		do
 		{
@@ -44,10 +44,10 @@ int main()
 				{
 					taosv( MSSV, ten, ho, gender, ngay, thang, nam, cccd);
 					themsvvaolop(CTT, MSSV, ten, ho, gender, ngay, thang, nam, cccd);
-					cout << "Thong tin hoc sinh trong lop " << CTT->tenlop << ":" << endl;
+					cout << "Thong tin hoc sinh trong lop " << CTT->ClassName << ":" << endl;
 					cout << "Ho va ten:" << CTT->ds->phead->ho << " " << CTT->ds->phead->ten << endl;
 					cout << "So can cuoc cong dan:" << CTT->ds->phead->cccd << endl;
-					cout << "Ngay sinh:" << CTT->ds->phead->ngay << "/" << CTT->ds->phead->thang << "/" << CTT->ds->phead->nam << endl;
+					cout << "Ngay sinh:" << CTT->ds->phead->birth.day << "/" << CTT->ds->phead->birth.month << "/" << CTT->ds->phead->birth.year << endl;
 				}
 				else
 				{
