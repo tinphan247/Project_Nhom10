@@ -1,17 +1,17 @@
 ﻿  main.cpp
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(212,106): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(212,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(506,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(520,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(527,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(541,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(589,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(621,90): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(621,64): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(622,109): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(622,84): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(634,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(641,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(7,106): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(7,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(89,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(103,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(110,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(124,28): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(173,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(204,90): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(204,64): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(205,109): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(205,84): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(217,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\tung1\source\repos\ConsoleApplication8\ConsoleApplication8\main.cpp(224,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   ConsoleApplication8.vcxproj -> C:\Users\tung1\source\repos\ConsoleApplication8\x64\Debug\ConsoleApplication8.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.
