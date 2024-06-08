@@ -459,4 +459,15 @@ ListSV* addListSV(string path)
 	return List;
 
 }
-
+//yeu cau11
+void add1StudentCourse(Course& cour, SinhVien& sv)
+{
+	if (cour.lop->ds->phead == NULL)
+	{
+		cour.lop->ds->phead = &sv;
+		cour.lop->ds->ptail = &sv;
+		return;
+	}
+	cour.lop->ds->ptail->next = &sv;
+	cour.lop->ds->ptail = &sv;
+}
