@@ -25,6 +25,7 @@ struct Course
 	string wDay;
 	string session;
 	Course* next;
+	Class* lop;
 };
 struct 	ListCourses
 
