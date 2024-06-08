@@ -405,5 +405,58 @@ void OutputListCourses(ListCourses List) {
     // Tạo đường kẻ ngang cuối cùng
     cout << setfill('-') << setw(120) << "-" << endl;
 }
+//yc8
+ListSV* addListSV(string path)
+{
+	ifstream ifile;
+	ifile.open(path);
+	if (!ifile.is_open())
+	{
+		cout << "loi";
+		return NULL;
+	}
+	ListSV* List = new ListSV;
+	List->phead = NULL;
+	List->ptail = NULL;
 
+	while (ifile.peek() != EOF)
+	{
+		SinhVien* newSV = new SinhVien;
+		string temp;
+		getline(ifile, temp);
+
+		getline(ifile, newSV->mssv, ',');
+		getline(ifile, newSV->ho, ',');
+		getline(ifile, newSV->ten, ',');
+		getline(ifile, newSV->ClassName, ',');
+		getline(ifile, newSV->gender, ',');
+		//doc ngay sinh
+		getline(ifile, temp, '/');
+		newSV->birth.month = stoi(temp);
+		getline(ifile, temp, '/');
+		newSV->birth.day = stoi(temp);
+		getline(ifile, temp, ',');
+		newSV->birth.year = stoi(temp);
+		getline(ifile, newSV->cccd);
+		newSV->Lc = NULL;
+		newSV->next = NULL;
+		if (List->phead == NULL)
+		{
+			List->phead = newSV;
+			List->ptail = newSV;
+		}
+		else
+		{
+			List->ptail->next = newSV;
+			List->ptail = newSV;
+		}
+
+
+	}
+	ifile.close();
+
+	//return
+	return List;
+
+}
 
