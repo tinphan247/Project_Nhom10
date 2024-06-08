@@ -96,5 +96,6 @@ void InitList(ListCourses &list);
 Course* InputCourse(string id,string CourseName,string ClassName,string GVName,int AcademicYear,int Credits,string wDay,string Session);
 void AddCourse(ListCourses& List,Course* newCourse);
 void OutputListCourses(ListCourses List);
-
+//yeu cau8 
+ListSV* addListSV(string path);
 #endif
