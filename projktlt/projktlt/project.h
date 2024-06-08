@@ -7,6 +7,7 @@
 #include<fstream>
 using namespace std;
 
+struct Class;
 struct Date {
 	int year;
 	int month;
@@ -100,4 +101,5 @@ void AddCourse(ListCourses& List,Course* newCourse);
 void OutputListCourses(ListCourses List);
 //yeu cau8 
 ListSV* addListSV(string path);
+void add1StudentCourse(Course& cour, SinhVien& sv);
 #endif
