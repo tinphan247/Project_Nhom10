@@ -1,4 +1,4 @@
-﻿#ifndef function_h
+#ifndef function_h
 #define function_h
 #include "raylib.h"
 #include <iostream>
@@ -25,16 +25,15 @@ struct Date {
 struct Course
 {
 	string id;
-	char courseName[50];
+	string courseName;
 	string teacherName;
-	int credits;
+	string ClassName;
+	int Credits;
 	int maxStudents = 50;
-	int numberRegistered = 0;
 	int academicYear;
 	string wDay;
-	string session[2];
+	string session;
 	Course* next;
-	Date startDate, endDate;
 };
 struct 	ListCourses
 
@@ -88,8 +87,7 @@ struct ListNamHoc
 {
 	NamHoc* phead;
 };
-
-
+void DrawButton(Rectangle button, const char* text, bool mouseOverButton);
 bool kiemtrangaysinh(int ngay, int thang, int nam);
 void taosv(string& MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
 void themsvvaolop(Class*& lop, string& MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
@@ -100,4 +98,9 @@ void xemdanhsachcaclop(ListClass*& DS);
 void xemdanhsachkhoahoc(ListCourses*& LC);
 void xoasvkhoikhoahoc(ListCourses*& LC);
 void DrawNumbers(NamHoc*& H, ListNamHoc& L);
+void InitList(ListCourses& list);
+void AddCourse(ListCourses& List, Course* newCourse);
+void DrawCourseTable(const Course* courses, int numRows);
+Course* InputCourse(string id, string CourseName, string ClassName, string GVName, int AcademicYear, int Credits, string wDay, string Session);
+void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session);
 #endif // FUNCTION_H
