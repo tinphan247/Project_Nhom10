@@ -1,8 +1,8 @@
 #include "function.h"
 
 int main() {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1280;
+    const int screenHeight = 720;
     InitWindow(screenWidth, screenHeight, "");
 
     ListCourses LC;
@@ -51,6 +51,7 @@ int main() {
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
         DrawText("LOGIN", screenWidth / 2 - 50, screenHeight / 2 - 200, 40, RED);
         DrawText("Username:", screenWidth / 2 - 100, screenHeight / 2 - 70, 20, DARKGRAY);
         DrawRectangleRec(usernameBox, LIGHTGRAY);
@@ -131,7 +132,7 @@ int main() {
     if (loginSuccessful) {
         const int dashboardWidth = 1400;
         const int dashboardHeight = 800;
-        InitWindow(dashboardWidth, dashboardHeight,"");
+        InitWindow(dashboardWidth, dashboardHeight, "");
         SetTargetFPS(60);
 
         Rectangle buttons[6];
@@ -139,23 +140,25 @@ int main() {
             "Create New School Year",
             "Create New Semester",
             "Add Course",
-            "View Classes",
+            "View Course",
             "Add Student to Class",
-            "View Course"
+            "View Classes"
         };
         bool ViewCourseActive = false;
         char ViewCourseInput[128] = "\0";
         bool createNewSchoolYearActive = false;
         char schoolYearInput[128] = "\0";
         bool ViewCourseInputBoxActive = false;
-        Rectangle ViewCourseInputBox = { dashboardWidth / 2 - 100, 250, 200, 40 };
         Rectangle schoolYearInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
         bool schoolYearInputBoxActive = false;
         bool semesterInputBoxActive = false;
         char semesterInput[128] = "\0";
         bool createNewSemesterActive = false;
-        Rectangle semesterInputBox = { dashboardWidth / 2 - 100, 400, 200, 40 };
         bool createNewCourseActive = false;
+        bool AddsvAVctive = false;
+        bool AddsvInputBoxACtive = false;
+        Rectangle AddsvInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
+        char AddsvInput[128] = "\0";
 
         for (int i = 0; i < 6; i++) {
             buttons[i].x = (dashboardWidth - 400) / 2;
@@ -177,7 +180,8 @@ int main() {
 
                 if (mouseOverButton[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     DrawRectangleRec(buttons[i], RED);
-                    switch (i) {
+                    switch (i)
+                    {
                     case 0:
                         createNewSchoolYearActive = true;
                         break;
@@ -187,8 +191,11 @@ int main() {
                     case 2:
                         createNewCourseActive = true;
                         break;
-                    case 5:
+                    case 3:
                         ViewCourseActive = true;
+                        break;
+                    case 4:
+                        AddsvInputBoxACtive = true;
                         break;
                     }
                 }
@@ -224,11 +231,11 @@ int main() {
                 if (IsKeyPressed(KEY_ENTER)) {
                     taonamhoc(LNH, N, schoolYearInput);
                     createNewSchoolYearActive = false;
-                    memset(schoolYearInput, 0, sizeof(schoolYearInput));
+                    //  memset(schoolYearInput, 0, sizeof(schoolYearInput));
                 }
             }
 
-            if (createNewSemesterActive) 
+            if (createNewSemesterActive)
             {
                 taohocky(sm, LNH);
                 createNewSemesterActive = false;
@@ -244,7 +251,7 @@ int main() {
                 Course* newCourse = InputCourse(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
                 AddCourse(LC, newCourse);
                 createNewCourseActive = false;
-                
+
             }
             if (ViewCourseActive)
             {
@@ -269,11 +276,49 @@ int main() {
 
                 // Gọi hàm DrawCourseTable với mảng đã tạo
                 DrawCourseTable(courseArray, numRows);
-
-                
-                
-
                 ViewCourseActive = false;
+            }
+            if (AddsvInputBoxACtive)
+            {
+                DrawRectangleRec(AddsvInputBox, LIGHTGRAY);
+                DrawText(AddsvInput, AddsvInputBox.x + 5, AddsvInputBox.y + 10, 20, DARKGRAY);
+                DrawText("Input file want to read", AddsvInputBox.x, AddsvInputBox.y - 20, 20, LIGHTGRAY);
+
+                if (AddsvInputBoxACtive) {
+                    int key = GetKeyPressed();
+                    if ((key >= 32) && (key <= 125)) {
+                        int length = strlen(AddsvInput);
+                        if (length < 127) {
+                            char newChar = (char)key;
+                            if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+                                newChar = toupper(newChar);
+                            }
+                            else {
+                                newChar = tolower(newChar);
+                            }
+                            AddsvInput[length] = newChar;
+                            AddsvInput[length + 1] = '\0';
+                        }
+                    }
+                    if (IsKeyPressed(KEY_BACKSPACE)) {
+                        int length = strlen(AddsvInput);
+                        if (length > 0) AddsvInput[length - 1] = '\0';
+                    }
+                }
+
+                if (IsKeyPressed(KEY_ENTER)) {
+                    ListSV* svList = addListSV(AddsvInput);
+                    int numRows = 0;
+                    SinhVien* currentSV = svList->phead;
+                    while (currentSV != nullptr) {
+                        numRows++;
+                        currentSV = currentSV->next;
+                    }
+                    DrawStudentListFromData(svList, numRows);
+                    memset(AddsvInput, 0, sizeof(AddsvInput));
+                    AddsvInputBoxACtive = false;
+                }
+
             }
             EndDrawing();
         }
@@ -282,3 +327,4 @@ int main() {
     CloseWindow();
     return 0;
 }
+
