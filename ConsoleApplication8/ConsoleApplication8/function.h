@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include <iostream>
 #include <cstring>
+#include<fstream>
 #include <string>
 using namespace std;
 
@@ -11,11 +12,6 @@ bool IsEmpty(const char* str);
 
 // Hàm kiểm tra thông tin đăng nhập
 bool CheckLogin(const char* username, const char* password);
-
-
-#include <string>
-using namespace std;
-
 struct Date {
 	int year;
 	int month;
@@ -52,6 +48,7 @@ struct SinhVien
 	string cccd;
 	SinhVien* next;
 	ListCourses* Lc;
+	string ClassName;
 };
 struct ListSV
 {
@@ -103,4 +100,8 @@ void AddCourse(ListCourses& List, Course* newCourse);
 void DrawCourseTable(const Course* courses, int numRows);
 Course* InputCourse(string id, string CourseName, string ClassName, string GVName, int AcademicYear, int Credits, string wDay, string Session);
 void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session);
+ListSV* addListSV(string path);
+void DrawSVTable(const SinhVien* sv, int numRows);
+void ShowStudentListWindow(ListSV* svList);
+void DrawStudentListFromData( ListSV* studentList, int numRows);
 #endif // FUNCTION_H
