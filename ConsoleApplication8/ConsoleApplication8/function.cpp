@@ -395,8 +395,6 @@ void DrawCourseTable(const Course* courses, int numRows)
 
     CloseWindow();
 }
-
-
 Course* InputCourse(string id, string CourseName, string ClassName, string GVName, int AcademicYear, int Credits, string wDay, string Session) {
     Course* newCourse = new Course;
     newCourse->id = id;
@@ -538,5 +536,163 @@ void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, stri
 
     CloseWindow();
 }
+ListSV* addListSV(string path)
+{
+    ifstream ifile;
+    ifile.open(path);
+    if (!ifile.is_open())
+    {
+        cout << "loi";
+        return NULL;
+    }
+    ListSV* List = new ListSV;
+    List->phead = NULL;
+    List->ptail = NULL;
+    string temp;
+    getline(ifile, temp);
+    while (ifile.peek() != EOF)
+    {
+        SinhVien* newSV = new SinhVien;
+
+        getline(ifile, newSV->mssv, ',');
+        getline(ifile, newSV->ho, ',');
+        getline(ifile, newSV->ten, ',');
+        getline(ifile, newSV->ClassName, ',');
+        getline(ifile, newSV->gender, ',');
+        //doc ngay sinh
+        getline(ifile, temp, '/');
+        newSV->birth.month = stoi(temp);
+        getline(ifile, temp, '/');
+        newSV->birth.day = stoi(temp);
+        getline(ifile, temp, ',');
+        newSV->birth.year = stoi(temp);
+        getline(ifile, newSV->cccd);
+        newSV->Lc = NULL;
+        newSV->next = NULL;
+        if (List->phead == NULL)
+        {
+            List->phead = newSV;
+            List->ptail = newSV;
+        }
+        else
+        {
+            List->ptail->next = newSV;
+            List->ptail = newSV;
+        }
+
+
+    }
+    ifile.close();
+
+    //return
+    return List;
+
+}
+void DrawStudentListFromData(ListSV* studentList, int numRows) {
+    const int screenWidth = 1400;
+    const int screenHeight = 800;
+    InitWindow(screenWidth, screenHeight, "");
+    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
+
+    const int numCols = 8; // Số cột bao gồm số thứ tự, MSSV, Họ, Tên, Lớp, Giới Tính, Ngày Sinh, CCCD
+    const int columnSpacing = 20; // Khoảng cách giữa các cột
+
+    const int cellWidth = (screenWidth - 2 * 50 - (numCols - 1) * columnSpacing) / numCols * screenRatioX; // Adjusted to fit the entire screen width with padding
+    const int cellHeight = 80 * screenRatioY; // Increased height to separate data further
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2); // Adjusted padding based on average screen ratio
+
+    const int startX = (screenWidth - (numCols * cellWidth + (numCols - 1) * columnSpacing)) / 2; // Centered horizontally
+    const int startY = 100 * screenRatioY; // Increased startY for more separation
+
+    const char* headers[numCols] = { "STT", "MSSV", "Ho", "Ten", "Lop", "Gioi Tinh", "Ngay Sinh", "CCCD" };
+
+    // Thêm thanh cuộn
+    int scrollBarYOffset = 0;
+    int maxDisplayedLines = screenHeight / cellHeight - 2; // Trừ 2 cho phần header và phần input
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Draw headers
+        for (int i = 0; i < numCols; i++) {
+            DrawRectangle(startX + (cellWidth + columnSpacing) * i, startY, cellWidth, cellHeight, LIGHTGRAY);
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+            int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK); // Adjusted font size
+        }
+
+        // Draw data
+        const SinhVien* currentSV = studentList->phead;
+
+        // Thanh cuộn
+        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+        scrollBar.height = scrollBarHeight;
+        scrollBar.y = startY + cellHeight + scrollBarY;
+        DrawRectangleRec(scrollBar, GRAY);
+
+        // Xử lý sự kiện cuộn chuột
+        int scroll = GetMouseWheelMove();
+        scrollBarYOffset += scroll * 50 * (-1); // Điều chỉnh tốc độ cuộn tùy thuộc vào yêu cầu của ứng dụng
+
+        // Giới hạn vị trí cuộn
+        if (scrollBarYOffset < 0) scrollBarYOffset = 0;
+        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+        }
+
+        // Vẽ lại dữ liệu với vị trí cuộn mới
+        int visibleStartIndex = scrollBarYOffset / cellHeight;
+        int visibleEndIndex = visibleStartIndex + maxDisplayedLines;
+        int currentIndex = 0;
+        currentSV = studentList->phead;
+
+        while (currentIndex < visibleStartIndex && currentSV != nullptr) {
+            currentSV = currentSV->next;
+            currentIndex++;
+        }
+
+        for (int i = visibleStartIndex; i < visibleEndIndex && currentSV != nullptr; i++) {
+            // Vẽ dữ liệu cho hàng hiện tại
+            DrawRectangle(startX, startY + (i - visibleStartIndex + 1) * cellHeight, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, RAYWHITE); // Vẽ hình chữ nhật cho toàn bộ hàng
+            DrawText(std::to_string(i + 1).c_str(), startX + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Số thứ tự
+            DrawText(currentSV->mssv.c_str(), startX + (cellWidth + columnSpacing) * 1 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // MSSV
+            DrawText(currentSV->ho.c_str(), startX + (cellWidth + columnSpacing) * 2 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Ho
+            DrawText(currentSV->ten.c_str(), startX + (cellWidth + columnSpacing) * 3 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Ten
+            DrawText(currentSV->ClassName.c_str(), startX + (cellWidth + columnSpacing) * 4 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Lop
+            DrawText(currentSV->gender.c_str(), startX + (cellWidth + columnSpacing) * 5 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Gioi Tinh
+            string birthday = TextFormat("%02d/%02d/%d", currentSV->birth.day, currentSV->birth.month, currentSV->birth.year);
+            DrawText(birthday.c_str(), startX + (cellWidth + columnSpacing) * 6 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Ngay Sinh
+            DrawText(currentSV->cccd.c_str(), startX + (cellWidth + columnSpacing) * 7 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // CCCD
+
+            currentSV = currentSV->next;
+        }
+
+        // Vẽ hàng header sau cùng để đảm bảo màu không bị đứt đoạn
+        DrawRectangle(startX, startY, cellWidth* numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
+        for (int i = 0; i < numCols; i++) {
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+            int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK); // Adjusted font size
+        }
+
+        // Kết thúc vẽ
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
+
+
+
+
+
+
+
+
 
 
