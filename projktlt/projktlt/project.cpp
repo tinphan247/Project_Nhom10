@@ -418,13 +418,12 @@ ListSV* addListSV(string path)
 	ListSV* List = new ListSV;
 	List->phead = NULL;
 	List->ptail = NULL;
-
+	string temp;
+	getline(ifile, temp);
 	while (ifile.peek() != EOF)
 	{
 		SinhVien* newSV = new SinhVien;
-		string temp;
-		getline(ifile, temp);
-
+		
 		getline(ifile, newSV->mssv, ',');
 		getline(ifile, newSV->ho, ',');
 		getline(ifile, newSV->ten, ',');
