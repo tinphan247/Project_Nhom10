@@ -470,3 +470,37 @@ void add1StudentCourse(Course& cour, SinhVien& sv)
 	cour.lop->ds->ptail->next = &sv;
 	cour.lop->ds->ptail = &sv;
 }
+//YEU CAU 13 XOA KHOA HOC theo ID lop hoc
+void RemoveCourse(ListCourses& List,Course* course){
+	if(List.head == NULL){
+		return;
+	}
+	else if(List.head == course){
+		List.head = course->next;
+		if(List.tail == course){
+			List.tail = NULL;
+		}
+	}else{
+		// duyet list tim course
+		Course* cur = List.head;
+		while(cur!= NULL && cur->next != course){
+			cur = cur->next;
+		}
+		//luc nay cur->next = course hoac cur == NULL
+		if(cur->next == course){
+			cur->next = course->next;
+			if(List.tail == course){
+				List.tail = cur;
+			}
+		}else{ // luc nay cur = NULL -> ko tim thay course
+			return;
+		}
+	}
+}
+Course* Find_ID(ListCourses List, string id){
+	Course* cur = List.head;
+	while(cur != NULL &&  cur->id != id){
+		cur = cur ->next;
+	}
+	return cur;
+}
