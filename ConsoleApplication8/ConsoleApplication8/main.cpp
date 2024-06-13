@@ -204,8 +204,9 @@ int main() {
                     }
                 }
             }
-            if (createNewSchoolYearActive)
-            {
+
+            if (createNewSchoolYearActive) {
+                // Implementation for creating new school year
                 DrawRectangleRec(schoolYearInputBox, LIGHTGRAY);
                 DrawText(schoolYearInput, schoolYearInputBox.x + 5, schoolYearInputBox.y + 10, 20, DARKGRAY);
                 DrawText("Enter School Year (e.g., 2020-2021):", schoolYearInputBox.x, schoolYearInputBox.y - 20, 20, LIGHTGRAY);
@@ -235,55 +236,65 @@ int main() {
                 if (IsKeyPressed(KEY_ENTER)) {
                     taonamhoc(LNH, N, schoolYearInput);
                     createNewSchoolYearActive = false;
-                    //  memset(schoolYearInput, 0, sizeof(schoolYearInput));
+                    memset(schoolYearInput, 0, sizeof(schoolYearInput));
                 }
             }
 
-            if (createNewSemesterActive)
-            {
+            if (createNewSemesterActive) {
+                // Implementation for creating new semester
                 taohocky(sm, LNH);
                 createNewSemesterActive = false;
             }
 
-            if (createNewCourseActive)
-            {
+            if (createNewCourseActive) {
+                // Implementation for creating new course
                 string id, CourseName, ClassName, GVName, wDay, Session;
                 int AcademicYear, Credits;
-                // Hiển thị giao diện nhập liệu và nhận giá trị đầu vào
-                ShowInputCoursePage(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
-                // Tạo đối tượng Course với dữ liệu đã nhập
-                Course* newCourse = InputCourse(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
-                AddCourse(LC, newCourse);
-                createNewCourseActive = false;
 
+                // UI for entering course details and receiving input
+                ShowInputCoursePage(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
+
+                // Create a new Course object with the input data
+                Course* newCourse = InputCourse(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
+
+                // Add the new Course to the ListCourses
+                AddCourse(LC, newCourse);
+
+                createNewCourseActive = false;
             }
-            if (ViewCourseActive)
-            {
-                // Tạo một mảng động để lưu trữ các đối tượng Course từ danh sách liên kết
-                // Đếm số lượng khóa học trong danh sách liên kết
+
+            if (ViewCourseActive) {
+                // Implementation for viewing courses
                 int numRows = 0;
                 Course* tempCount = LC.head;
+
+                // Count the number of courses in the linked list
                 while (tempCount != nullptr) {
                     numRows++;
                     tempCount = tempCount->next;
                 }
 
-                // Tạo một mảng động để lưu trữ các đối tượng Course từ danh sách liên kết
+                // Allocate memory for an array to store courses
                 Course* courseArray = new Course[numRows];
-                Course* temp = LC.head;
 
-                // Sao chép thông tin từ danh sách liên kết vào mảng
+                // Copy courses from linked list to array
+                Course* temp = LC.head;
                 for (int i = 0; i < numRows && temp != nullptr; i++) {
                     courseArray[i] = *temp;
                     temp = temp->next;
                 }
 
-                // Gọi hàm DrawCourseTable với mảng đã tạo
+                // Draw the course table
                 DrawCourseTable(courseArray, numRows);
+
+                // Clean up dynamically allocated memory
+                delete[] courseArray;
+
                 ViewCourseActive = false;
             }
-            if (AddsvInputBoxActive)
-            {
+
+            if (AddsvInputBoxActive) {
+                // Implementation for adding students from a file
                 DrawRectangleRec(AddsvInputBox, LIGHTGRAY);
                 DrawText(AddsvInput, AddsvInputBox.x + 5, AddsvInputBox.y + 10, 20, DARKGRAY);
                 DrawText("Input file want to read", AddsvInputBox.x, AddsvInputBox.y - 20, 20, LIGHTGRAY);
@@ -292,8 +303,7 @@ int main() {
                     int key = GetKeyPressed();
                     if ((key >= 32) && (key <= 125)) {
                         int length = strlen(AddsvInput);
-                        if (length < 127)
-                        {
+                        if (length < 127) {
                             char newChar = (char)key;
                             if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
                                 newChar = toupper(newChar);
@@ -323,13 +333,20 @@ int main() {
                     memset(AddsvInput, 0, sizeof(AddsvInput));
                     AddsvInputBoxActive = false;
                 }
-
             }
+
+            if (ChangepasswordActive) {
+                // Implementation for changing password
+                ChangePassword(LUR, username, password);
+                saveListUser(LUR, "User.csv");
+                ChangepasswordActive = false;
+            }
+
             EndDrawing();
         }
+
+        CloseWindow();
     }
 
-    CloseWindow();
     return 0;
 }
-
