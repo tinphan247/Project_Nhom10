@@ -749,3 +749,229 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
 
     CloseWindow();
 }
+void saveListUser(ListUser* LUR, const string& path) {
+    ofstream ofile(path);
+    if (!ofile.is_open()) {
+        cerr << "Không thể mở file để ghi." << endl;
+        return;
+    }
+
+    // Write header line
+    ofile << "id,pass,ho,ten,ClassName,gender,birth,academicYear,staff\n";
+
+    // Traverse through the list and write each user's information
+    User* current = LUR->phead;
+    while (current != nullptr) {
+        ofile << current->id << ","
+            << current->pass << ","
+            << current->ho << ","
+            << current->ten << ","
+            << current->ClassName << ","
+            << current->gender << ","
+            << current->birth.month << "/" << current->birth.day << "/" << current->birth.year << ","
+            << current->academicYear << ",";
+        if (current->staff) {
+            ofile << "TRUE\n";
+        }
+        else {
+            ofile << "FALSE\n";
+        }
+        current = current->next;
+    }
+
+    ofile.close();
+}
+void ChangePassword(ListUser* userList, const char* username, const char* password) {
+    const int dashboardWidth = 1400;
+    const int dashboardHeight = 800;
+    InitWindow(dashboardWidth, dashboardHeight, "Staff Dashboard");
+
+    bool changePasswordActive = true;
+    char currentPassword[128] = "\0";
+    char newPassword[128] = "\0";
+    char confirmedNewPassword[128] = "\0";
+    Rectangle currentPasswordBox = { dashboardWidth / 2 - 150, 200, 300, 40 };
+    Rectangle newPasswordBox = { dashboardWidth / 2 - 150, 280, 300, 40 };
+    Rectangle confirmedNewPasswordBox = { dashboardWidth / 2 - 150, 360, 300, 40 };
+    bool currentPasswordBoxActive = false;
+    bool newPasswordBoxActive = false;
+    bool confirmedNewPasswordBoxActive = false;
+    bool confirmPassword = false;
+    char errorMessage[256] = "\0";
+
+    const int maxPasswordLength = 24; // Maximum password length is 24 characters
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose() && changePasswordActive) {
+        Vector2 mousePoint = GetMousePosition();
+
+        // Handle user input
+        if (CheckCollisionPointRec(mousePoint, currentPasswordBox) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            currentPasswordBoxActive = true;
+            newPasswordBoxActive = false;
+            confirmedNewPasswordBoxActive = false;
+        }
+        else if (CheckCollisionPointRec(mousePoint, newPasswordBox) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            currentPasswordBoxActive = false;
+            newPasswordBoxActive = true;
+            confirmedNewPasswordBoxActive = false;
+        }
+        else if (CheckCollisionPointRec(mousePoint, confirmedNewPasswordBox) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            currentPasswordBoxActive = false;
+            newPasswordBoxActive = false;
+            confirmedNewPasswordBoxActive = true;
+        }
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            currentPasswordBoxActive = false;
+            newPasswordBoxActive = false;
+            confirmedNewPasswordBoxActive = false;
+        }
+
+        // Process key presses in input boxes
+        if (currentPasswordBoxActive) {
+            int key = GetKeyPressed();
+            if ((key >= 32) && (key <= 125)) {
+                int length = strlen(currentPassword);
+                if (length < maxPasswordLength) {
+                    char newChar = (char)key;
+                    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+                        newChar = toupper(newChar);
+                    }
+                    else {
+                        newChar = tolower(newChar);
+                    }
+                    currentPassword[length] = newChar;
+                    currentPassword[length + 1] = '\0';
+                }
+            }
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                int length = strlen(currentPassword);
+                if (length > 0)
+                    currentPassword[length - 1] = '\0';
+            }
+        }
+        else if (newPasswordBoxActive) {
+            int key = GetKeyPressed();
+            if ((key >= 32) && (key <= 125)) {
+                int length = strlen(newPassword);
+                if (length < maxPasswordLength) {
+                    char newChar = (char)key;
+                    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+                        newChar = toupper(newChar);
+                    }
+                    else {
+                        newChar = tolower(newChar);
+                    }
+                    newPassword[length] = newChar;
+                    newPassword[length + 1] = '\0';
+                }
+            }
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                int length = strlen(newPassword);
+                if (length > 0)
+                    newPassword[length - 1] = '\0';
+            }
+        }
+        else if (confirmedNewPasswordBoxActive) {
+            int key = GetKeyPressed();
+            if ((key >= 32) && (key <= 125)) {
+                int length = strlen(confirmedNewPassword);
+                if (length < maxPasswordLength) {
+                    char newChar = (char)key;
+                    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+                        newChar = toupper(newChar);
+                    }
+                    else {
+                        newChar = tolower(newChar);
+                    }
+                    confirmedNewPassword[length] = newChar;
+                    confirmedNewPassword[length + 1] = '\0';
+                }
+            }
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                int length = strlen(confirmedNewPassword);
+                if (length > 0)
+                    confirmedNewPassword[length - 1] = '\0';
+            }
+        }
+
+        // Draw everything once per frame
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Draw interface elements
+        DrawText("Change Password", dashboardWidth / 2 - MeasureText("Change Password", 30) / 2, 100, 30, DARKGRAY);
+
+        // Current Password
+        DrawText("Current Password:", dashboardWidth / 2 - 150, 170, 20, DARKGRAY);
+        DrawRectangleRec(currentPasswordBox, LIGHTGRAY);
+        if (currentPasswordBoxActive)
+            DrawRectangleLinesEx(currentPasswordBox, 1, RED);
+        DrawText(currentPassword, currentPasswordBox.x + 5, currentPasswordBox.y + 10, 20, DARKGRAY);
+
+        // New Password
+        DrawText("New Password:", dashboardWidth / 2 - 150, 250, 20, DARKGRAY);
+        DrawRectangleRec(newPasswordBox, LIGHTGRAY);
+        if (newPasswordBoxActive)
+            DrawRectangleLinesEx(newPasswordBox, 1, RED);
+        DrawText(newPassword, newPasswordBox.x + 5, newPasswordBox.y + 10, 20, DARKGRAY);
+
+        // Confirm New Password
+        DrawText("Confirm New Password:", dashboardWidth / 2 - 150, 330, 20, DARKGRAY);
+        DrawRectangleRec(confirmedNewPasswordBox, LIGHTGRAY);
+        if (confirmedNewPasswordBoxActive)
+            DrawRectangleLinesEx(confirmedNewPasswordBox, 1, RED);
+        DrawText(confirmedNewPassword, confirmedNewPasswordBox.x + 5, confirmedNewPasswordBox.y + 10, 20, DARKGRAY);
+
+        // Change Password Button
+        Rectangle changePasswordButton = { dashboardWidth / 2 - 50, 420, 100, 40 };
+        DrawRectangleRec(changePasswordButton, LIGHTGRAY);
+        DrawText("Change", changePasswordButton.x + 5, changePasswordButton.y + 10, 20, DARKGRAY);
+
+        // Check if Change button is pressed
+        if (CheckCollisionPointRec(mousePoint, changePasswordButton) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            // Locate the user in the list
+            User* temp = userList->phead;
+            while (temp != NULL)
+            {
+                if (username== temp->id && password== temp->pass) 
+                {
+                    break;
+                }
+                temp = temp->next;
+            }
+
+            // Check current and new passwords
+            if (currentPassword== temp->pass) {
+                if (strlen(newPassword) > 0 && strcmp(newPassword, confirmedNewPassword) == 0) {
+                    // Update password in the system
+                    temp->pass= newPassword;
+                    confirmPassword = true;
+                    strcpy_s(errorMessage,50, "Password changed successfully!");
+                }
+                else {
+                    strcpy_s(errorMessage,100, "Error: New passwords do not match or are invalid.");
+                }
+            }
+            else {
+                strcpy_s(errorMessage,38, "Error: Current password is incorrect.");
+            }
+        }
+
+        // Draw error message if there is any
+        DrawText(errorMessage, dashboardWidth - MeasureText(errorMessage, 20) - 10, dashboardHeight - 30, 20, RED);
+
+        EndDrawing();
+    }
+
+    CloseWindow(); // Close window when done
+}
+
+
+
+
+
+
+
+
