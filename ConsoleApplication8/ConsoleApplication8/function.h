@@ -6,12 +6,6 @@
 #include<fstream>
 #include <string>
 using namespace std;
-
-// Hàm kiểm tra nếu chuỗi rỗng
-bool IsEmpty(const char* str);
-
-// Hàm kiểm tra thông tin đăng nhập
-bool CheckLogin(const char* username, const char* password);
 struct Date {
 	int year;
 	int month;
@@ -84,6 +78,24 @@ struct ListNamHoc
 {
 	NamHoc* phead;
 };
+struct User
+{
+	string id;
+	string pass;
+	string ten;
+	string ho;
+	string gender;
+	Date birth; 
+	string ClassName;
+	string academicYear;
+	bool staff;
+	User* next;
+};
+struct ListUser
+{
+	User* phead;
+	User* ptail;
+};
 void DrawButton(Rectangle button, const char* text, bool mouseOverButton);
 bool kiemtrangaysinh(int ngay, int thang, int nam);
 void taosv(string& MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
@@ -104,4 +116,10 @@ ListSV* addListSV(string path);
 void DrawSVTable(const SinhVien* sv, int numRows);
 void ShowStudentListWindow(ListSV* svList);
 void DrawStudentListFromData( ListSV* studentList, int numRows);
+ListUser* addListUser(const string& path);
+// Hàm kiểm tra nếu chuỗi rỗng
+bool IsEmpty(const char* str);
+// Hàm kiểm tra thông tin đăng nhập
+bool CheckLogin(const char* username, const char* password, bool& checkstaff, ListUser*& LU);
+void ChangePassword(ListUser* userList);
 #endif // FUNCTION_H
