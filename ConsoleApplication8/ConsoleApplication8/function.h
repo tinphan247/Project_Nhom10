@@ -121,5 +121,6 @@ ListUser* addListUser(const string& path);
 bool IsEmpty(const char* str);
 // Hàm kiểm tra thông tin đăng nhập
 bool CheckLogin(const char* username, const char* password, bool& checkstaff, ListUser*& LU);
-void ChangePassword(ListUser* userList);
+void ChangePassword(ListUser* userList, const char* username, const char* password);
+void saveListUser(ListUser* LUR, const string& path);
 #endif // FUNCTION_H
