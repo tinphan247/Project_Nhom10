@@ -4,12 +4,13 @@ int main() {
     const int screenWidth = 1280;
     const int screenHeight = 720;
     InitWindow(screenWidth, screenHeight, "");
-
+   // ListUser* LUR;
     ListCourses LC;
     InitList(LC);
     ListNamHoc LNH = { NULL };
     NamHoc* N = NULL;
     Semester* sm = NULL;
+    ListUser* LUR = addListUser("User.csv");
     char username[128] = "\0";
     char password[128] = "\0";
     bool mouseOnText = false;
@@ -22,7 +23,7 @@ int main() {
     Rectangle usernameBox = { screenWidth / 2 - 100, screenHeight / 2 - 50, 200, 40 };
     Rectangle passwordBox = { screenWidth / 2 - 100, screenHeight / 2 + 10, 200, 40 };
     Rectangle loginButton = { screenWidth / 2 - 50, screenHeight / 2 + 70, 100, 40 };
-
+    bool checkstaff;
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
@@ -118,7 +119,7 @@ int main() {
         if (CheckCollisionPointRec(mousePoint, loginButton) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             loginAttempted = true;
             if (!IsEmpty(username) && !IsEmpty(password)) {
-                if (CheckLogin(username, password)) {
+                if (CheckLogin(username, password,checkstaff,LUR)) {
                     loginSuccessful = true;
                     break;
                 }
@@ -129,10 +130,10 @@ int main() {
         }
     }
 
-    if (loginSuccessful) {
+    if (loginSuccessful&& checkstaff == true) {
         const int dashboardWidth = 1400;
         const int dashboardHeight = 800;
-        InitWindow(dashboardWidth, dashboardHeight, "");
+        InitWindow(dashboardWidth, dashboardHeight, "staff dashboard");
         SetTargetFPS(60);
 
         Rectangle buttons[6];
@@ -141,8 +142,8 @@ int main() {
             "Create New Semester",
             "Add Course",
             "View Course",
-            "Add Student to Class",
-            "View Classes"
+            "Add Student to Course and View",
+            "Change password"
         };
         bool ViewCourseActive = false;
         char ViewCourseInput[128] = "\0";
@@ -155,8 +156,8 @@ int main() {
         char semesterInput[128] = "\0";
         bool createNewSemesterActive = false;
         bool createNewCourseActive = false;
-        bool AddsvAVctive = false;
-        bool AddsvInputBoxACtive = false;
+        bool AddsvInputBoxActive = false;
+        bool ChangepasswordActive = false;
         Rectangle AddsvInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
         char AddsvInput[128] = "\0";
 
@@ -195,7 +196,10 @@ int main() {
                         ViewCourseActive = true;
                         break;
                     case 4:
-                        AddsvInputBoxACtive = true;
+                        AddsvInputBoxActive = true;
+                        break;
+                    case 5:
+                        ChangepasswordActive = true;
                         break;
                     }
                 }
@@ -278,17 +282,18 @@ int main() {
                 DrawCourseTable(courseArray, numRows);
                 ViewCourseActive = false;
             }
-            if (AddsvInputBoxACtive)
+            if (AddsvInputBoxActive)
             {
                 DrawRectangleRec(AddsvInputBox, LIGHTGRAY);
                 DrawText(AddsvInput, AddsvInputBox.x + 5, AddsvInputBox.y + 10, 20, DARKGRAY);
                 DrawText("Input file want to read", AddsvInputBox.x, AddsvInputBox.y - 20, 20, LIGHTGRAY);
 
-                if (AddsvInputBoxACtive) {
+                if (AddsvInputBoxActive) {
                     int key = GetKeyPressed();
                     if ((key >= 32) && (key <= 125)) {
                         int length = strlen(AddsvInput);
-                        if (length < 127) {
+                        if (length < 127)
+                        {
                             char newChar = (char)key;
                             if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
                                 newChar = toupper(newChar);
@@ -316,7 +321,7 @@ int main() {
                     }
                     DrawStudentListFromData(svList, numRows);
                     memset(AddsvInput, 0, sizeof(AddsvInput));
-                    AddsvInputBoxACtive = false;
+                    AddsvInputBoxActive = false;
                 }
 
             }
