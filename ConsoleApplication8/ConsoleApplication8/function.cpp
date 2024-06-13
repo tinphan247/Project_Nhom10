@@ -4,18 +4,81 @@ bool IsEmpty(const char* str)
 {
     return strlen(str) == 0;
 }
-
-bool CheckLogin(const char* username, const char* password) 
-{
-    // Thực hiện kiểm tra thông tin đăng nhập ở đây
-    if (strcmp(username, "AD") == 0 && strcmp(password, "123") == 0)
-    {
-        return true;
+ListUser* addListUser(const string& path) {
+    ifstream ifile(path);
+    if (!ifile.is_open()) {
+        cerr << "Không thể mở file." << endl;
+        return nullptr;
     }
-    else {
+
+    ListUser* LUR = new ListUser;
+    LUR->phead = nullptr;
+    LUR->ptail = nullptr;
+    string temp;
+    getline(ifile, temp); // Bỏ qua dòng tiêu đề
+
+    while (ifile.peek() != EOF) {
+        User* u = new User;
+
+        getline(ifile, u->id, ',');
+        getline(ifile, u->pass, ',');
+        getline(ifile, u->ho, ',');
+        getline(ifile, u->ten, ',');
+        getline(ifile, u->ClassName, ',');
+        getline(ifile, u->gender, ',');
+
+        getline(ifile, temp, '/');
+        u->birth.month = stoi(temp);
+        getline(ifile, temp, '/');
+        u->birth.day = stoi(temp);
+        getline(ifile, temp, ',');
+        u->birth.year = stoi(temp);
+
+        getline(ifile, u->academicYear, ',');
+        getline(ifile, temp, '\n');
+        if (temp == "TRUE")
+        {
+            u->staff = true;
+        }
+        else
+        {
+            u->staff = false;
+        }
+
+        u->next = nullptr;
+        if (LUR->phead == nullptr) {
+            LUR->phead = u;
+            LUR->ptail = u;
+        }
+        else {
+            LUR->ptail->next = u;
+            LUR->ptail = u;
+        }
+    }
+    ifile.close();
+    return LUR;
+}
+
+bool CheckLogin(const char* username, const char* password,bool& checkstaff,ListUser*& LU) 
+{
+    if (!LU) 
+    {
         return false;
     }
+
+    User* temp = LU->phead;
+    while (temp != nullptr) 
+    {
+        if (temp->id == username && temp->pass == password) 
+        {
+            checkstaff = temp->staff;
+            return true;
+        }
+        temp = temp->next;
+    }
+    return false;
 }
+
 void DrawButton(Rectangle button, const char* text, bool mouseOverButton) 
 {
     DrawRectangleRec(button, mouseOverButton ? DARKGRAY : LIGHTGRAY);
@@ -686,13 +749,3 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
 
     CloseWindow();
 }
-
-
-
-
-
-
-
-
-
-
