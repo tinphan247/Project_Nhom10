@@ -131,6 +131,7 @@ void DrawCourseTable(const Course* courses, int numRows);
 Course* InputCourse(string id, string CourseName, string ClassName, string GVName, int AcademicYear, int Credits, string wDay, string Session);
 void ImportCourseFile(ListCourses& List, string path);
 void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session);
+void ShowImportCoursePage(string& path);
 ListSV* addListSV(string path);
 void saveListUser(ListUser* LUR, const string& path);
 void ChangePassword(ListUser* userList, const char* username, const char* password);
@@ -139,8 +140,4 @@ void ShowStudentListWindow(ListSV* svList);
 void DrawStudentListFromData(ListSV* studentList, int numRows);
 //void DrawStudentListFromData(ListSV* studentList, int numRows, StudentGrades* studentGradesList);
 void DrawStudentGrades(const StudentGrades* studentGrades);
-
-void InputCourseScreen(ListCourses& LC);
-void ImportCourse(const char* fileName);
-void DrawCourseDashBoard(ListCourses& LC);
 #endif // FUNCTION_H
