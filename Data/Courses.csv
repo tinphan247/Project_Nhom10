@@ -1,0 +1,14 @@
+﻿ID,Course name,Teacher name,ClassName,Credits,Academic year,Number of students,Day of the week,Session
+BAA00004,Pháp luật đại cương,Le Thi Thu,23CTT5,3,2023,50,WED,S1-S2
+BAA00022,Thể dục 2,Do Van Chon,23CTT5,2,2023,50,FRI,S1-S2
+CSC10002,Kỹ thuật lập trình,Nguyen Le Hoang Dung,23CTT5,4,2023,50,THU,S3-S4
+MTH00004,Vi tích phân 2B,Nguyen Dang Khoa,23CTT5,3,2023,50,TUE,S1-S2
+MTH00030,Đại số tuyến tính,Le Van Hop,23CTT5,3,2023,50,SAT,S1-S2
+MTH00082,Thực hành Vi tích phân 2B,Nguyen Nhut Hung,23CTT5,1,2023,50,THU,S1-S2
+MTH00083,Thực hành Đại số tuyến tính,Nguyen Thi Ha,23CTT5,1,2023,50,MON,S1-S2
+BIO00001,Sinh đại cương 1,Pham Van Sinh,23CTT5,3,2023,50,TUE,S3-S4
+BIO00081,Thực tập Sinh đại cương 1,Hoang Thi Mai,23CTT5,1,2023,50,SAT,S3-S4
+CHE00001,Hóa đại cương 1,Nguyen Van Khoi,23CTT5,3,2023,50,WED,S3-S4
+CHE00081,Thực hành Hóa đại cương 1,Le Thi Lien,23CTT5,1,2023,50,SAT,S3-S4
+PHY00001,Vật lý đại cương 1 (Cơ - Nhiệt),Trinh Hoa Lang,23CTT5,3,2023,50,MON,S3-S4
+PHY00081,Thực hành Vật lý đại cương,Pham Thi Ngan,23CTT5,1,2023,50,FRI,S3-S4
