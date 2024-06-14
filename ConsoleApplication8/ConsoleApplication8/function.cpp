@@ -1,5 +1,4 @@
-#include "function.h"
-
+#include "project.h"
 bool IsEmpty(const char* str)
 {
     return strlen(str) == 0;
@@ -58,18 +57,17 @@ ListUser* addListUser(const string& path) {
     ifile.close();
     return LUR;
 }
-
-bool CheckLogin(const char* username, const char* password,bool& checkstaff,ListUser*& LU) 
+bool CheckLogin(const char* username, const char* password, bool& checkstaff, ListUser*& LU)
 {
-    if (!LU) 
+    if (!LU)
     {
         return false;
     }
 
     User* temp = LU->phead;
-    while (temp != nullptr) 
+    while (temp != nullptr)
     {
-        if (temp->id == username && temp->pass == password) 
+        if (temp->id == username && temp->pass == password)
         {
             checkstaff = temp->staff;
             return true;
@@ -78,8 +76,7 @@ bool CheckLogin(const char* username, const char* password,bool& checkstaff,List
     }
     return false;
 }
-
-void DrawButton(Rectangle button, const char* text, bool mouseOverButton) 
+void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
 {
     DrawRectangleRec(button, mouseOverButton ? DARKGRAY : LIGHTGRAY);
     DrawText(text, button.x + button.width / 2 - MeasureText(text, 20) / 2, button.y + button.height / 2 - 10, 20, BLACK);
@@ -87,7 +84,7 @@ void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
 void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc)
 {
     N = new NamHoc();
-    N->ngaybatdau= thoigiannamhoc;
+    N->ngaybatdau = thoigiannamhoc;
     if (L.phead == NULL) {
         L.phead = N;
     }
@@ -101,9 +98,6 @@ void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc)
     N->next = NULL;
     N->Hocky = NULL;
 }
-
-
-
 void taohocky(Semester*& H, ListNamHoc& L) {
 
     H = new Semester();
@@ -162,7 +156,7 @@ void taohocky(Semester*& H, ListNamHoc& L) {
 
         // Xử lý sự kiện cuộn chuột
         int scroll = GetMouseWheelMove();
-        scrollBarYOffset += scroll * 50*(-1);
+        scrollBarYOffset += scroll * 50 * (-1);
         if (scrollBarYOffset < 0) scrollBarYOffset = 0;
         if (scrollBarYOffset > ((i - maxDisplayedLines) * 50)) scrollBarYOffset = (i - maxDisplayedLines) * 50;
 
@@ -351,17 +345,13 @@ void taohocky(Semester*& H, ListNamHoc& L) {
         EndDrawing();
     }
 
-   
+
 }
-
-
-
 void InitList(ListCourses& list) {
     list.head = NULL;
     list.tail = NULL;
     list.size = 0;
 }
-
 void AddCourse(ListCourses& List, Course* newCourse) {
     if (newCourse == NULL) return;
     if (List.head == NULL) {
@@ -374,8 +364,6 @@ void AddCourse(ListCourses& List, Course* newCourse) {
     }
     List.size++;
 }
-
-
 void DrawCourseTable(const Course* courses, int numRows)
 {
     const int screenWidth = 1400;
@@ -493,7 +481,7 @@ void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, stri
     int activeField = -1;
     bool enterPressed = false;
 
-    InitWindow(1400, 800, "Course Input");
+    InitWindow(1366, 768, "Course Input");
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
@@ -736,7 +724,7 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
         }
 
         // Vẽ hàng header sau cùng để đảm bảo màu không bị đứt đoạn
-        DrawRectangle(startX, startY, cellWidth* numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
+        DrawRectangle(startX, startY, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
         for (int i = 0; i < numCols; i++) {
             int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
             int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
@@ -935,7 +923,7 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             User* temp = userList->phead;
             while (temp != NULL)
             {
-                if (username== temp->id && password== temp->pass) 
+                if (username == temp->id && password == temp->pass)
                 {
                     break;
                 }
@@ -943,19 +931,19 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             }
 
             // Check current and new passwords
-            if (currentPassword== temp->pass) {
+            if (currentPassword == temp->pass) {
                 if (strlen(newPassword) > 0 && strcmp(newPassword, confirmedNewPassword) == 0) {
                     // Update password in the system
-                    temp->pass= newPassword;
+                    temp->pass = newPassword;
                     confirmPassword = true;
-                    strcpy_s(errorMessage,50, "Password changed successfully!");
+                    strcpy_s(errorMessage, 50, "Password changed successfully!");
                 }
                 else {
-                    strcpy_s(errorMessage,100, "Error: New passwords do not match or are invalid.");
+                    strcpy_s(errorMessage, 100, "Error: New passwords do not match or are invalid.");
                 }
             }
             else {
-                strcpy_s(errorMessage,38, "Error: Current password is incorrect.");
+                strcpy_s(errorMessage, 38, "Error: Current password is incorrect.");
             }
         }
 
@@ -967,10 +955,209 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
 
     CloseWindow(); // Close window when done
 }
+void ImportCourseFile(ListCourses& List, string path) {
+    ifstream ifile;
+    ifile.open(path);
+    if (!ifile.is_open()) {
+        cout << "Khong the mo file" << endl;
+        return;
+    }
+    string temp;
+    getline(ifile, temp);
+    while (!ifile.eof()) {
+        Course* cur = new Course;
+        getline(ifile, cur->id, ',');
+        getline(ifile, cur->courseName, ',');
+        getline(ifile, cur->teacherName, ',');
+        getline(ifile, cur->ClassName, ',');
+        //ID,Course name,Teacher name,ClassName,Credits,Academic year,Number of students,Day of the week,Session
+        //BAA00004, Pháp luật đại cương, Le Thi Thu, 23CTT5, 3, 2023, 50, WED, S1 - S2
+        getline(ifile, temp, ',');
+        cur->Credits = stoi(temp);
+        getline(ifile, temp, ',');
+        cur->academicYear = stoi(temp);
+        getline(ifile, temp, ',');
+        cur->maxStudents = stoi(temp);
+        getline(ifile, cur->wDay, ',');
+        getline(ifile, cur->session);
+        AddCourse(List, cur);
+    }
+    ifile.close();
+
+}
+//void DrawStudentListFromData(ListSV* studentList, int numRows, StudentGrades* studentGradesList) {
+//    const int screenWidth = 1366;
+//    const int screenHeight = 768;
+//    InitWindow(screenWidth, screenHeight, "Student List");
+//    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+//    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
+//
+//    const int numCols = 8;
+//    const int columnSpacing = 20;
+//
+//    const int cellWidth = (screenWidth - 2 * 50 - (numCols - 1) * columnSpacing) / numCols * screenRatioX;
+//    const int cellHeight = 80 * screenRatioY;
+//    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
+//
+//    const int startX = (screenWidth - (numCols * cellWidth + (numCols - 1) * columnSpacing)) / 2;
+//    const int startY = 100 * screenRatioY;
+//
+//    const char* headers[numCols] = { "STT", "MSSV", "Ho", "Ten", "Lop", "Gioi Tinh", "Ngay Sinh", "CCCD" };
+//
+//    int scrollBarYOffset = 0;
+//    int maxDisplayedLines = screenHeight / cellHeight - 2;
+//    int selectedIndex = 0;
+//
+//    while (!WindowShouldClose()) {
+//        // Handle key presses for navigation
+//        if (IsKeyPressed(KEY_DOWN)) {
+//            selectedIndex++;
+//            if (selectedIndex >= numRows) selectedIndex = numRows - 1;
+//        }
+//        if (IsKeyPressed(KEY_UP)) {
+//            selectedIndex--;
+//            if (selectedIndex < 0) selectedIndex = 0;
+//        }
+//
+//        // Handle "Enter" key press to display grades
+//        if (IsKeyPressed(KEY_ENTER)) {
+//            const SinhVien* currentSV = studentList->phead;
+//            for (int i = 0; i < selectedIndex; i++) {
+//                currentSV = currentSV->next;
+//            }
+//            if (currentSV != nullptr) {
+//                StudentGrades* currentGrades = studentGradesList;
+//                while (currentGrades != nullptr) {
+//                    if (currentGrades->mssv == currentSV->mssv) {
+//                        DrawStudentGrades(currentGrades);
+//                        break;
+//                    }
+//                    currentGrades = currentGrades->next;
+//                }
+//            }
+//        }
+//
+//        // Adjust scroll offset based on selectedIndex
+//        if (selectedIndex < scrollBarYOffset / cellHeight) {
+//            scrollBarYOffset = selectedIndex * cellHeight;
+//        }
+//        else if (selectedIndex >= (scrollBarYOffset / cellHeight + maxDisplayedLines)) {
+//            scrollBarYOffset = (selectedIndex - maxDisplayedLines + 1) * cellHeight;
+//        }
+//
+//        BeginDrawing();
+//        ClearBackground(RAYWHITE);
+//
+//        // Draw headers
+//        for (int i = 0; i < numCols; i++) {
+//            DrawRectangle(startX + (cellWidth + columnSpacing) * i, startY, cellWidth, cellHeight, LIGHTGRAY);
+//            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+//            int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
+//            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+//        }
+//
+//        // Draw data
+//        const SinhVien* currentSV = studentList->phead;
+//
+//        // Thanh cuộn
+//        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+//        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+//        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+//        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+//        scrollBar.height = scrollBarHeight;
+//        scrollBar.y = startY + cellHeight + scrollBarY;
+//        DrawRectangleRec(scrollBar, GRAY);
+//
+//        // Xử lý sự kiện cuộn chuột
+//        int scroll = GetMouseWheelMove();
+//        scrollBarYOffset += scroll * 50 * (-1);
+//
+//        // Giới hạn vị trí cuộn
+//        if (scrollBarYOffset < 0) scrollBarYOffset = 0;
+//        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+//            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+//        }
+//
+//        // Vẽ lại dữ liệu với vị trí cuộn mới
+//        int visibleStartIndex = scrollBarYOffset / cellHeight;
+//        int visibleEndIndex = visibleStartIndex + maxDisplayedLines;
+//        int currentIndex = 0;
+//        currentSV = studentList->phead;
+//
+//        while (currentIndex < visibleStartIndex && currentSV != nullptr) {
+//            currentSV = currentSV->next;
+//            currentIndex++;
+//        }
+//
+//        for (int i = visibleStartIndex; i < visibleEndIndex && currentSV != nullptr; i++) {
+//            Color rowColor = (i == selectedIndex) ? YELLOW : RAYWHITE;
+//            DrawRectangle(startX, startY + (i - visibleStartIndex + 1) * cellHeight, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, rowColor);
+//            DrawText(std::to_string(i + 1).c_str(), startX + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+//            DrawText(currentSV->mssv.c_str(), startX + (cellWidth + columnSpacing) * 1 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+//            DrawText(currentSV->ho.c_str(), startX + (cellWidth + columnSpacing) * 2 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+//            DrawText(currentSV->ten.c_str(), startX + (cellWidth + columnSpacing) * 3 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+//            DrawText(currentSV->ClassName.c_str(), startX + (cellWidth + columnSpacing) * 4 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+//            DrawText(currentSV->gender.c_str(), startX + (cellWidth + columnSpacing) * 5 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+//            std::string birthday = TextFormat("%02d/%02d/%d", currentSV->birth.day, currentSV->birth.month, currentSV->birth.year);
+//            DrawText(birthday.c_str(), startX + (cellWidth + columnSpacing) * 6 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+//            DrawText(currentSV->cccd.c_str(), startX + (cellWidth + columnSpacing) * 7 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+//
+//            currentSV = currentSV->next;
+//        }
+//
+//        // Vẽ hàng header sau cùng để đảm bảo màu không bị đứt đoạn
+//        DrawRectangle(startX, startY, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
+//        for (int i = 0; i < numCols; i++) {
+//            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+//            int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
+//            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+//        }
+//
+//        EndDrawing();
+//    }
+//
+//    CloseWindow();
+//}
+void DrawStudentGrades(const StudentGrades* studentGrades) {
+    const int screenWidth = 600;
+    const int screenHeight = 400;
+    InitWindow(screenWidth, screenHeight, "Student Grades");
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        const int startX = 50;
+        const int startY = 50;
+        const int lineSpacing = 30;
+        int currentY = startY;
+
+        DrawText("Grades:", startX, currentY, 20, BLACK);
+        currentY += lineSpacing;
+
+        const Grade* currentGrade = studentGrades->grades;
+        while (currentGrade != nullptr) {
+            std::string gradeText = currentGrade->subject + ": " + std::to_string(currentGrade->score);
+            DrawText(gradeText.c_str(), startX, currentY, 20, DARKGRAY);
+            currentY += lineSpacing;
+            currentGrade = currentGrade->next;
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
 
 
 
 
+// Function to import course from file
+void ImportCourse(const char* fileName) {
+    // Dummy implementation for import course screen
+    DrawText("Importing Course from File", 200, 200, 20, DARKGRAY);
+    DrawText(fileName, 200, 230, 20, DARKGRAY);
+}
 
 
 
