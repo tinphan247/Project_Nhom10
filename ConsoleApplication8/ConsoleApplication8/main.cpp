@@ -1,10 +1,10 @@
-#include "function.h"
+#include "project.h"
 
 int main() {
     const int screenWidth = 1280;
     const int screenHeight = 720;
     InitWindow(screenWidth, screenHeight, "");
-   // ListUser* LUR;
+    // ListUser* LUR;
     ListCourses LC;
     InitList(LC);
     ListNamHoc LNH = { NULL };
@@ -119,7 +119,7 @@ int main() {
         if (CheckCollisionPointRec(mousePoint, loginButton) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             loginAttempted = true;
             if (!IsEmpty(username) && !IsEmpty(password)) {
-                if (CheckLogin(username, password,checkstaff,LUR)) {
+                if (CheckLogin(username, password, checkstaff, LUR)) {
                     loginSuccessful = true;
                     break;
                 }
@@ -130,9 +130,9 @@ int main() {
         }
     }
 
-    if (loginSuccessful&& checkstaff == true) {
-        const int dashboardWidth = 1400;
-        const int dashboardHeight = 800;
+    if (loginSuccessful && checkstaff == true) {
+        const int dashboardWidth = 1366;
+        const int dashboardHeight = 768;
         InitWindow(dashboardWidth, dashboardHeight, "staff dashboard");
         SetTargetFPS(60);
 
@@ -156,6 +156,16 @@ int main() {
         char semesterInput[128] = "\0";
         bool createNewSemesterActive = false;
         bool createNewCourseActive = false;
+        bool inputCourseActive = false;
+        bool importCourseActive = false;
+        char fileInput[128] = "\0";
+        bool fileInputBoxActive = false;
+        char importFileName[256] = "\0";
+        bool importFileInputBoxActive = false;
+        Rectangle fileInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
+        Rectangle inputCourseBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
+        Rectangle importCourseBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
+
         bool AddsvInputBoxActive = false;
         bool ChangepasswordActive = false;
         Rectangle AddsvInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
@@ -247,20 +257,114 @@ int main() {
             }
 
             if (createNewCourseActive) {
-                // Implementation for creating new course
-                string id, CourseName, ClassName, GVName, wDay, Session;
-                int AcademicYear, Credits;
+                const int screenWidth = 800;
+                const int screenHeight = 450;
+                InitWindow(screenWidth, screenHeight, "Course Dashboard");
 
-                // UI for entering course details and receiving input
-                ShowInputCoursePage(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
+                // Define button properties
+                Rectangle inputCourseButton = { screenWidth / 2 - 100, screenHeight / 2 - 60, 220, 40 };
+                Rectangle importCourseButton = { screenWidth / 2 - 100, screenHeight / 2 + 20, 220, 40 };
 
-                // Create a new Course object with the input data
-                Course* newCourse = InputCourse(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
+                // Flags to indicate which action is currently active
+                bool inputCourseActive = false;
+                bool importCourseActive = false;
 
-                // Add the new Course to the ListCourses
-                AddCourse(LC, newCourse);
+                // Buffer for file input
+                char fileInput[128] = "\0";
+                bool fileInputBoxActive = false;
+                Rectangle fileInputBox = { screenWidth / 2 - 100, screenHeight / 2 + 80, 220, 40 };
 
-                createNewCourseActive = false;
+                SetTargetFPS(60);
+
+                while (!WindowShouldClose()) {
+
+                    Vector2 mousePoint = GetMousePosition();
+                    bool inputCourseMouseOver = CheckCollisionPointRec(mousePoint, inputCourseButton);
+                    bool importCourseMouseOver = CheckCollisionPointRec(mousePoint, importCourseButton);
+                    DrawRectangleRec(inputCourseButton, inputCourseMouseOver ? LIGHTGRAY : GRAY);
+                    DrawText("Create New Course", inputCourseButton.x + 10, inputCourseButton.y + 10, 20, DARKGRAY);
+                    DrawRectangleRec(importCourseButton, importCourseMouseOver ? LIGHTGRAY : GRAY);
+                    DrawText("Import Course", importCourseButton.x + 30, importCourseButton.y + 10, 20, DARKGRAY);
+                    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                        if (inputCourseMouseOver) {
+                            inputCourseActive = true;
+                        }
+                        if (importCourseMouseOver) {
+                            importCourseActive = true;
+                            fileInputBoxActive = true;
+                        }
+                    }
+
+                    BeginDrawing();
+                    ClearBackground(RAYWHITE);
+
+                    if (inputCourseActive) {
+                        // Implementation for creating a new course
+                        string id, CourseName, ClassName, GVName, wDay, Session;
+                        int AcademicYear, Credits;
+
+                        // UI for entering course details and receiving input
+                        ShowInputCoursePage(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
+
+                        // Create a new Course object with the input data
+                        Course* newCourse = InputCourse(id, CourseName, ClassName, GVName, AcademicYear, Credits, wDay, Session);
+
+                        // Add the new Course to the ListCourses
+                        AddCourse(LC, newCourse);
+                        inputCourseActive = false;
+                        createNewCourseActive = false;
+                    }
+                    else if (importCourseActive) {
+                        // Handle file input for importing courses
+                        DrawText("Import Course from File", 10, 10, 20, DARKGRAY);
+                        DrawRectangleRec(fileInputBox, LIGHTGRAY);
+                        DrawText(fileInput, fileInputBox.x + 5, fileInputBox.y + 10, 20, DARKGRAY);
+                        DrawText("Input file to read", fileInputBox.x, fileInputBox.y - 20, 20, LIGHTGRAY);
+
+                        if (fileInputBoxActive) {
+                            int key = GetKeyPressed();
+                            if ((key >= 32) && (key <= 125)) {
+                                int length = strlen(fileInput);
+                                if (length < 127) {
+                                    char newChar = (char)key;
+                                    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+                                        newChar = toupper(newChar);
+                                    }
+                                    else {
+                                        newChar = tolower(newChar);
+                                    }
+                                    fileInput[length] = newChar;
+                                    fileInput[length + 1] = '\0';
+                                }
+                            }
+                            if (IsKeyPressed(KEY_BACKSPACE)) {
+                                int length = strlen(fileInput);
+                                if (length > 0) fileInput[length - 1] = '\0';
+                            }
+
+                            if (IsKeyPressed(KEY_ENTER)) {
+                                cout << fileInput << endl;
+                                ImportCourseFile(LC, fileInput);
+                                memset(fileInput, 0, sizeof(fileInput));
+                                importCourseActive = false;
+                                fileInputBoxActive = false;
+                                createNewCourseActive = false;
+
+                            }
+                        }
+
+                    }
+
+                    // Draw buttons
+                    /*DrawRectangleRec(inputCourseButton, inputCourseMouseOver ? LIGHTGRAY : GRAY);
+                    DrawText("Create New Course", inputCourseButton.x + 10, inputCourseButton.y + 10, 20, DARKGRAY);
+                    DrawRectangleRec(importCourseButton, importCourseMouseOver ? LIGHTGRAY : GRAY);
+                    DrawText("Import Course", importCourseButton.x + 30, importCourseButton.y + 10, 20, DARKGRAY);*/
+
+                    EndDrawing();
+                }
+
+                CloseWindow();
             }
 
             if (ViewCourseActive) {
@@ -344,9 +448,7 @@ int main() {
 
             EndDrawing();
         }
-
         CloseWindow();
     }
-
     return 0;
 }
