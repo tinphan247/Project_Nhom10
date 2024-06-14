@@ -373,15 +373,17 @@ void DrawCourseTable(const Course* courses, int numRows)
     const float screenRatioY = (float)GetScreenHeight() / screenHeight;
 
     const int numCols = 8;
+    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
 
-    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX; // Adjusted to fit the entire screen width with padding
-    const int cellHeight = 80 * screenRatioY; // Increased height to separate data further
-    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2); // Adjusted padding based on average screen ratio
-
-    const int startX = (screenWidth - (numCols * cellWidth)) / 2; // Centered horizontally
-    const int startY = 100 * screenRatioY; // Increased startY for more separation
+    const int startX = (screenWidth - (numCols * cellWidth)) / 2;
+    const int startY = 100 * screenRatioY;
 
     const char* headers[numCols] = { "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", " week day", "Session" };
+
+    int scrollBarYOffset = 0;
+    int maxDisplayedLines = screenHeight / cellHeight - 2; // Trừ 2 cho phần header và phần input
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -390,14 +392,20 @@ void DrawCourseTable(const Course* courses, int numRows)
         // Draw headers
         for (int i = 0; i < numCols; i++) {
             DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
-            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
             int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
-            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK); // Adjusted font size
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
         }
 
         // Draw data
         for (int i = 0; i < numRows; i++) {
-            DrawRectangle(startX, startY + (i + 1) * cellHeight, cellWidth * numCols, cellHeight, RAYWHITE); // Draw a rectangle for the entire row
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + 2 * cellHeight) {
+                continue; // Skip drawing rows above the visible area
+            }
+            if (startY + i * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
+                break; // No need to draw rows below the visible area
+            }
+            DrawRectangle(startX, startY + i * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, RAYWHITE);
             for (int j = 0; j < numCols; j++) {
                 int textWidth = 0;
                 int textX = startX + j * cellWidth + textPadding;
@@ -405,40 +413,63 @@ void DrawCourseTable(const Course* courses, int numRows)
                 switch (j) {
                 case 0:
                     textToDraw = courses[i].id.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
                     break;
                 case 1:
                     textToDraw = courses[i].courseName.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
                     break;
                 case 2:
                     textToDraw = courses[i].ClassName.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
                     break;
                 case 3:
                     textToDraw = courses[i].teacherName.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
                     break;
                 case 4:
                     textToDraw = TextFormat("%d", courses[i].academicYear);
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
                     break;
                 case 5:
                     textToDraw = TextFormat("%d", courses[i].Credits);
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
                     break;
                 case 6:
                     textToDraw = courses[i].wDay.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
                     break;
                 case 7:
                     textToDraw = courses[i].session.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                default:
                     break;
                 }
                 textX += (cellWidth - textWidth) / 2;
-                DrawText(textToDraw, textX, startY + (i + 1) * cellHeight + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), DARKGRAY); // Adjusted font size
+                DrawText(textToDraw, textX, startY + i * cellHeight - scrollBarYOffset + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), DARKGRAY);
             }
+        }
+
+        // Calculate and draw scrollbar
+        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+        scrollBar.height = scrollBarHeight;
+        scrollBar.y = startY + cellHeight + scrollBarY;
+        DrawRectangleRec(scrollBar, GRAY);
+
+        // Handle mouse wheel scrolling
+        int scroll = GetMouseWheelMove();
+        scrollBarYOffset += scroll * 50 * (-1); // Adjust scrolling speed as needed
+
+        // Limit scrollBarYOffset within valid range
+        if (scrollBarYOffset < 0) {
+            scrollBarYOffset = 0;
+        }
+        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
         }
 
         EndDrawing();
