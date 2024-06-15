@@ -1,4 +1,4 @@
-#include "function.h"
+#include "project.h"
 
 bool IsEmpty(const char* str)
 {
@@ -58,18 +58,17 @@ ListUser* addListUser(const string& path) {
     ifile.close();
     return LUR;
 }
-
-bool CheckLogin(const char* username, const char* password,bool& checkstaff,ListUser*& LU) 
+bool CheckLogin(const char* username, const char* password, bool& checkstaff, ListUser*& LU)
 {
-    if (!LU) 
+    if (!LU)
     {
         return false;
     }
 
     User* temp = LU->phead;
-    while (temp != nullptr) 
+    while (temp != nullptr)
     {
-        if (temp->id == username && temp->pass == password) 
+        if (temp->id == username && temp->pass == password)
         {
             checkstaff = temp->staff;
             return true;
@@ -78,16 +77,17 @@ bool CheckLogin(const char* username, const char* password,bool& checkstaff,List
     }
     return false;
 }
-
-void DrawButton(Rectangle button, const char* text, bool mouseOverButton) 
+void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
 {
     DrawRectangleRec(button, mouseOverButton ? DARKGRAY : LIGHTGRAY);
     DrawText(text, button.x + button.width / 2 - MeasureText(text, 20) / 2, button.y + button.height / 2 - 10, 20, BLACK);
 }
+
+
 void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc)
 {
     N = new NamHoc();
-    N->ngaybatdau= thoigiannamhoc;
+    N->ngaybatdau = thoigiannamhoc;
     if (L.phead == NULL) {
         L.phead = N;
     }
@@ -101,14 +101,11 @@ void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc)
     N->next = NULL;
     N->Hocky = NULL;
 }
-
-
-
 void taohocky(Semester*& H, ListNamHoc& L) {
 
     H = new Semester();
-    const int screenWidth = 1400;
-    const int screenHeight = 800;
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
 
     InitWindow(screenWidth, screenHeight, "");
 
@@ -162,7 +159,7 @@ void taohocky(Semester*& H, ListNamHoc& L) {
 
         // Xử lý sự kiện cuộn chuột
         int scroll = GetMouseWheelMove();
-        scrollBarYOffset += scroll * 50*(-1);
+        scrollBarYOffset += scroll * 50 * (-1);
         if (scrollBarYOffset < 0) scrollBarYOffset = 0;
         if (scrollBarYOffset > ((i - maxDisplayedLines) * 50)) scrollBarYOffset = (i - maxDisplayedLines) * 50;
 
@@ -351,17 +348,16 @@ void taohocky(Semester*& H, ListNamHoc& L) {
         EndDrawing();
     }
 
-   
+
 }
 
 
-
+bool courseWasDeleted = false;
 void InitList(ListCourses& list) {
     list.head = NULL;
     list.tail = NULL;
     list.size = 0;
 }
-
 void AddCourse(ListCourses& List, Course* newCourse) {
     if (newCourse == NULL) return;
     if (List.head == NULL) {
@@ -374,11 +370,57 @@ void AddCourse(ListCourses& List, Course* newCourse) {
     }
     List.size++;
 }
+void showCourseDetails(ListCourses& List,Course& course) {
+    const int detailScreenWidth = 1366;
+    const int detailScreenHeight = 768;
+    InitWindow(detailScreenWidth, detailScreenHeight, "Course Details");
 
+    bool shouldDelete = false;
+    bool shouldClose = false;
 
-void viewcourse(const Course* courses, int numRows) {
-    const int screenWidth = 1400;
-    const int screenHeight = 800;
+    while (!WindowShouldClose() && !shouldClose) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        int textY = 50;
+        const int textPadding = 10;
+        DrawText(("ID: " + course.id).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Course Name: " + course.courseName).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Class Name: " + course.ClassName).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Teacher Name: " + course.teacherName).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Academic Year: " + std::to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Credits: " + std::to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Week Day: " + course.wDay).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Session: " + course.session).c_str(), 50, textY, 20, BLACK);
+
+        Rectangle deleteButton = { detailScreenWidth / 2 - 50, detailScreenHeight - 100, 100, 50 };
+        DrawRectangleRec(deleteButton, RED);
+        DrawText("DELETE", detailScreenWidth / 2 - MeasureText("DELETE", 20) / 2, detailScreenHeight - 85, 20, WHITE);
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), deleteButton)) {
+            shouldDelete = true;
+            shouldClose = true;
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+    if (shouldDelete) {
+        RemoveCourse(List, Find_ID(List, course.id));
+        courseWasDeleted = true;
+    }
+}
+void viewcourse(ListCourses List, Course*& courses, int& numRows) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "");
     const float screenRatioX = (float)GetScreenWidth() / screenWidth;
     const float screenRatioY = (float)GetScreenHeight() / screenHeight;
@@ -394,9 +436,61 @@ void viewcourse(const Course* courses, int numRows) {
     const char* headers[numCols] = { "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", " week day", "Session" };
 
     int scrollBarYOffset = 0;
-    int maxDisplayedLines = screenHeight / cellHeight - 2; // Trừ 2 cho phần header và phần input
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight; // Adjust the max displayed lines based on available space
+
+    int selectedCourse = 0;
 
     while (!WindowShouldClose()) {
+        // Handle keyboard input
+        if (IsKeyPressed(KEY_DOWN) && selectedCourse < numRows - 1) {
+            selectedCourse++;
+        }
+        if (IsKeyPressed(KEY_UP) && selectedCourse > 0) {
+            selectedCourse--;
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
+            showCourseDetails(List, courses[selectedCourse]);
+
+            // Check if a course was deleted
+            if (courseWasDeleted) {
+                // Remove the course from List
+                numRows--;  // Decrease number of rows
+
+                // Update the courses array if needed
+                // Here we assume courses is an array of Course structs or objects
+                // Update courses by fetching data from List again
+                Course* newCourses = new Course[numRows];  // Allocate new array for courses
+
+                // Copy data from List to newCourses array
+                Course* cur = List.head;
+                int index = 0;
+                while (cur != NULL) {
+                    newCourses[index] = *cur;
+                    cur = cur->next;
+                    index++;
+                }
+
+                // Assign newCourses and newNumRows back to the original variables
+                delete[] courses;  // Delete old courses array if necessary
+                courses = newCourses;
+
+                // Reset courseWasDeleted flag
+                courseWasDeleted = false;
+
+                // Close current window and reinitialize to refresh the course list
+                CloseWindow();
+                InitWindow(screenWidth, screenHeight, "");
+            }
+        }
+
+        // Adjust scroll position to keep the selected course visible
+        if (selectedCourse * cellHeight < scrollBarYOffset) {
+            scrollBarYOffset = selectedCourse * cellHeight;
+        }
+        if (selectedCourse * cellHeight >= scrollBarYOffset + maxDisplayedLines * cellHeight) {
+            scrollBarYOffset = (selectedCourse + 1) * cellHeight - maxDisplayedLines * cellHeight;
+        }
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -410,13 +504,16 @@ void viewcourse(const Course* courses, int numRows) {
 
         // Draw data
         for (int i = 0; i < numRows; i++) {
-            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + 2 * cellHeight) {
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
                 continue; // Skip drawing rows above the visible area
             }
-            if (startY + i * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
                 break; // No need to draw rows below the visible area
             }
-            DrawRectangle(startX, startY + i * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, RAYWHITE);
+
+            Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
+            DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
+
             for (int j = 0; j < numCols; j++) {
                 int textWidth = 0;
                 int textX = startX + j * cellWidth + textPadding;
@@ -458,7 +555,7 @@ void viewcourse(const Course* courses, int numRows) {
                     break;
                 }
                 textX += (cellWidth - textWidth) / 2;
-                DrawText(textToDraw, textX, startY + i * cellHeight - scrollBarYOffset + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), DARKGRAY);
+                DrawText(textToDraw, textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), DARKGRAY);
             }
         }
 
@@ -488,6 +585,43 @@ void viewcourse(const Course* courses, int numRows) {
 
     CloseWindow();
 }
+void RemoveCourse(ListCourses& List, Course* course) {
+    if (List.head == NULL) {
+        return;
+    }
+    else if (List.head == course) {
+        List.head = course->next;
+        if (List.tail == course) {
+            List.tail = NULL;
+        }
+    }
+    else {
+        // duyet list tim course
+        Course* cur = List.head;
+        while (cur != NULL && cur->next != course) {
+            cur = cur->next;
+        }
+        //luc nay cur->next = course hoac cur == NULL
+        if (cur->next == course) {
+            cur->next = course->next;
+            if (List.tail == course) {
+                List.tail = cur;
+            }
+        }
+        else { // luc nay cur = NULL -> ko tim thay course
+            return;
+        }
+    }
+}
+Course* Find_ID(ListCourses List, string id) {
+    Course* cur = List.head;
+    while (cur != NULL && cur->id != id) {
+        cur = cur->next;
+    }
+    return cur;
+}
+
+
 
 Course* InputCourse(string id, string CourseName, string ClassName, string GVName, int AcademicYear, int Credits, string wDay, string Session) {
     Course* newCourse = new Course;
@@ -630,6 +764,7 @@ void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, stri
 
     CloseWindow();
 }
+
 ListSV* addListSV(string path)
 {
     ifstream ifile;
@@ -683,8 +818,8 @@ ListSV* addListSV(string path)
 
 }
 void DrawStudentListFromData(ListSV* studentList, int numRows) {
-    const int screenWidth = 1400;
-    const int screenHeight = 800;
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "");
     const float screenRatioX = (float)GetScreenWidth() / screenWidth;
     const float screenRatioY = (float)GetScreenHeight() / screenHeight;
@@ -767,7 +902,7 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
         }
 
         // Vẽ hàng header sau cùng để đảm bảo màu không bị đứt đoạn
-        DrawRectangle(startX, startY, cellWidth* numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
+        DrawRectangle(startX, startY, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
         for (int i = 0; i < numCols; i++) {
             int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
             int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
@@ -813,8 +948,8 @@ void saveListUser(ListUser* LUR, const string& path) {
     ofile.close();
 }
 void ChangePassword(ListUser* userList, const char* username, const char* password) {
-    const int dashboardWidth = 1400;
-    const int dashboardHeight = 800;
+    const int dashboardWidth = 1366;
+    const int dashboardHeight = 768;
     InitWindow(dashboardWidth, dashboardHeight, "");
 
     bool changePasswordActive = true;
@@ -966,7 +1101,7 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             User* temp = userList->phead;
             while (temp != NULL)
             {
-                if (username== temp->id && password== temp->pass) 
+                if (username == temp->id && password == temp->pass)
                 {
                     break;
                 }
@@ -974,19 +1109,19 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             }
 
             // Check current and new passwords
-            if (currentPassword== temp->pass) {
+            if (currentPassword == temp->pass) {
                 if (strlen(newPassword) > 0 && strcmp(newPassword, confirmedNewPassword) == 0) {
                     // Update password in the system
-                    temp->pass= newPassword;
+                    temp->pass = newPassword;
                     confirmPassword = true;
-                    strcpy_s(errorMessage,50, "Password changed successfully!");
+                    strcpy_s(errorMessage, 50, "Password changed successfully!");
                 }
                 else {
-                    strcpy_s(errorMessage,100, "Error: New passwords do not match or are invalid.");
+                    strcpy_s(errorMessage, 100, "Error: New passwords do not match or are invalid.");
                 }
             }
             else {
-                strcpy_s(errorMessage,38, "Error: Current password is incorrect.");
+                strcpy_s(errorMessage, 38, "Error: Current password is incorrect.");
             }
             if (confirmPassword) {
                 changePasswordActive = false;
@@ -1123,8 +1258,8 @@ bool Login(ListUser* LUR, char* username, char* password, bool& checkstaff) {
     return loginSuccessful;
 }
 void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearInputBoxActive, char* schoolYearInput, ListNamHoc& LNH, NamHoc*& N, Vector2 mousePoint) {
-    const int screenWidth = 1400;
-    const int screenHeight = 800;
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
     Rectangle schoolYearInputBox = { screenWidth / 2 - 100, 450, 200, 40 };
 
     // Vẽ các thành phần của giao diện người dùng
@@ -1225,7 +1360,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInp
         DrawText(errorMsg, posX, posY, fontSize, RED);
     }
 }
-User* timnodeuser(ListUser* LUR,string username,string password)
+User* timnodeuser(ListUser* LUR, string username, string password)
 {
     User* temp = LUR->phead;
     while (temp != NULL)
@@ -1239,8 +1374,8 @@ User* timnodeuser(ListUser* LUR,string username,string password)
     }
 }
 void DisplayProfileInfo(User* user) {
-    const int windowWidth = 1400;
-    const int windowHeight = 800;
+    const int windowWidth = 1366;
+    const int windowHeight = 768;
     const int buttonWidth = 120;
     const int buttonHeight = 40;
     const int backButtonX = windowWidth - buttonWidth - 20;
@@ -1276,8 +1411,8 @@ void DisplayProfileInfo(User* user) {
     CloseWindow();
 }
 void ShowImportCoursePage(string& pathC) {
-    const int screenWidth = 1400;
-    const int screenHeight = 800;
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
     bool pathBoxActive = false;
     char pathInput[256] = "\0";
     bool importButtonClicked = false;
@@ -1467,8 +1602,3 @@ void CourseDashboard(int screenWidth, int screenHeight, ListCourses& LC) {
 
     CloseWindow();  // Close the course dashboard window
 }
-
-
-
-
-
