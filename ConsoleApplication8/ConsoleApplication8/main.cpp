@@ -1,4 +1,4 @@
-#include "function.h"
+#include "project.h"
 
 int main() {
     ListCourses LC;
@@ -20,8 +20,8 @@ int main() {
     bool showError = false;
 
     if (Login(LUR, username, password, checkstaff) && checkstaff) {
-        const int dashboardWidth = 1400;
-        const int dashboardHeight = 800;
+        const int dashboardWidth = 1366;
+        const int dashboardHeight = 768;
         SetWindowSize(dashboardWidth, dashboardHeight);
         SetWindowTitle("staff dashboard");
         SetTargetFPS(60);
@@ -147,7 +147,7 @@ int main() {
                 }
 
                 // Draw the course table
-                viewcourse(courseArray, numRows);
+                viewcourse(LC,courseArray, numRows);
 
                 // Clean up dynamically allocated memory
                 delete[] courseArray;
