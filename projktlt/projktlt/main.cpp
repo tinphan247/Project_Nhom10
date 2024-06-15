@@ -1,79 +1,241 @@
 #include "project.h"
-int main()
-{
-	{
-		string  MSSV;
-		int ngay, thang, nam;
-		string ten, ho, gender,cccd;
-		Class* CTT = NULL;
-		int menu;
-		NamHoc* N;
-		Semester* H;
-		ListNamHoc L;
-		L.phead = NULL;
-		ListClass* DS=new ListClass();
 
-		ListCourses ListC;
-		InitList(ListC);
-		Course* newCourse = new Course;
-		string id,CourseName,ClassName,GVName,wDay,Session;
-		int AcademicYear,Credits;
-		int sl_Courses;
+int main() {
+    ListCourses LC;
+    InitList(LC);
+    ListNamHoc LNH = { NULL };
+    NamHoc* N = NULL;
+    Semester* sm = NULL;
+    ListUser* LUR = addListUser("User.csv");
 
-		DS->head =NULL;
-		do
-		{
-			cout << "Nhap vao yeu cau muon lam:" << endl;
-			cout << "(1):khoi tao 1 nam hoc moi" << endl;
-			cout << "(2):Chon 1 nam hoc roi tao 1 hco ki moi trong nam hoc do" << endl;
-			cout << "(3):Them 1 lop moi vao danh sach cac lop" << endl;
-			cout << "(4):Xem danh sach cac lop" << endl;
-			cout << "(5):Them 1 sinh vien vao lop" << endl;
-			cout << "(6) Them khoa hoc"<<endl;
-			cin >> menu;
-			if (menu == 1)
-			{
-				taonamhoc(L, N);
-			}
-			else if (menu == 2)
-			{
-				taohocky(H, L);
-			}
-			else if (menu == 3)
-			{
-				themlopmoivaodanhsachcaclop(CTT, DS);
-			}
-			else if (menu == 4)
-			{
-				xemdanhsachcaclop(DS);
-			}
-			else if (menu == 5)
-			{
-				if (DS->head != NULL)
-				{
-					taosv( MSSV, ten, ho, gender, ngay, thang, nam, cccd);
-					themsvvaolop(CTT, MSSV, ten, ho, gender, ngay, thang, nam, cccd);
-					cout << "Thong tin hoc sinh trong lop " << CTT->ClassName << ":" << endl;
-					cout << "Ho va ten:" << CTT->ds->phead->ho << " " << CTT->ds->phead->ten << endl;
-					cout << "So can cuoc cong dan:" << CTT->ds->phead->cccd << endl;
-					cout << "Ngay sinh:" << CTT->ds->phead->birth.day << "/" << CTT->ds->phead->birth.month << "/" << CTT->ds->phead->birth.year << endl;
-				}
-				else
-				{
-					cout << "Khong co lop de them sinh vien" << endl;
-				}
-			}
-			else if(menu == 6){
-				cout<<"Nhap so luong khoa hoc: ";
-				cin>>sl_Courses;
-				for(int i = 0;i < sl_Courses;i++){
-				newCourse = InputCourse(id,CourseName,ClassName,GVName,AcademicYear,Credits,wDay,Session);
-				AddCourse(ListC,newCourse);
-				newCourse = NULL;
-				system("cls");
-				OutputListCourses(ListC);
-				}
-			}
-		} while (menu != 0);
-	}
+    char username[128] = "\0";
+    char password[128] = "\0";
+    bool checkstaff = false;
+
+    bool mouseOnText = false;
+    bool usernameBoxActive = false;
+    bool passwordBoxActive = false;
+    bool loginAttempted = false;
+    bool loginSuccessful = false;
+    bool showError = false;
+
+    if (Login(LUR, username, password, checkstaff) && checkstaff) {
+        const int dashboardWidth = 1366;
+        const int dashboardHeight = 768;
+        SetWindowSize(dashboardWidth, dashboardHeight);
+        SetWindowTitle("staff dashboard");
+        SetTargetFPS(60);
+
+        Rectangle buttons[6];
+        const char* buttonLabels[6] = {
+            "Create New School Year",
+            "Create New Semester",
+            "Add Course",
+            "View Course",
+            "Add Student to Course and View",
+            "Change password"
+        };
+
+        bool createNewSchoolYearActive = false;
+        char schoolYearInput[128] = "\0";
+        Rectangle schoolYearInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
+        bool schoolYearInputBoxActive = false;
+
+        bool createNewSemesterActive = false;
+
+        bool createNewCourseActive = false;
+
+        bool ViewCourseActive = false;
+
+        char ViewCourseInput[128] = "\0";
+        bool ViewCourseInputBoxActive = false;
+
+        bool AddsvInputBoxActive = false;
+        char AddsvInput[128] = "\0";
+        Rectangle AddsvInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
+
+        bool ChangepasswordActive = false;
+
+        for (int i = 0; i < 6; i++) {
+            buttons[i].x = (dashboardWidth - 400) / 2;
+            buttons[i].y = 50 + i * 60;
+            buttons[i].width = 400;
+            buttons[i].height = 40;
+        }
+
+        while (!WindowShouldClose()) {
+            Vector2 mousePoint = GetMousePosition();
+            bool mouseOverButton[6] = { false };
+
+            BeginDrawing();
+            ClearBackground(RAYWHITE);
+
+            for (int i = 0; i < 6; i++) {
+                mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
+                DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
+
+                if (mouseOverButton[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    // Reset all active states
+                    createNewSchoolYearActive = false;
+                    schoolYearInputBoxActive = false;
+                    createNewSemesterActive = false;
+                    createNewCourseActive = false;
+                    ViewCourseActive = false;
+                    ViewCourseInputBoxActive = false;
+                    AddsvInputBoxActive = false;
+                    ChangepasswordActive = false;
+
+                    switch (i) {
+                    case 0:
+                        createNewSchoolYearActive = true;
+                        break;
+                    case 1:
+                        createNewSemesterActive = true;
+                        break;
+                    case 2:
+                        createNewCourseActive = true;
+                        break;
+                    case 3:
+                        ViewCourseActive = true;
+                        break;
+                    case 4:
+                        AddsvInputBoxActive = true;
+                        break;
+                    case 5:
+                        ChangepasswordActive = true;
+                        break;
+                    }
+                }
+            }
+
+            if (createNewSchoolYearActive) {
+                CreateNewSchoolYeabutton(createNewSchoolYearActive, schoolYearInputBoxActive, schoolYearInput, LNH, N, mousePoint);
+            }
+
+            if (createNewSemesterActive) {
+                // Implementation for creating new semester
+                taohocky(sm, LNH);
+                createNewSemesterActive = false;
+            }
+
+            if (createNewCourseActive) {
+                CloseWindow();
+                CourseDashboard(dashboardWidth, dashboardHeight, LC);
+                createNewCourseActive = false;
+            }
+
+            if (ViewCourseActive) {
+                // Assume LC is your linked list containing courses
+
+ // Count the number of courses in the linked list
+                int numRows = 0;
+                Course* tempCount = LC.head;
+
+                while (tempCount != nullptr) {
+                    numRows++;
+                    tempCount = tempCount->next;
+                }
+
+                // Allocate memory for an array to store courses
+                Course* courseArray = new Course[numRows];
+
+                // Copy courses from linked list to array
+                Course* temp = LC.head;
+                for (int i = 0; i < numRows && temp != nullptr; i++) {
+                    courseArray[i] = *temp;  // Copy each course object
+                    temp = temp->next;
+                }
+
+                // Draw the course table
+                viewcourse(LC,courseArray, numRows);
+
+                // Clean up dynamically allocated memory
+                delete[] courseArray;
+
+                ViewCourseActive = false;
+            }
+
+            if (AddsvInputBoxActive) {
+                AddStudentsbutton(AddsvInput, AddsvInputBox, AddsvInputBoxActive);
+            }
+
+            if (ChangepasswordActive) {
+                // Implementation for changing password
+                ChangePassword(LUR, username, password);
+                saveListUser(LUR, "User.csv");
+                ChangepasswordActive = false;
+            }
+
+            EndDrawing();
+        }
+    }
+    else {
+        const int dashboardWidth = 1400;
+        const int dashboardHeight = 800;
+        SetWindowSize(dashboardWidth, dashboardHeight);
+        SetWindowTitle("user dashboard");
+        SetTargetFPS(60);
+
+        Rectangle buttons[2];
+        const char* buttonLabels[2] = {
+            "Profile",
+            "Change Password"
+        };
+
+        bool viewprofileActive = false;
+        bool ChangepasswordActive = false;
+
+        for (int i = 0; i < 2; i++) {
+            buttons[i].x = (dashboardWidth - 400) / 2;
+            buttons[i].y = 50 + i * 60;
+            buttons[i].width = 400;
+            buttons[i].height = 40;
+        }
+
+        while (!WindowShouldClose()) {
+            Vector2 mousePoint = GetMousePosition();
+            bool mouseOverButton[2] = { false };
+
+            BeginDrawing();
+            ClearBackground(RAYWHITE);
+
+            for (int i = 0; i < 2; i++) {
+                mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
+                DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
+
+                if (mouseOverButton[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    // Reset all active states
+                    viewprofileActive = false;
+                    ChangepasswordActive = false;
+
+                    switch (i) {
+                    case 0:
+                        viewprofileActive = true;
+                        break;
+                    case 1:
+                        ChangepasswordActive = true;
+                        break;
+                    }
+                }
+            }
+
+            if (ChangepasswordActive) {
+                // Implementation for changing password
+                ChangePassword(LUR, username, password);
+                saveListUser(LUR, "User.csv");
+                ChangepasswordActive = false;
+            }
+
+            if (viewprofileActive) {
+                User* user = timnodeuser(LUR, username, password);
+                DisplayProfileInfo(user);
+                viewprofileActive = false;
+            }
+
+            EndDrawing();
+        }
+    }
+
+    CloseWindow();
+    return 0;
 }
