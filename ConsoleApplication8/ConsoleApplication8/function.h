@@ -85,7 +85,7 @@ struct User
 	string ten;
 	string ho;
 	string gender;
-	Date birth; 
+	Date birth;
 	string ClassName;
 	string academicYear;
 	bool staff;
@@ -109,13 +109,17 @@ void xoasvkhoikhoahoc(ListCourses*& LC);
 void DrawNumbers(NamHoc*& H, ListNamHoc& L);
 void InitList(ListCourses& list);
 void AddCourse(ListCourses& List, Course* newCourse);
-void viewcourse(const Course* courses, int numRows);
+void showCourseDetails(ListCourses& List, Course& course);
+void viewcourse(ListCourses List, Course*& courses, int& numRows);
+void RemoveCourse(ListCourses& List, Course* course);
+Course* Find_ID(ListCourses List, string id);
+
 Course* InputCourse(string id, string CourseName, string ClassName, string GVName, int AcademicYear, int Credits, string wDay, string Session);
 void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session);
 ListSV* addListSV(string path);
 void DrawSVTable(const SinhVien* sv, int numRows);
 void ShowStudentListWindow(ListSV* svList);
-void DrawStudentListFromData( ListSV* studentList, int numRows);
+void DrawStudentListFromData(ListSV* studentList, int numRows);
 ListUser* addListUser(const string& path);
 // Hàm kiểm tra nếu chuỗi rỗng
 bool IsEmpty(const char* str);
