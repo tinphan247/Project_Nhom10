@@ -1,4 +1,4 @@
-#include "project.h"
+#include "function.h"
 
 int main() {
     ListCourses LC;
@@ -125,9 +125,7 @@ int main() {
             }
 
             if (ViewCourseActive) {
-                // Assume LC is your linked list containing courses
-
- // Count the number of courses in the linked list
+                // Count the number of courses in the linked list
                 int numRows = 0;
                 Course* tempCount = LC.head;
 
@@ -141,13 +139,14 @@ int main() {
 
                 // Copy courses from linked list to array
                 Course* temp = LC.head;
-                for (int i = 0; i < numRows && temp != nullptr; i++) {
+                Course* pretemp = NULL;
+                int i;
+                for (i = 0; i < numRows && temp!= nullptr; i++) {
                     courseArray[i] = *temp;  // Copy each course object
                     temp = temp->next;
                 }
-
                 // Draw the course table
-                viewcourse(LC,courseArray, numRows);
+                viewcourse(LC, courseArray, numRows);
 
                 // Clean up dynamically allocated memory
                 delete[] courseArray;
@@ -156,7 +155,7 @@ int main() {
             }
 
             if (AddsvInputBoxActive) {
-                AddStudentsbutton(AddsvInput, AddsvInputBox, AddsvInputBoxActive);
+                AddStudentsbutton(AddsvInput, AddsvInputBox, AddsvInputBoxActive, LC, dashboardWidth, dashboardHeight);
             }
 
             if (ChangepasswordActive) {
@@ -170,22 +169,23 @@ int main() {
         }
     }
     else {
-        const int dashboardWidth = 1400;
-        const int dashboardHeight = 800;
+        const int dashboardWidth = 1366;
+        const int dashboardHeight = 768;
         SetWindowSize(dashboardWidth, dashboardHeight);
         SetWindowTitle("user dashboard");
         SetTargetFPS(60);
 
-        Rectangle buttons[2];
-        const char* buttonLabels[2] = {
+        Rectangle buttons[3];
+        const char* buttonLabels[3] = {
             "Profile",
-            "Change Password"
+            "Change Password",
+            "Sign a course"
         };
 
         bool viewprofileActive = false;
         bool ChangepasswordActive = false;
-
-        for (int i = 0; i < 2; i++) {
+        bool dangkicourse = false;
+        for (int i = 0; i < 3; i++) {
             buttons[i].x = (dashboardWidth - 400) / 2;
             buttons[i].y = 50 + i * 60;
             buttons[i].width = 400;
@@ -194,12 +194,12 @@ int main() {
 
         while (!WindowShouldClose()) {
             Vector2 mousePoint = GetMousePosition();
-            bool mouseOverButton[2] = { false };
+            bool mouseOverButton[3] = { false };
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 3; i++) {
                 mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
                 DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
 
@@ -208,13 +208,17 @@ int main() {
                     viewprofileActive = false;
                     ChangepasswordActive = false;
 
-                    switch (i) {
-                    case 0:
-                        viewprofileActive = true;
-                        break;
-                    case 1:
-                        ChangepasswordActive = true;
-                        break;
+                    switch (i) 
+                    {
+                        case 0:
+                            viewprofileActive = true;
+                            break;
+                        case 1:
+                            ChangepasswordActive = true;
+                            break;
+                        case 3:
+                            dangkicourse = true;
+                            break;
                     }
                 }
             }
