@@ -1941,7 +1941,95 @@ void createnewstudent(Course* cour, bool& studentSaved) {
 
     CloseWindow();
 }
+/////////doc tu file 23CTT5_mark.csv
+ListSV* docDiemTuFile(string path)
+{
+    ifstream ifile(path);
+    if (!ifile.is_open())
+    {
+        cout << "loi";
+        return NULL;
+    }
+    ListSV* List = new ListSV;
+    List->phead = NULL;
+    List->ptail = NULL;
+    string temp;
+    getline(ifile, temp);
+    while (ifile.peek() != EOF)
+    {
+        SinhVien* newSV = new SinhVien;
+        getline(ifile, temp, ',');
+        getline(ifile, newSV->mssv, ',');
+        getline(ifile, newSV->ho, ',');
+        getline(ifile, newSV->ten, ',');
+        //lay diem
+        getline(ifile, temp, ',');
+        newSV->mark.otherMark = stod(temp);
 
+        getline(ifile, temp, ',');
+        newSV->mark.MidMark = stod(temp);
+
+        getline(ifile, temp, ',');
+        newSV->mark.FinalMark = stod(temp);
+
+        getline(ifile, temp);
+        newSV->mark.totalMark = stod(temp);
+
+        newSV->Lc = NULL;
+        newSV->next = NULL;
+        if (List->phead == NULL)
+        {
+            List->phead = newSV;
+            List->ptail = newSV;
+        }
+        else
+        {
+            List->ptail->next = newSV;
+            List->ptail = newSV;
+        }
+
+
+    }
+    ifile.close();
+
+    //return
+    return List;
+
+}
+void deleteListSV(ListSV*& lsv)
+{
+    if (lsv->phead == NULL)
+    {
+        return;
+    }
+    SinhVien* temp = lsv->phead;
+    SinhVien* after = NULL;
+    while (temp != NULL)
+    {
+        after = temp->next;
+        delete temp;
+        temp = after;
+        
+
+    }
+}
+void deleteListCourse(ListCourses*& lc)
+{
+    if (lc->head == NULL)
+    {
+        return;
+    }
+    Course* temp = lc->head;
+    Course* after = NULL;
+    while (temp != NULL)
+    {
+        after = temp->next;
+        delete temp;
+        temp = after;
+        
+
+    }
+}
 
 
 
