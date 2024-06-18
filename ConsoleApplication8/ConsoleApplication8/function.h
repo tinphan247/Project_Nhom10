@@ -147,4 +147,9 @@ void createnewstudent(Course* cour, bool& studentSaved);
 void showCourseDetails(ListCourses& List, Course& course);
 void RemoveCourse(ListCourses& List, Course* course);
 Course* Find_ID(ListCourses List, string id);
+ListSV* docDiemTuFile(string path);
+//delete
+void deleteListSV(ListSV*& lsv);
+void deleteListCourse(ListCourses*& lc);
+
 #endif // FUNCTION_H
