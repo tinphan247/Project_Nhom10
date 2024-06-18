@@ -14,7 +14,13 @@ struct Date {
 };
 
 struct ListCourses;
-
+struct diem
+{
+    double MidMark;//midtermMark
+    double FinalMark;
+    double otherMark;
+    double totalMark;
+};
 struct SinhVien {
     string mssv;
     string ten;
@@ -25,6 +31,7 @@ struct SinhVien {
     SinhVien* next;
     ListCourses* Lc;
     string ClassName;
+    diem mark;
 };
 
 struct ListSV {
