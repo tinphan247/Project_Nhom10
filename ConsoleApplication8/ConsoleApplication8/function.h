@@ -122,7 +122,7 @@ void InitList(ListCourses& list);
 void AddCourse(ListCourses& List, Course* newCourse);
 void viewcourse(ListCourses List, Course*& courses, int& numRows);
 Course* InputCourse(string id, string CourseName, string ClassName, string GVName, int AcademicYear, int Credits, string wDay, string Session);
-void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int &AcademicYear, int& Credits, string& wDay, string& Session);
+void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session);
 ListSV* addListSV(string path);
 void DrawSVTable(const SinhVien* sv, int numRows);
 void ShowStudentListWindow(ListSV* svList);
@@ -152,4 +152,8 @@ ListSV* docDiemTuFile(string path);
 void deleteListSV(ListSV*& lsv);
 void deleteListCourse(ListCourses*& lc);
 
+//
+void ViewSignCourses(ListCourses List, Course* courses, int numRows, ListCourses& SV);
+void ShowSignCoursesDetails(ListCourses& List, Course& course, ListCourses& SV);
+void ViewCourses_SV(ListCourses List, Course* courses, int numRows);
 #endif // FUNCTION_H
