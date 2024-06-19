@@ -1,8 +1,12 @@
-#include "function.h"
+#include "project.h"
 
 int main() {
     ListCourses LC;
     InitList(LC);
+
+    ListCourses List_Courses_SV;
+    InitList(List_Courses_SV);
+
     ListNamHoc LNH = { NULL };
     NamHoc* N = NULL;
     Semester* sm = NULL;
@@ -141,7 +145,7 @@ int main() {
                 Course* temp = LC.head;
                 Course* pretemp = NULL;
                 int i;
-                for (i = 0; i < numRows && temp!= nullptr; i++) {
+                for (i = 0; i < numRows && temp != nullptr; i++) {
                     courseArray[i] = *temp;  // Copy each course object
                     temp = temp->next;
                 }
@@ -175,17 +179,19 @@ int main() {
         SetWindowTitle("user dashboard");
         SetTargetFPS(60);
 
-        Rectangle buttons[3];
-        const char* buttonLabels[3] = {
+        Rectangle buttons[4];
+        const char* buttonLabels[4] = {
             "Profile",
             "Change Password",
-            "Sign a course"
+            "Sign a course",
+            "View courses"
         };
 
         bool viewprofileActive = false;
         bool ChangepasswordActive = false;
         bool dangkicourse = false;
-        for (int i = 0; i < 3; i++) {
+        bool ViewCoursesActive = false;
+        for (int i = 0; i < 4; i++) {
             buttons[i].x = (dashboardWidth - 400) / 2;
             buttons[i].y = 50 + i * 60;
             buttons[i].width = 400;
@@ -194,12 +200,12 @@ int main() {
 
         while (!WindowShouldClose()) {
             Vector2 mousePoint = GetMousePosition();
-            bool mouseOverButton[3] = { false };
+            bool mouseOverButton[4] = { false };
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 4; i++) {
                 mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
                 DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
 
@@ -208,17 +214,20 @@ int main() {
                     viewprofileActive = false;
                     ChangepasswordActive = false;
 
-                    switch (i) 
+                    switch (i)
                     {
-                        case 0:
-                            viewprofileActive = true;
-                            break;
-                        case 1:
-                            ChangepasswordActive = true;
-                            break;
-                        case 3:
-                            dangkicourse = true;
-                            break;
+                    case 0:
+                        viewprofileActive = true;
+                        break;
+                    case 1:
+                        ChangepasswordActive = true;
+                        break;
+                    case 2:
+                        dangkicourse = true;
+                        break;
+                    case 3:
+                        ViewCoursesActive = true;
+                        break;
                     }
                 }
             }
@@ -236,10 +245,69 @@ int main() {
                 viewprofileActive = false;
             }
 
+            if (dangkicourse) {
+                ImportCourseFile(LC, "Courses.csv");
+                // Count the number of courses in the linked list
+                int numRows = 0;
+                Course* tempCount = LC.head;
+
+                while (tempCount != nullptr) {
+                    numRows++;
+                    tempCount = tempCount->next;
+                }
+
+                // Allocate memory for an array to store courses
+                Course* courseArray = new Course[numRows];
+
+                // Copy courses from linked list to array
+                Course* temp = LC.head;
+                Course* pretemp = NULL;
+                int i;
+                for (i = 0; i < numRows && temp != nullptr; i++) {
+                    courseArray[i] = *temp;  // Copy each course object
+                    temp = temp->next;
+                }
+                // Draw the course table
+                ViewSignCourses(LC, courseArray, numRows,List_Courses_SV);
+
+                // Clean up dynamically allocated memory
+                delete[] courseArray;
+
+                dangkicourse = false;
+            }
+
+            if (ViewCoursesActive) {
+                int numRows = 0;
+                Course* tempCount = List_Courses_SV.head;
+                // dem sl dong
+                while (tempCount != nullptr) {
+                    numRows++;
+                    tempCount = tempCount->next;
+                }
+
+                // Allocate memory for an array to store courses
+                Course* courseArray = new Course[numRows];
+
+                // Copy courses from linked list to array
+                Course* temp = List_Courses_SV.head;
+                Course* pretemp = NULL;
+                int i;
+                for (i = 0; i < numRows && temp != nullptr; i++) {
+                    courseArray[i] = *temp;  // Copy each course object
+                    temp = temp->next;
+                }
+                // Draw the course table
+                ViewCourses_SV(List_Courses_SV,courseArray,numRows);
+
+                // Clean up dynamically allocated memory
+                delete[] courseArray;
+
+                ViewCoursesActive = false;
+            }
+    
             EndDrawing();
         }
-    }
-
+    }    
     CloseWindow();
     return 0;
 }
