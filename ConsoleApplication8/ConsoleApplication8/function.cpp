@@ -1,4 +1,4 @@
-#include "function.h"
+#include "project.h"
 
 bool IsEmpty(const char* str)
 {
@@ -59,17 +59,17 @@ ListUser* addListUser(const string& path) {
     return LUR;
 }
 
-bool CheckLogin(const char* username, const char* password,bool& checkstaff,ListUser*& LU) 
+bool CheckLogin(const char* username, const char* password, bool& checkstaff, ListUser*& LU)
 {
-    if (!LU) 
+    if (!LU)
     {
         return false;
     }
 
     User* temp = LU->phead;
-    while (temp != nullptr) 
+    while (temp != nullptr)
     {
-        if (temp->id == username && temp->pass == password) 
+        if (temp->id == username && temp->pass == password)
         {
             checkstaff = temp->staff;
             return true;
@@ -79,7 +79,7 @@ bool CheckLogin(const char* username, const char* password,bool& checkstaff,List
     return false;
 }
 
-void DrawButton(Rectangle button, const char* text, bool mouseOverButton) 
+void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
 {
     DrawRectangleRec(button, mouseOverButton ? DARKGRAY : LIGHTGRAY);
     DrawText(text, button.x + button.width / 2 - MeasureText(text, 20) / 2, button.y + button.height / 2 - 10, 20, BLACK);
@@ -87,7 +87,7 @@ void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
 void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc)
 {
     N = new NamHoc();
-    N->ngaybatdau= thoigiannamhoc;
+    N->ngaybatdau = thoigiannamhoc;
     if (L.phead == NULL) {
         L.phead = N;
     }
@@ -162,7 +162,7 @@ void taohocky(Semester*& H, ListNamHoc& L) {
 
         // Xử lý sự kiện cuộn chuột
         int scroll = GetMouseWheelMove();
-        scrollBarYOffset += scroll * 50*(-1);
+        scrollBarYOffset += scroll * 50 * (-1);
         if (scrollBarYOffset < 0) scrollBarYOffset = 0;
         if (scrollBarYOffset > ((i - maxDisplayedLines) * 50)) scrollBarYOffset = (i - maxDisplayedLines) * 50;
 
@@ -351,7 +351,7 @@ void taohocky(Semester*& H, ListNamHoc& L) {
         EndDrawing();
     }
 
-   
+
 }
 void InitList(ListCourses& list) {
     list.head = NULL;
@@ -644,7 +644,7 @@ Course* InputCourse(string id, string CourseName, string ClassName, string GVNam
     cout << newCourse->session << endl;
     return newCourse;
 }
-void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int &Credits, string& wDay, string& Session) {
+void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session) {
     const int numFields = 8;
     const char* fieldLabels[numFields] = {
         "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", "Nhap week day(MON / TUE...) :", "Nhap Session [S1 (07:30), S2 (09:30), S3(13:30), S4 (15:30)]:"
@@ -902,7 +902,7 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
         }
 
         // Vẽ hàng header sau cùng để đảm bảo màu không bị đứt đoạn
-        DrawRectangle(startX, startY, cellWidth* numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
+        DrawRectangle(startX, startY, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
         for (int i = 0; i < numCols; i++) {
             int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
             int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
@@ -1101,7 +1101,7 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             User* temp = userList->phead;
             while (temp != NULL)
             {
-                if (username== temp->id && password== temp->pass) 
+                if (username == temp->id && password == temp->pass)
                 {
                     break;
                 }
@@ -1109,19 +1109,19 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             }
 
             // Check current and new passwords
-            if (currentPassword== temp->pass) {
+            if (currentPassword == temp->pass) {
                 if (strlen(newPassword) > 0 && strcmp(newPassword, confirmedNewPassword) == 0) {
                     // Update password in the system
-                    temp->pass= newPassword;
+                    temp->pass = newPassword;
                     confirmPassword = true;
-                    strcpy_s(errorMessage,50, "Password changed successfully!");
+                    strcpy_s(errorMessage, 50, "Password changed successfully!");
                 }
                 else {
-                    strcpy_s(errorMessage,100, "Error: New passwords do not match or are invalid.");
+                    strcpy_s(errorMessage, 100, "Error: New passwords do not match or are invalid.");
                 }
             }
             else {
-                strcpy_s(errorMessage,38, "Error: Current password is incorrect.");
+                strcpy_s(errorMessage, 38, "Error: Current password is incorrect.");
             }
             if (confirmPassword) {
                 changePasswordActive = false;
@@ -1298,7 +1298,7 @@ void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearI
         memset(schoolYearInput, 0, sizeof(schoolYearInput));
     }
 }
-void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInputBoxActive,ListCourses LC, int screenWidth, int screenHeight) {
+void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInputBoxActive, ListCourses LC, int screenWidth, int screenHeight) {
     static bool showError = false;
 
     // Vẽ hộp nhập liệu và chuỗi ký tự hiện tại
@@ -1346,7 +1346,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInp
         }
         else
         {
-            AddstudentDashboard(screenWidth, screenHeight, LC,temp);
+            AddstudentDashboard(screenWidth, screenHeight, LC, temp);
         }
         memset(AddsvInput, 0, 128);
         AddsvInputBoxActive = false;
@@ -1363,7 +1363,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInp
         DrawText(errorMsg, posX, posY, fontSize, RED);
     }
 }
-User* timnodeuser(ListUser* LUR,string username,string password)
+User* timnodeuser(ListUser* LUR, string username, string password)
 {
     User* temp = LUR->phead;
     while (temp != NULL)
@@ -1738,7 +1738,7 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses& LC, Cou
             if (IsKeyPressed(KEY_ENTER))
             {
                 ListSV* svList = addListSV(AddsvInput);
-                SinhVien*temp=cour->lsv->ptail;
+                SinhVien* temp = cour->lsv->ptail;
                 temp->next = svList->phead;
                 if (svList == NULL) {
                     showError = true;  // Set the error flag
@@ -2009,7 +2009,7 @@ void deleteListSV(ListSV*& lsv)
         after = temp->next;
         delete temp;
         temp = after;
-        
+
 
     }
 }
@@ -2026,10 +2026,335 @@ void deleteListCourse(ListCourses*& lc)
         after = temp->next;
         delete temp;
         temp = after;
-        
+
 
     }
 }
 
+//
+void ViewSignCourses(ListCourses List, Course* courses, int numRows, ListCourses& SV) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
+    InitWindow(screenWidth, screenHeight, "");
+    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
 
+    const int numCols = 8;
+    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
 
+    const int startX = (screenWidth - (numCols * cellWidth)) / 2;
+    const int startY = 100 * screenRatioY;
+
+    const char* headers[numCols] = { "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", " week day", "Session" };
+
+    int scrollBarYOffset = 0;
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight; // Adjust the max displayed lines based on available space
+
+    int selectedCourse = 0;
+
+    while (!WindowShouldClose()) {
+        // Handle keyboard input
+        if (IsKeyPressed(KEY_DOWN) && selectedCourse < numRows - 1) {
+            selectedCourse++;
+        }
+        if (IsKeyPressed(KEY_UP) && selectedCourse > 0) {
+            selectedCourse--;
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
+            ShowSignCoursesDetails(List, courses[selectedCourse], SV);    
+        }
+
+        // Adjust scroll position to keep the selected course visible
+        if (selectedCourse * cellHeight < scrollBarYOffset) {
+            scrollBarYOffset = selectedCourse * cellHeight;
+        }
+        if (selectedCourse * cellHeight >= scrollBarYOffset + maxDisplayedLines * cellHeight) {
+            scrollBarYOffset = (selectedCourse + 1) * cellHeight - maxDisplayedLines * cellHeight;
+        }
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Draw headers
+        for (int i = 0; i < numCols; i++) {
+            DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+            int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+        }
+
+        // Draw data
+        for (int i = 0; i < numRows; i++) {
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
+                continue; // Skip drawing rows above the visible area
+            }
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
+                break; // No need to draw rows below the visible area
+            }
+
+            Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
+            DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
+
+            for (int j = 0; j < numCols; j++) {
+                int textWidth = 0;
+                int textX = startX + j * cellWidth + textPadding;
+                const char* textToDraw = nullptr;
+                switch (j) {
+                case 0:
+                    textToDraw = courses[i].id.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 1:
+                    textToDraw = courses[i].courseName.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 2:
+                    textToDraw = courses[i].ClassName.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 3:
+                    textToDraw = courses[i].teacherName.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 4:
+                    textToDraw = TextFormat("%d", courses[i].academicYear);
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 5:
+                    textToDraw = TextFormat("%d", courses[i].Credits);
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 6:
+                    textToDraw = courses[i].wDay.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 7:
+                    textToDraw = courses[i].session.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                default:
+                    break;
+                }
+                textX += (cellWidth - textWidth) / 2;
+                DrawText(textToDraw, textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), DARKGRAY);
+            }
+        }
+
+        // Calculate and draw scrollbar
+        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+        scrollBar.height = scrollBarHeight;
+        scrollBar.y = startY + cellHeight + scrollBarY;
+        DrawRectangleRec(scrollBar, GRAY);
+
+        // Handle mouse wheel scrolling
+        int scroll = GetMouseWheelMove();
+        scrollBarYOffset += scroll * 50 * (-1); // Adjust scrolling speed as needed
+
+        // Limit scrollBarYOffset within valid range
+        if (scrollBarYOffset < 0) {
+            scrollBarYOffset = 0;
+        }
+        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
+void ShowSignCoursesDetails(ListCourses& List, Course& course, ListCourses& SV) {
+    const int detailScreenWidth = 1366;
+    const int detailScreenHeight = 768;
+    InitWindow(detailScreenWidth, detailScreenHeight, "Course Details");
+
+    bool shouldRegister = false;
+    bool shouldClose = false;
+
+    while (!WindowShouldClose() && !shouldClose) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        int textY = 50;
+        const int textPadding = 10;
+        DrawText(("ID: " + course.id).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Course Name: " + course.courseName).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Class Name: " + course.ClassName).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Teacher Name: " + course.teacherName).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Academic Year: " + std::to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Credits: " + std::to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Week Day: " + course.wDay).c_str(), 50, textY, 20, BLACK);
+        textY += 30 + textPadding;
+        DrawText(("Session: " + course.session).c_str(), 50, textY, 20, BLACK);
+
+        Rectangle RegisterButton = { detailScreenWidth / 2 - 60, detailScreenHeight - 100, 120, 50 };
+        DrawRectangleRec(RegisterButton, GREEN);
+        DrawText("Register", detailScreenWidth / 2 - 40, detailScreenHeight - 85, 20, WHITE);
+
+        if (CheckCollisionPointRec(GetMousePosition(), RegisterButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            shouldRegister = true;
+            shouldClose = true;
+        }
+
+        Rectangle CloseButton = { detailScreenWidth - 70, detailScreenHeight - 50, 60, 30 };
+        DrawRectangleRec(CloseButton, RED);
+        DrawText("Close", detailScreenWidth - 60, detailScreenHeight - 40, 20, WHITE);
+
+        if (CheckCollisionPointRec(GetMousePosition(), CloseButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            shouldClose = true;
+        }
+
+        EndDrawing();
+
+        if (shouldRegister) {
+            Course* newCourse = InputCourse(course.id, course.courseName, course.ClassName, course.teacherName, course.academicYear, course.Credits, course.wDay, course.session);
+            AddCourse(SV, newCourse);
+
+        }
+
+        CloseWindow();
+    }
+}
+void ViewCourses_SV(ListCourses List, Course* courses, int numRows) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
+    InitWindow(screenWidth, screenHeight, "Danh Sách Khóa Học");
+    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
+
+    const int numCols = 8;
+    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
+
+    const int startX = (screenWidth - (numCols * cellWidth)) / 2;
+    const int startY = 100 * screenRatioY;
+
+    const char* headers[numCols] = { "ID", "Tên khóa học", "Lớp", "Giáo viên", "Năm học", "Số tín chỉ", "Ngày học", "Buổi học" };
+
+    int scrollBarYOffset = 0;
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
+
+    int selectedCourse = 0;
+
+    while (!WindowShouldClose()) {
+        // Handle keyboard input
+        if (IsKeyPressed(KEY_DOWN) && selectedCourse < numRows - 1) {
+            selectedCourse++;
+        }
+        if (IsKeyPressed(KEY_UP) && selectedCourse > 0) {
+            selectedCourse--;
+        }
+        // Adjust scroll position to keep the selected course visible
+        if (selectedCourse * cellHeight < scrollBarYOffset) {
+            scrollBarYOffset = selectedCourse * cellHeight;
+        }
+        if (selectedCourse * cellHeight >= scrollBarYOffset + maxDisplayedLines * cellHeight) {
+            scrollBarYOffset = (selectedCourse + 1) * cellHeight - maxDisplayedLines * cellHeight;
+        }
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Draw headers
+        for (int i = 0; i < numCols; i++) {
+            DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+            int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+        }
+
+        // Draw data
+        for (int i = 0; i < numRows; i++) {
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
+                continue; // Skip drawing rows above the visible area
+            }
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
+                break; // No need to draw rows below the visible area
+            }
+
+            Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
+            DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
+
+            for (int j = 0; j < numCols; j++) {
+                int textWidth = 0;
+                int textX = startX + j * cellWidth + textPadding;
+                const char* textToDraw = nullptr;
+                switch (j) {
+                case 0:
+                    textToDraw = courses[i].id.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 1:
+                    textToDraw = courses[i].courseName.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 2:
+                    textToDraw = courses[i].ClassName.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 3:
+                    textToDraw = courses[i].teacherName.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 4:
+                    textToDraw = TextFormat("%d", courses[i].academicYear);
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 5:
+                    textToDraw = TextFormat("%d", courses[i].Credits);
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 6:
+                    textToDraw = courses[i].wDay.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                case 7:
+                    textToDraw = courses[i].session.c_str();
+                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    break;
+                default:
+                    break;
+                }
+                textX += (cellWidth - textWidth) / 2;
+                DrawText(textToDraw, textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), DARKGRAY);
+            }
+        }
+
+        // Calculate and draw scrollbar
+        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+        scrollBar.height = scrollBarHeight;
+        scrollBar.y = startY + cellHeight + scrollBarY;
+        DrawRectangleRec(scrollBar, GRAY);
+
+        // Handle mouse wheel scrolling
+        int scroll = GetMouseWheelMove();
+        scrollBarYOffset += scroll * 50 * (-1); // Adjust scrolling speed as needed
+
+        // Limit scrollBarYOffset within valid range
+        if (scrollBarYOffset < 0) {
+            scrollBarYOffset = 0;
+        }
+        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
