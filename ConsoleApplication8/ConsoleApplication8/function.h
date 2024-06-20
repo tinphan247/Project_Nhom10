@@ -14,13 +14,7 @@ struct Date {
 };
 
 struct ListCourses;
-struct diem
-{
-    double MidMark;//midtermMark
-    double FinalMark;
-    double otherMark;
-    double totalMark;
-};
+
 struct SinhVien {
     string mssv;
     string ten;
@@ -31,7 +25,6 @@ struct SinhVien {
     SinhVien* next;
     ListCourses* Lc;
     string ClassName;
-    diem mark;
 };
 
 struct ListSV {
@@ -75,6 +68,8 @@ struct Semester {
     string Ngayketthuc;
     Semester* next;
     ListCourses* lc;
+    string namhoc;
+    bool showsemester = false;
 };
 
 struct NamHoc {
@@ -111,18 +106,19 @@ void DrawButton(Rectangle button, const char* text, bool mouseOverButton);
 bool kiemtrangaysinh(int ngay, int thang, int nam);
 void taosv(string& MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
 void themsvvaolop(Class*& lop, string& MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
+bool IsValidSchoolYearFormat(const char* input);
 void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc);
-void taohocky(Semester*& H, ListNamHoc& L);
+Semester* taohocky(Semester*& H, ListNamHoc& L);
 void themlopmoivaodanhsachcaclop(Class*& CTT, ListClass*& DS);
 void xemdanhsachcaclop(ListClass*& DS);
 void xemdanhsachkhoahoc(ListCourses*& LC);
 void xoasvkhoikhoahoc(ListCourses*& LC);
 void DrawNumbers(NamHoc*& H, ListNamHoc& L);
-void InitList(ListCourses& list);
+void InitList(ListCourses* list);
 void AddCourse(ListCourses& List, Course* newCourse);
-void viewcourse(ListCourses List, Course*& courses, int& numRows);
+void viewcourse(ListCourses*& List, Course*& courses, int& numRows);
 Course* InputCourse(string id, string CourseName, string ClassName, string GVName, int AcademicYear, int Credits, string wDay, string Session);
-void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session);
+void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int &AcademicYear, int& Credits, string& wDay, string& Session);
 ListSV* addListSV(string path);
 void DrawSVTable(const SinhVien* sv, int numRows);
 void ShowStudentListWindow(ListSV* svList);
@@ -133,27 +129,21 @@ bool CheckLogin(const char* username, const char* password, bool& checkstaff, Li
 void ChangePassword(ListUser* userList, const char* username, const char* password);
 void saveListUser(ListUser* LUR, const string& path);
 bool Login(ListUser* LUR, char* username, char* password, bool& checkstaff);
-void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearInputBoxActive, char* schoolYearInput, ListNamHoc& LNH, NamHoc*& N, Vector2 mousePoint);
-void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInputBoxActive, ListCourses LC, int screenWidth, int screenHeight);
+void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearInputBoxActive, char* schoolYearInput, ListNamHoc& LNH, NamHoc*& N, Vector2 mousePoint, bool& showError);
+void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInputBoxActive, ListCourses*& LC, int screenWidth, int screenHeight);
 User* timnodeuser(ListUser* LUR, string username, string password);
 void DisplayProfileInfo(User* user);
 void ShowImportCoursePage(string& pathC);
-void ImportCourseFile(ListCourses& List, string path);
-void CourseDashboard(int screenWidth, int screenHeight, ListCourses& LC);
-void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses& LC, Course* cour);
+void ImportCourseFile(ListCourses*& List, string path);
+void CourseDashboard(int screenWidth, int screenHeight, ListCourses*& LC);
+void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Course* cour);
 void add1StudentCourse(Course*& cour, SinhVien*& sv);
 void createnewstudent(Course* cour);
 void createnewstudent(Course* cour, bool& studentSaved);
 void showCourseDetails(ListCourses& List, Course& course);
-void RemoveCourse(ListCourses& List, Course* course);
-Course* Find_ID(ListCourses List, string id);
-ListSV* docDiemTuFile(string path);
-//delete
-void deleteListSV(ListSV*& lsv);
-void deleteListCourse(ListCourses*& lc);
-
-//
-void ViewSignCourses(ListCourses List, Course* courses, int numRows, ListCourses& SV);
-void ShowSignCoursesDetails(ListCourses& List, Course& course, ListCourses& SV);
-void ViewCourses_SV(ListCourses List, Course* courses, int numRows);
+void RemoveCourse(ListCourses*& List, Course* course);
+Course* Find_ID(ListCourses*& List, string id);
+void ViewSignCourses(ListCourses* List, Course* courses, int numRows, ListCourses*& SV);
+void ShowSignCoursesDetails(ListCourses*& List, Course& course, ListCourses*& SV);
+void ViewCourses_SV(ListCourses* List, Course* courses, int numRows);
 #endif // FUNCTION_H
