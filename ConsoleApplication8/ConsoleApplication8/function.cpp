@@ -1,4 +1,4 @@
-#include "project.h"
+#include "function.h"
 
 bool IsEmpty(const char* str)
 {
@@ -59,17 +59,17 @@ ListUser* addListUser(const string& path) {
     return LUR;
 }
 
-bool CheckLogin(const char* username, const char* password, bool& checkstaff, ListUser*& LU)
+bool CheckLogin(const char* username, const char* password,bool& checkstaff,ListUser*& LU) 
 {
-    if (!LU)
+    if (!LU) 
     {
         return false;
     }
 
     User* temp = LU->phead;
-    while (temp != nullptr)
+    while (temp != nullptr) 
     {
-        if (temp->id == username && temp->pass == password)
+        if (temp->id == username && temp->pass == password) 
         {
             checkstaff = temp->staff;
             return true;
@@ -79,7 +79,7 @@ bool CheckLogin(const char* username, const char* password, bool& checkstaff, Li
     return false;
 }
 
-void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
+void DrawButton(Rectangle button, const char* text, bool mouseOverButton) 
 {
     DrawRectangleRec(button, mouseOverButton ? DARKGRAY : LIGHTGRAY);
     DrawText(text, button.x + button.width / 2 - MeasureText(text, 20) / 2, button.y + button.height / 2 - 10, 20, BLACK);
@@ -87,7 +87,7 @@ void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
 void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc)
 {
     N = new NamHoc();
-    N->ngaybatdau = thoigiannamhoc;
+    N->ngaybatdau= thoigiannamhoc;
     if (L.phead == NULL) {
         L.phead = N;
     }
@@ -102,56 +102,74 @@ void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc)
     N->Hocky = NULL;
 }
 
+bool IsValidSchoolYearFormat(const char* input) {
+    // Check if the length is exactly 9 (nnnn-nnnn)
+    if (strlen(input) != 9) return false;
+
+    // Check each character to ensure it fits the nnnn-nnnn format
+    for (int i = 0; i < 9; ++i) {
+        if (i == 4) {
+            if (input[i] != '-') return false; // The fifth character should be '-'
+        }
+        else {
+            if (input[i] < '0' || input[i] > '9') return false; // All other characters should be digits
+        }
+    }
+
+    return true;
+}
 
 
-void taohocky(Semester*& H, ListNamHoc& L) {
-
-    H = new Semester();
+Semester* taohocky(Semester*& H, ListNamHoc& L) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
-
-    InitWindow(screenWidth, screenHeight, "");
-
+    H = new Semester;
+    InitWindow(screenWidth, screenHeight, "Tao hoc ky");
     SetTargetFPS(60);
 
+    // Variables for input fields and validation
     bool isYearInputActive = false;
     bool isOrdinalInputActive = false;
     bool isStartDateInputActive = false;
     bool isEndDateInputActive = false;
     bool isConfirmButtonPressed = false;
 
-    std::string yearInput = "";
-    std::string ordinalInput = "";
-    std::string startDateInput = "";
-    std::string endDateInput = "";
+    string yearInput = "";
+    string ordinalInput = "";
+    string startDateInput = "";
+    string endDateInput = "";
 
     bool isInputValid = true;
-    std::string errorMessage = "";
+    string errorMessage = "";
+
+    // Scrollbar variables
     int scrollBarYOffset = 0;
     int maxDisplayedLines = 0;
 
-    while (!WindowShouldClose())
-    {
+    bool semesterAdded = false; // Flag to indicate if a semester has been successfully added
+
+    while (!WindowShouldClose() && !semesterAdded) {
         int i = 1;
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
+        // Draw list of academic years
         NamHoc* temp = L.phead;
         int textWidth = MeasureText("Danh sach cac nam hien co:", 20);
         int xPosition = (screenWidth - textWidth) / 2;
         DrawText("Danh sach cac nam hien co:", xPosition, 50 - scrollBarYOffset, 20, RED);
+
         while (temp != NULL) {
-            // Convert std::string to C-style string
             const char* kt = temp->ngaybatdau.c_str();
             textWidth = MeasureText(kt, 20);
             xPosition = (screenWidth - textWidth) / 2;
-            DrawText(kt, xPosition, 50 * (i + 1) - scrollBarYOffset, 20, BLACK); // Điều chỉnh vị trí bắt đầu
+            DrawText(kt, xPosition, 50 * (i + 1) - scrollBarYOffset, 20, BLACK); // Adjust start position
             temp = temp->next;
             i++;
         }
 
-        // Tính toán vị trí thanh cuộn
+        // Calculate scrollbar position and draw it
         Rectangle scrollBar = { screenWidth - 20, 0, 20, screenHeight };
         float scrollBarHeight = screenHeight * screenHeight / ((float)i * 50);
         float maxScrollBarY = screenHeight - scrollBarHeight;
@@ -160,20 +178,18 @@ void taohocky(Semester*& H, ListNamHoc& L) {
         scrollBar.y = scrollBarY;
         DrawRectangleRec(scrollBar, GRAY);
 
-        // Xử lý sự kiện cuộn chuột
+        // Handle mouse scroll event
         int scroll = GetMouseWheelMove();
         scrollBarYOffset += scroll * 50 * (-1);
         if (scrollBarYOffset < 0) scrollBarYOffset = 0;
         if (scrollBarYOffset > ((i - maxDisplayedLines) * 50)) scrollBarYOffset = (i - maxDisplayedLines) * 50;
 
-        // Cập nhật vị trí dọc hiện tại
+        // Calculate current vertical position
         int currentYOffset = 0;
 
-        // Vẽ các trường nhập và nút xác nhận
-        // Calculate starting Y position for input fields
+        // Draw input fields and confirm button
         int startY = 50 * (i + 1) + 50;
 
-        // Draw input fields and labels
         currentYOffset = startY - scrollBarYOffset;
 
         textWidth = MeasureText("Chon nam hoc:", 20);
@@ -184,7 +200,7 @@ void taohocky(Semester*& H, ListNamHoc& L) {
 
         textWidth = MeasureText("Chon thu tu cua hoc ki (1-3):", 20);
         xPosition = (screenWidth - textWidth) / 2;
-        DrawText("Chon thu tu cua hoc ki (1-3):", xPosition, currentYOffset + 80, 20, BLACK);
+        DrawText("Nhap thu tu cua hoc ki (1-3):", xPosition, currentYOffset + 80, 20, BLACK);
         DrawRectangle((screenWidth - 400) / 2, currentYOffset + 110, 400, 40, isOrdinalInputActive ? LIGHTGRAY : GRAY);
         DrawText(ordinalInput.c_str(), (screenWidth - 400) / 2 + 10, currentYOffset + 120, 20, BLACK);
 
@@ -204,11 +220,12 @@ void taohocky(Semester*& H, ListNamHoc& L) {
         DrawRectangle(confirmButtonX, currentYOffset + 330, 200, 50, isConfirmButtonPressed ? RED : MAROON);
         DrawText("Xac Nhan", confirmButtonX + 50, currentYOffset + 345, 20, WHITE);
 
+        // Draw error message if input is not valid
         if (!isInputValid) {
             DrawText(errorMessage.c_str(), screenWidth - MeasureText(errorMessage.c_str(), 20) - 10, screenHeight - 30, 20, RED);
         }
 
-        // Xử lý sự kiện chuột
+        // Handle mouse click events
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             Vector2 mousePosition = GetMousePosition();
             if (CheckCollisionPointRec(mousePosition, { (float)(screenWidth - 400) / 2, (float)currentYOffset + 30, 400, 40 })) {
@@ -261,46 +278,92 @@ void taohocky(Semester*& H, ListNamHoc& L) {
                     isInputValid = false;
                     errorMessage = "End date input is empty!";
                 }
+                else if (ordinalInput < "1" || ordinalInput > "3") {
+                    isInputValid = false;
+                    errorMessage = "Ordinal input must be between 1 and 3!";
+                }
                 else {
-                    // Ham them 1 hoc ky vao nam hoc da chon
+                    // Convert ordinal input to integer for comparison
+                    int newOrdinal = stoi(ordinalInput);
+
+                    // Check if the ordinal already exists for the selected academic year
                     NamHoc* temp = L.phead;
                     bool yearFound = false;
                     while (temp != NULL) {
                         if (temp->ngaybatdau == yearInput) {
                             yearFound = true;
-                            if (temp->Hocky == NULL) {
-                                temp->Hocky = H;
+
+                            // Check if the new ordinal already exists
+                            Semester* currentSemester = temp->Hocky;
+                            bool ordinalExists = false;
+                            while (currentSemester != NULL) {
+                                if (currentSemester->thutu == newOrdinal) {
+                                    ordinalExists = true;
+                                    break;
+                                }
+                                currentSemester = currentSemester->next;
+                            }
+
+                            // If ordinal does not exist, add the new semester
+                            if (!ordinalExists) {
+                                // Create new semester                              
+                                H->thutu = newOrdinal;
+                                H->Ngaybatdau = startDateInput;
+                                H->Ngayketthuc = endDateInput;
+                                H->next = NULL;
+                                H->namhoc = yearInput;
+                                H->lc = new ListCourses;
+                                H->lc->head = NULL;
+                                H->lc->tail = NULL;
+                                H->showsemester=true;
+                                // Insert new semester at the correct position
+                                if (temp->Hocky == NULL) {
+                                    // No semesters exist for this year yet
+                                    temp->Hocky = H;
+                                }
+                                else {
+                                    // Insert at the correct position based on ordinal
+                                    Semester* current = temp->Hocky;
+                                    Semester* previous = NULL;
+                                    while (current != NULL && current->thutu < newOrdinal) {
+                                        previous = current;
+                                        current = current->next;
+                                    }
+                                    if (previous == NULL) {
+                                        // Insert at the beginning
+                                        H->next = temp->Hocky;
+                                        temp->Hocky = H;
+                                    }
+                                    else {
+                                        // Insert in the middle or at the end
+                                        previous->next = H;
+                                        H->next = current;
+                                    }
+                                }
+
+                                // Output success message
+                                cout << "Da them 1 hoc ky vao nam hoc " << temp->ngaybatdau << endl;
+                                semesterAdded = true; // Set flag to exit the loop
+                                break;
                             }
                             else {
-                                Semester* temphocky = temp->Hocky;
-                                while (temphocky->next != NULL) {
-                                    temphocky = temphocky->next;
-                                }
-                                temphocky->next = H;
+                                isInputValid = false;
+                                errorMessage = "Ordinal already exists for this academic year!";
+                                break;
                             }
-                            cout << "Da them 1 hoc ky vao nam hoc " << temp->ngaybatdau << std::endl;
-                            break;
                         }
                         temp = temp->next;
                     }
 
+                    // If the selected year was not found
                     if (!yearFound) {
                         isInputValid = false;
-                        errorMessage = "Year not found!";
-                    }
-                    else {
-                        // Save the input data to the Semester object
-                        H->Ngaybatdau = startDateInput;
-                        H->thutu = stoi(ordinalInput);
-                        H->Ngayketthuc = endDateInput;
-
-                        // Close the window
-                        CloseWindow();
-                        break; // Exit the loop after saving and closing the window
+                        errorMessage = "Selected year not found!";
                     }
                 }
             }
             else {
+                // Reset input field states
                 isYearInputActive = false;
                 isOrdinalInputActive = false;
                 isStartDateInputActive = false;
@@ -309,7 +372,7 @@ void taohocky(Semester*& H, ListNamHoc& L) {
             }
         }
 
-        // Xử lý phím bấm cho các ô nhập dữ liệu
+        // Handle keyboard input for each input field
         int key = GetKeyPressed();
         if (isYearInputActive) {
             if (key >= 32 && key <= 125) {
@@ -321,58 +384,59 @@ void taohocky(Semester*& H, ListNamHoc& L) {
         }
 
         if (isOrdinalInputActive) {
-            if (key >= 32 && key <= 125) {
+            if (key >= 48 && key <= 57) { // Only allow numbers 1-3 for ordinal input
                 ordinalInput += static_cast<char>(key);
             }
-            if (IsKeyPressed(KEY_BACKSPACE) && !ordinalInput.empty())
-            {
+            if (IsKeyPressed(KEY_BACKSPACE) && !ordinalInput.empty()) {
                 ordinalInput.pop_back();
             }
         }
 
-        if (isStartDateInputActive) {
+        if (isStartDateInputActive || isEndDateInputActive) {
             if (key >= 32 && key <= 125) {
-                startDateInput += static_cast<char>(key);
+                if (isStartDateInputActive) {
+                    startDateInput += static_cast<char>(key);
+                }
+                else {
+                    endDateInput += static_cast<char>(key);
+                }
             }
-            if (IsKeyPressed(KEY_BACKSPACE) && !startDateInput.empty()) {
-                startDateInput.pop_back();
-            }
-        }
-
-        if (isEndDateInputActive) {
-            if (key >= 32 && key <= 125) {
-                endDateInput += static_cast<char>(key);
-            }
-            if (IsKeyPressed(KEY_BACKSPACE) && !endDateInput.empty()) {
-                endDateInput.pop_back();
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                if (isStartDateInputActive && !startDateInput.empty()) {
+                    startDateInput.pop_back();
+                }
+                else if (isEndDateInputActive && !endDateInput.empty()) {
+                    endDateInput.pop_back();
+                }
             }
         }
 
         EndDrawing();
     }
 
-
+    CloseWindow();
+    return H;
 }
-void InitList(ListCourses& list) {
-    list.head = NULL;
-    list.tail = NULL;
-    list.size = 0;
+void InitList(ListCourses* list) {
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
 }
 
-void AddCourse(ListCourses& List, Course* newCourse) {
+void AddCourse(ListCourses*& List, Course* newCourse) {
     if (newCourse == NULL) return;
-    if (List.head == NULL) {
-        List.head = newCourse;
-        List.tail = newCourse;
+    if (List->head == NULL) {
+        List->head = newCourse;
+        List->tail = newCourse;
     }
     else {
-        List.tail->next = newCourse;
-        List.tail = newCourse;
+        List->tail->next = newCourse;
+        List->tail = newCourse;
     }
-    List.size++;
+    List->size++;
 }
 bool courseWasDeleted = false;
-void showCourseDetails(ListCourses& List, Course& course) {
+void showCourseDetails(ListCourses*& List, Course& course) {
     const int detailScreenWidth = 1366;
     const int detailScreenHeight = 768;
     InitWindow(detailScreenWidth, detailScreenHeight, "Course Details");
@@ -394,9 +458,9 @@ void showCourseDetails(ListCourses& List, Course& course) {
         textY += 30 + textPadding;
         DrawText(("Teacher Name: " + course.teacherName).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
-        DrawText(("Academic Year: " + std::to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
+        DrawText(("Academic Year: " +to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
-        DrawText(("Credits: " + std::to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
+        DrawText(("Credits: " + to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
         DrawText(("Week Day: " + course.wDay).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
@@ -420,27 +484,27 @@ void showCourseDetails(ListCourses& List, Course& course) {
         courseWasDeleted = true;
     }
 }
-void RemoveCourse(ListCourses& List, Course* course) {
-    if (List.head == NULL) {
+void RemoveCourse(ListCourses*& List, Course* course) {
+    if (List->head == NULL) {
         return;
     }
-    else if (List.head == course) {
-        List.head = course->next;
-        if (List.tail == course) {
-            List.tail = NULL;
+    else if (List->head == course) {
+        List->head = course->next;
+        if (List->tail == course) {
+            List->tail = NULL;
         }
     }
     else {
         // duyet list tim course
-        Course* cur = List.head;
+        Course* cur = List->head;
         while (cur != NULL && cur->next != course) {
             cur = cur->next;
         }
         //luc nay cur->next = course hoac cur == NULL
         if (cur->next == course) {
             cur->next = course->next;
-            if (List.tail == course) {
-                List.tail = cur;
+            if (List->tail == course) {
+                List->tail = cur;
             }
         }
         else { // luc nay cur = NULL -> ko tim thay course
@@ -448,34 +512,29 @@ void RemoveCourse(ListCourses& List, Course* course) {
         }
     }
 }
-Course* Find_ID(ListCourses List, string id) {
-    Course* cur = List.head;
+Course* Find_ID(ListCourses*& List, string id) {
+    Course* cur = List->head;
     while (cur != NULL && cur->id != id) {
         cur = cur->next;
     }
     return cur;
 }
 
-void viewcourse(ListCourses List, Course*& courses, int& numRows) {
+void viewcourse(ListCourses*& List, Course*& courses, int& numRows) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "");
     const float screenRatioX = (float)GetScreenWidth() / screenWidth;
     const float screenRatioY = (float)GetScreenHeight() / screenHeight;
-
     const int numCols = 8;
     const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
     const int cellHeight = 80 * screenRatioY;
     const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
-
     const int startX = (screenWidth - (numCols * cellWidth)) / 2;
     const int startY = 100 * screenRatioY;
-
     const char* headers[numCols] = { "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", " week day", "Session" };
-
     int scrollBarYOffset = 0;
-    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight; // Adjust the max displayed lines based on available space
-
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight; 
     int selectedCourse = 0;
 
     while (!WindowShouldClose()) {
@@ -488,40 +547,23 @@ void viewcourse(ListCourses List, Course*& courses, int& numRows) {
         }
         if (IsKeyPressed(KEY_ENTER)) {
             showCourseDetails(List, courses[selectedCourse]);
-
-            // Check if a course was deleted
             if (courseWasDeleted) {
-                // Remove the course from List
-                numRows--;  // Decrease number of rows
-
-                // Update the courses array if needed
-                // Here we assume courses is an array of Course structs or objects
-                // Update courses by fetching data from List again
-                Course* newCourses = new Course[numRows];  // Allocate new array for courses
-
-                // Copy data from List to newCourses array
-                Course* cur = List.head;
+                numRows--;  
+                Course* newCourses = new Course[numRows];  
+                Course* cur = List->head;
                 int index = 0;
                 while (cur != NULL) {
                     newCourses[index] = *cur;
                     cur = cur->next;
                     index++;
                 }
-
-                // Assign newCourses and newNumRows back to the original variables
-                delete[] courses;  // Delete old courses array if necessary
+                delete[] courses; 
                 courses = newCourses;
-
-                // Reset courseWasDeleted flag
                 courseWasDeleted = false;
-
-                // Close current window and reinitialize to refresh the course list
                 CloseWindow();
                 InitWindow(screenWidth, screenHeight, "");
             }
         }
-
-        // Adjust scroll position to keep the selected course visible
         if (selectedCourse * cellHeight < scrollBarYOffset) {
             scrollBarYOffset = selectedCourse * cellHeight;
         }
@@ -543,57 +585,50 @@ void viewcourse(ListCourses List, Course*& courses, int& numRows) {
         // Draw data
         for (int i = 0; i < numRows; i++) {
             if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
-                continue; // Skip drawing rows above the visible area
+                continue; 
             }
             if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
-                break; // No need to draw rows below the visible area
+                break; 
             }
-
             Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
             DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
-
-            for (int j = 0; j < numCols; j++) {
+            const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
+            for (int j = 0; j < 8; j++) { // Assuming there are 8 columns
                 int textWidth = 0;
                 int textX = startX + j * cellWidth + textPadding;
-                const char* textToDraw = nullptr;
+                string textToDraw;
+
                 switch (j) {
                 case 0:
-                    textToDraw = courses[i].id.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    textToDraw = courses[i].id;
                     break;
                 case 1:
-                    textToDraw = courses[i].courseName.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    textToDraw = courses[i].courseName;
                     break;
                 case 2:
-                    textToDraw = courses[i].ClassName.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    textToDraw = courses[i].ClassName;
                     break;
                 case 3:
-                    textToDraw = courses[i].teacherName.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    textToDraw = courses[i].teacherName;
                     break;
                 case 4:
-                    textToDraw = TextFormat("%d", courses[i].academicYear);
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    textToDraw = to_string(courses[i].academicYear);
                     break;
                 case 5:
-                    textToDraw = TextFormat("%d", courses[i].Credits);
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    textToDraw = to_string(courses[i].Credits);
                     break;
                 case 6:
-                    textToDraw = courses[i].wDay.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    textToDraw = courses[i].wDay;
                     break;
                 case 7:
-                    textToDraw = courses[i].session.c_str();
-                    textWidth = MeasureText(textToDraw, 15 * ((screenRatioX + screenRatioY) / 2));
+                    textToDraw = courses[i].session;
                     break;
                 default:
                     break;
                 }
+                textWidth = MeasureText(textToDraw.c_str(), fontSize);
                 textX += (cellWidth - textWidth) / 2;
-                DrawText(textToDraw, textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), DARKGRAY);
+                DrawText(textToDraw.c_str(), textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, fontSize, DARKGRAY);
             }
         }
 
@@ -644,7 +679,7 @@ Course* InputCourse(string id, string CourseName, string ClassName, string GVNam
     cout << newCourse->session << endl;
     return newCourse;
 }
-void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session) {
+void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int &Credits, string& wDay, string& Session) {
     const int numFields = 8;
     const char* fieldLabels[numFields] = {
         "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", "Nhap week day(MON / TUE...) :", "Nhap Session [S1 (07:30), S2 (09:30), S3(13:30), S4 (15:30)]:"
@@ -894,15 +929,15 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
             DrawText(currentSV->ten.c_str(), startX + (cellWidth + columnSpacing) * 3 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Ten
             DrawText(currentSV->ClassName.c_str(), startX + (cellWidth + columnSpacing) * 4 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Lop
             DrawText(currentSV->gender.c_str(), startX + (cellWidth + columnSpacing) * 5 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Gioi Tinh
-            string birthday = TextFormat("%02d/%02d/%d", currentSV->birth.day, currentSV->birth.month, currentSV->birth.year);
-            DrawText(birthday.c_str(), startX + (cellWidth + columnSpacing) * 6 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Ngay Sinh
+            string birthday = to_string(currentSV->birth.day) + "/" +to_string(currentSV->birth.month) + "/" +to_string(currentSV->birth.year);
+            DrawText(birthday.c_str(), startX + (cellWidth + columnSpacing) * 6 + textPadding,startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // Ngay Sinh
             DrawText(currentSV->cccd.c_str(), startX + (cellWidth + columnSpacing) * 7 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); // CCCD
             stt++;
             currentSV = currentSV->next;
         }
 
         // Vẽ hàng header sau cùng để đảm bảo màu không bị đứt đoạn
-        DrawRectangle(startX, startY, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
+        DrawRectangle(startX, startY, cellWidth* numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
         for (int i = 0; i < numCols; i++) {
             int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
             int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
@@ -1101,7 +1136,7 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             User* temp = userList->phead;
             while (temp != NULL)
             {
-                if (username == temp->id && password == temp->pass)
+                if (username== temp->id && password== temp->pass) 
                 {
                     break;
                 }
@@ -1109,19 +1144,19 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             }
 
             // Check current and new passwords
-            if (currentPassword == temp->pass) {
+            if (currentPassword== temp->pass) {
                 if (strlen(newPassword) > 0 && strcmp(newPassword, confirmedNewPassword) == 0) {
                     // Update password in the system
-                    temp->pass = newPassword;
+                    temp->pass= newPassword;
                     confirmPassword = true;
-                    strcpy_s(errorMessage, 50, "Password changed successfully!");
+                    strcpy_s(errorMessage,50, "Password changed successfully!");
                 }
                 else {
-                    strcpy_s(errorMessage, 100, "Error: New passwords do not match or are invalid.");
+                    strcpy_s(errorMessage,100, "Error: New passwords do not match or are invalid.");
                 }
             }
             else {
-                strcpy_s(errorMessage, 38, "Error: Current password is incorrect.");
+                strcpy_s(errorMessage,38, "Error: Current password is incorrect.");
             }
             if (confirmPassword) {
                 changePasswordActive = false;
@@ -1257,17 +1292,22 @@ bool Login(ListUser* LUR, char* username, char* password, bool& checkstaff) {
     CloseWindow();
     return loginSuccessful;
 }
-void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearInputBoxActive, char* schoolYearInput, ListNamHoc& LNH, NamHoc*& N, Vector2 mousePoint) {
+void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearInputBoxActive, char* schoolYearInput, ListNamHoc& LNH, NamHoc*& N, Vector2 mousePoint, bool& showError) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
     Rectangle schoolYearInputBox = { screenWidth / 2 - 100, 450, 200, 40 };
 
-    // Vẽ các thành phần của giao diện người dùng
+    // Draw UI components
     DrawRectangleRec(schoolYearInputBox, LIGHTGRAY);
     DrawText(schoolYearInput, schoolYearInputBox.x + 5, schoolYearInputBox.y + 10, 20, DARKGRAY);
     DrawText("Enter School Year (e.g., 2020-2021):", schoolYearInputBox.x, schoolYearInputBox.y - 20, 20, LIGHTGRAY);
 
-    // Kiểm tra tương tác của người dùng với hộp văn bản
+    // Display error message if format is invalid
+    if (showError) {
+        DrawText("Invalid format. Use nnnn-nnnn.", schoolYearInputBox.x, schoolYearInputBox.y + 50, 20, RED);
+    }
+
+    // Check user interaction with the text box
     if (CheckCollisionPointRec(mousePoint, schoolYearInputBox) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         schoolYearInputBoxActive = true;
     }
@@ -1275,7 +1315,7 @@ void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearI
         schoolYearInputBoxActive = false;
     }
 
-    // Nhận ký tự từ bàn phím nếu hộp văn bản đang hoạt động
+    // Get characters from keyboard if text box is active
     if (schoolYearInputBoxActive) {
         int key = GetKeyPressed();
         if ((key >= 32) && (key <= 125)) {
@@ -1291,14 +1331,21 @@ void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearI
         }
     }
 
-    // Xử lý khi người dùng nhấn phím ENTER
+    // Handle user pressing ENTER key
     if (IsKeyPressed(KEY_ENTER)) {
-        taonamhoc(LNH, N, schoolYearInput);
-        createNewSchoolYearActive = false;
-        memset(schoolYearInput, 0, sizeof(schoolYearInput));
+        if (IsValidSchoolYearFormat(schoolYearInput)) {
+            taonamhoc(LNH, N, schoolYearInput);
+            createNewSchoolYearActive = false;
+            showError = false;
+            memset(schoolYearInput, 0, sizeof(char) * 128); // Clear the input buffer
+        }
+        else {
+            showError = true; // Show error message if format is invalid
+        }
     }
 }
-void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInputBoxActive, ListCourses LC, int screenWidth, int screenHeight) {
+
+void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInputBoxActive,ListCourses*& LC, int screenWidth, int screenHeight) {
     static bool showError = false;
 
     // Vẽ hộp nhập liệu và chuỗi ký tự hiện tại
@@ -1331,7 +1378,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInp
 
     // Xử lý khi nhấn phím ENTER
     if (IsKeyPressed(KEY_ENTER)) {
-        Course* temp = LC.head;
+        Course* temp = LC->head;
         while (temp != NULL)
         {
             if (temp->courseName == AddsvInput)
@@ -1346,7 +1393,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInp
         }
         else
         {
-            AddstudentDashboard(screenWidth, screenHeight, LC, temp);
+            AddstudentDashboard(screenWidth, screenHeight, LC,temp);
         }
         memset(AddsvInput, 0, 128);
         AddsvInputBoxActive = false;
@@ -1363,7 +1410,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInp
         DrawText(errorMsg, posX, posY, fontSize, RED);
     }
 }
-User* timnodeuser(ListUser* LUR, string username, string password)
+User* timnodeuser(ListUser* LUR,string username,string password)
 {
     User* temp = LUR->phead;
     while (temp != NULL)
@@ -1385,6 +1432,7 @@ void DisplayProfileInfo(User* user) {
     const int backButtonY = windowHeight - buttonHeight - 20;
     bool backButtonPressed = false;
 
+    // Initialize window
     InitWindow(windowWidth, windowHeight, "Profile");
 
     while (!WindowShouldClose() && !backButtonPressed) {
@@ -1392,11 +1440,24 @@ void DisplayProfileInfo(User* user) {
         ClearBackground(RAYWHITE);
 
         // Draw personal information on the screen
-        DrawText(TextFormat("ID: %s", user->id.c_str()), 50, 50, 20, BLACK);  // user->id is a string
-        DrawText(TextFormat("Full Name: %s %s", user->ho.c_str(), user->ten.c_str()), 50, 80, 20, BLACK);
-        DrawText(TextFormat("Date of Birth: %02d/%02d/%d", user->birth.day, user->birth.month, user->birth.year), 50, 110, 20, BLACK);
-        DrawText(TextFormat("Gender: %s", user->gender.c_str()), 50, 140, 20, BLACK);
-        DrawText(TextFormat("Academic Year: %s", user->academicYear.c_str()), 50, 170, 20, BLACK);
+
+        // Draw ID
+        DrawText(("ID: " + user->id).c_str(), 50, 50, 20, BLACK);
+
+        // Draw Full Name
+        DrawText(("Full Name: " + user->ho + " " + user->ten).c_str(), 50, 80, 20, BLACK);
+
+        // Draw Date of Birth
+        DrawText(("Date of Birth: " +
+           to_string(user->birth.day) + "/" +
+           to_string(user->birth.month) + "/" +
+           to_string(user->birth.year)).c_str(), 50, 110, 20, BLACK);
+
+        // Draw Gender
+        DrawText(("Gender: " + user->gender).c_str(), 50, 140, 20, BLACK);
+
+        // Draw Academic Year
+        DrawText(("Academic Year: " + user->academicYear).c_str(), 50, 170, 20, BLACK);
 
         // Draw back button
         DrawRectangle(backButtonX, backButtonY, buttonWidth, buttonHeight, LIGHTGRAY);
@@ -1411,6 +1472,7 @@ void DisplayProfileInfo(User* user) {
         EndDrawing();
     }
 
+    // Close window
     CloseWindow();
 }
 void ShowImportCoursePage(string& pathC) {
@@ -1493,7 +1555,7 @@ void ShowImportCoursePage(string& pathC) {
 
     CloseWindow();
 }
-void ImportCourseFile(ListCourses& List, string path)
+void ImportCourseFile(ListCourses*& List, string path)
 {
     ifstream ifile;
     ifile.open(path);
@@ -1524,7 +1586,7 @@ void ImportCourseFile(ListCourses& List, string path)
     }
     ifile.close();
 }
-void CourseDashboard(int screenWidth, int screenHeight, ListCourses& LC) {
+void CourseDashboard(int screenWidth, int screenHeight, ListCourses*& LC) {
     InitWindow(screenWidth, screenHeight, "Course Dashboard");
 
     // Define button properties
@@ -1632,7 +1694,7 @@ void add1StudentCourse(Course*& cour, SinhVien*& sv) {
     }
 }
 
-void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses& LC, Course* cour) {
+void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Course* cour) {
     cour->lsv = new ListSV;
     cour->lsv->phead = NULL;
     cour->lsv->ptail = NULL;
@@ -1693,7 +1755,7 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses& LC, Cou
             if (studentSaved) {
                 int numRows = 0;
                 SinhVien* currentSV = cour->lsv->phead;
-                while (currentSV != nullptr) {
+                while (currentSV != NULL) {
                     numRows++;
                     currentSV = currentSV->next;
                 }
@@ -1738,13 +1800,31 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses& LC, Cou
             if (IsKeyPressed(KEY_ENTER))
             {
                 ListSV* svList = addListSV(AddsvInput);
-                SinhVien* temp = cour->lsv->ptail;
-                temp->next = svList->phead;
                 if (svList == NULL) {
                     showError = true;  // Set the error flag
                 }
                 else {
                     showError = false;  // Reset the error flag if file is successfully opened
+
+                    // Update the linked list of students
+                    if (cour->lsv == NULL) {
+                        cour->lsv = svList;
+                    }
+                    else {
+                        SinhVien* temp = cour->lsv->ptail;
+                        if (temp == NULL) {
+                            cour->lsv->phead = svList->phead;
+                        }
+                        else {
+                            temp->next = svList->phead;
+                        }
+                    }
+
+                    // Move ptail to the end of the updated list
+                    SinhVien* lastSV = svList->ptail;
+                    if (lastSV != NULL) {
+                        cour->lsv->ptail = lastSV;
+                    }
 
                     int numRows = 0;
                     SinhVien* currentSV = cour->lsv->phead;
@@ -1811,7 +1891,7 @@ void createnewstudent(Course* cour, bool& studentSaved) {
     bool isConfirmButtonPressed = false;
 
     bool isInputValid = true;
-    std::string errorMessage = "";
+    string errorMessage = "";
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -1892,7 +1972,7 @@ void createnewstudent(Course* cour, bool& studentSaved) {
             }
 
             if (isInputValid) {
-                std::string gender = inputFields[4].text;
+               string gender = inputFields[4].text;
                 if (gender != "Male" && gender != "Female") {
                     isInputValid = false;
                     errorMessage = "Gender must be Male or Female";
@@ -1941,98 +2021,7 @@ void createnewstudent(Course* cour, bool& studentSaved) {
 
     CloseWindow();
 }
-/////////doc tu file 23CTT5_mark.csv
-ListSV* docDiemTuFile(string path)
-{
-    ifstream ifile(path);
-    if (!ifile.is_open())
-    {
-        cout << "loi";
-        return NULL;
-    }
-    ListSV* List = new ListSV;
-    List->phead = NULL;
-    List->ptail = NULL;
-    string temp;
-    getline(ifile, temp);
-    while (ifile.peek() != EOF)
-    {
-        SinhVien* newSV = new SinhVien;
-        getline(ifile, temp, ',');
-        getline(ifile, newSV->mssv, ',');
-        getline(ifile, newSV->ho, ',');
-        getline(ifile, newSV->ten, ',');
-        //lay diem
-        getline(ifile, temp, ',');
-        newSV->mark.otherMark = stod(temp);
-
-        getline(ifile, temp, ',');
-        newSV->mark.MidMark = stod(temp);
-
-        getline(ifile, temp, ',');
-        newSV->mark.FinalMark = stod(temp);
-
-        getline(ifile, temp);
-        newSV->mark.totalMark = stod(temp);
-
-        newSV->Lc = NULL;
-        newSV->next = NULL;
-        if (List->phead == NULL)
-        {
-            List->phead = newSV;
-            List->ptail = newSV;
-        }
-        else
-        {
-            List->ptail->next = newSV;
-            List->ptail = newSV;
-        }
-
-
-    }
-    ifile.close();
-
-    //return
-    return List;
-
-}
-void deleteListSV(ListSV*& lsv)
-{
-    if (lsv->phead == NULL)
-    {
-        return;
-    }
-    SinhVien* temp = lsv->phead;
-    SinhVien* after = NULL;
-    while (temp != NULL)
-    {
-        after = temp->next;
-        delete temp;
-        temp = after;
-
-
-    }
-}
-void deleteListCourse(ListCourses*& lc)
-{
-    if (lc->head == NULL)
-    {
-        return;
-    }
-    Course* temp = lc->head;
-    Course* after = NULL;
-    while (temp != NULL)
-    {
-        after = temp->next;
-        delete temp;
-        temp = after;
-
-
-    }
-}
-
-//
-void ViewSignCourses(ListCourses List, Course* courses, int numRows, ListCourses& SV) {
+void ViewSignCourses(ListCourses* List, Course* courses, int numRows, ListCourses*& SV) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "");
@@ -2063,7 +2052,7 @@ void ViewSignCourses(ListCourses List, Course* courses, int numRows, ListCourses
             selectedCourse--;
         }
         if (IsKeyPressed(KEY_ENTER)) {
-            ShowSignCoursesDetails(List, courses[selectedCourse], SV);    
+            ShowSignCoursesDetails(List, courses[selectedCourse], SV);
         }
 
         // Adjust scroll position to keep the selected course visible
@@ -2168,7 +2157,7 @@ void ViewSignCourses(ListCourses List, Course* courses, int numRows, ListCourses
 
     CloseWindow();
 }
-void ShowSignCoursesDetails(ListCourses& List, Course& course, ListCourses& SV) {
+void ShowSignCoursesDetails(ListCourses*& List, Course& course, ListCourses*& SV) {
     const int detailScreenWidth = 1366;
     const int detailScreenHeight = 768;
     InitWindow(detailScreenWidth, detailScreenHeight, "Course Details");
@@ -2226,7 +2215,7 @@ void ShowSignCoursesDetails(ListCourses& List, Course& course, ListCourses& SV) 
         CloseWindow();
     }
 }
-void ViewCourses_SV(ListCourses List, Course* courses, int numRows) {
+void ViewCourses_SV(ListCourses* List, Course* courses, int numRows) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "Danh Sách Khóa Học");
@@ -2241,7 +2230,7 @@ void ViewCourses_SV(ListCourses List, Course* courses, int numRows) {
     const int startX = (screenWidth - (numCols * cellWidth)) / 2;
     const int startY = 100 * screenRatioY;
 
-    const char* headers[numCols] = { "ID", "Tên khóa học", "Lớp", "Giáo viên", "Năm học", "Số tín chỉ", "Ngày học", "Buổi học" };
+    const char* headers[numCols] = { "ID", "Course name", "Class", "Teacher", "School Year", "Credits", "Week Day", "Session" };
 
     int scrollBarYOffset = 0;
     int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
@@ -2358,3 +2347,5 @@ void ViewCourses_SV(ListCourses List, Course* courses, int numRows) {
 
     CloseWindow();
 }
+
+
