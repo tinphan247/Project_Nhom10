@@ -99,9 +99,6 @@ struct ListUser {
     User* phead;
     User* ptail;
 };
-
-// Function declarations
-
 void DrawButton(Rectangle button, const char* text, bool mouseOverButton);
 bool kiemtrangaysinh(int ngay, int thang, int nam);
 void taosv(string& MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
@@ -143,7 +140,9 @@ void createnewstudent(Course* cour, bool& studentSaved);
 void showCourseDetails(ListCourses& List, Course& course);
 void RemoveCourse(ListCourses*& List, Course* course);
 Course* Find_ID(ListCourses*& List, string id);
+void ViewAvailableSignCourses(ListCourses* List, Course* courses, int numRows, ListCourses*& SV);
+void DisplayCourseDetails(Course* course, ListCourses*& List_Courses_SV);
 void ViewSignCourses(ListCourses* List, Course* courses, int numRows, ListCourses*& SV);
 void ShowSignCoursesDetails(ListCourses*& List, Course& course, ListCourses*& SV);
-void ViewCourses_SV(ListCourses* List, Course* courses, int numRows);
-#endif // FUNCTION_H
+void ViewCourses_SV(Course* courses, int numRows,ListCourses*& SV);
+#endif 
