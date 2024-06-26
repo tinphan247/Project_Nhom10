@@ -75,7 +75,6 @@ int main() {
                 DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
 
                 if (mouseOverButton[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                    // Reset all active states
                     createNewSchoolYearActive = false;
                     schoolYearInputBoxActive = false;
                     createNewSemesterActive = false;
@@ -221,7 +220,6 @@ int main() {
                 DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
 
                 if (mouseOverButton[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                    // Reset all active states
                     viewprofileActive = false;
                     ChangepasswordActive = false;
 
@@ -244,7 +242,6 @@ int main() {
             }
 
             if (ChangepasswordActive) {
-                // Implementation for changing password
                 ChangePassword(LUR, username, password);
                 saveListUser(LUR, "User.csv");
                 ChangepasswordActive = false;
@@ -255,10 +252,9 @@ int main() {
                 DisplayProfileInfo(user);
                 viewprofileActive = false;
             }
-
             if (dangkicourse) {
                 ImportCourseFile(LC, "Courses.csv");
-                // Count the number of courses in the linked list
+
                 int numRows = 0;
                 Course* tempCount = LC->head;
 
@@ -266,27 +262,18 @@ int main() {
                     numRows++;
                     tempCount = tempCount->next;
                 }
-
-                // Allocate memory for an array to store courses
                 Course* courseArray = new Course[numRows];
-
-                // Copy courses from linked list to array
                 Course* temp = LC->head;
                 Course* pretemp = NULL;
                 int i;
                 for (i = 0; i < numRows && temp != nullptr; i++) {
-                    courseArray[i] = *temp;  // Copy each course object
+                    courseArray[i] = *temp; 
                     temp = temp->next;
                 }
-                // Draw the course table
-                ViewSignCourses(LC, courseArray, numRows, List_Courses_SV);
-
-                // Clean up dynamically allocated memory
+                ViewAvailableSignCourses(LC, courseArray, numRows, List_Courses_SV);
                 delete[] courseArray;
-
                 dangkicourse = false;
             }
-
             if (ViewCoursesActive) {
                 int numRows = 0;
                 Course* tempCount = List_Courses_SV->head;
@@ -295,24 +282,15 @@ int main() {
                     numRows++;
                     tempCount = tempCount->next;
                 }
-
-                // Allocate memory for an array to store courses
                 Course* courseArray = new Course[numRows];
-
-                // Copy courses from linked list to array
                 Course* temp = List_Courses_SV->head;
-                Course* pretemp = NULL;
                 int i;
                 for (i = 0; i < numRows && temp != nullptr; i++) {
-                    courseArray[i] = *temp;  // Copy each course object
+                    courseArray[i] = *temp;  
                     temp = temp->next;
                 }
-                // Draw the course table
-                ViewCourses_SV(List_Courses_SV, courseArray, numRows);
-
-                // Clean up dynamically allocated memory
+                ViewCourses_SV( courseArray, numRows, List_Courses_SV);
                 delete[] courseArray;
-
                 ViewCoursesActive = false;
             }
 
