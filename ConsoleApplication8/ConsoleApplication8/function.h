@@ -99,6 +99,17 @@ struct ListUser {
     User* phead;
     User* ptail;
 };
+struct docDiem
+{
+    int No;
+    string id;
+    string ho;
+    string ten;
+    double other;
+    double midterm;
+    double final;
+    double total;
+};
 void DrawButton(Rectangle button, const char* text, bool mouseOverButton);
 bool kiemtrangaysinh(int ngay, int thang, int nam);
 void taosv(string& MSSV, string& ten, string& ho, string& gender, int& ngay, int& thang, int& nam, string& cccd);
@@ -157,4 +168,5 @@ void showClassFunctions(ListClass* classList, Class& selectedClass);
 void viewListStudent(const Class& selectedClass, int screenWidth, int screenHeight, bool& viewlistsvActive);
 void importListStudent(Class& selectedClass, int screenWidth, int screenHeight, bool& importlistsvActive);
 void deleteClass(ListClass* classList, const Class& selectedClass);
+docDiem* docDiemTuFile(string path, int& count, string& title);
 #endif 
