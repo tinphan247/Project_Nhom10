@@ -1,15 +1,24 @@
 #include "function.h"
 
 int main() {
-    ListCourses* LC=new ListCourses;
+    ListClass* Lclass = new ListClass;
+    Lclass->head = NULL;
+
+    ListCourses* LC = new ListCourses;
     InitList(LC);
+
     ListNamHoc LNH = { NULL };
-    NamHoc* N = NULL;
-    Semester* sm = NULL;
+
+    NamHoc* N = new NamHoc; // Sử dụng new để đồng bộ với delete
+    Semester* sm = new Semester; // Sử dụng new để đồng bộ với delete
+
     ListUser* LUR = addListUser("User.csv");
+
     Semester* s = new Semester;
-    ListCourses* List_Courses_SV=new ListCourses;
+
+    ListCourses* List_Courses_SV = new ListCourses;
     InitList(List_Courses_SV);
+
     char username[128] = "\0";
     char password[128] = "\0";
     bool checkstaff = false;
@@ -21,6 +30,11 @@ int main() {
     bool loginSuccessful = false;
     bool showError = false;
     bool showInvalidYearError = false;
+    bool showsemester = false;
+
+    char classNameInput[128] = "\0"; // Tăng kích thước bộ nhớ
+    Rectangle classNameInputBox = { 100, 100, 200, 40 };
+
     if (Login(LUR, username, password, checkstaff) && checkstaff) {
         const int dashboardWidth = 1366;
         const int dashboardHeight = 768;
@@ -28,14 +42,17 @@ int main() {
         SetWindowTitle("staff dashboard");
         SetTargetFPS(60);
 
-        Rectangle buttons[6];
-        const char* buttonLabels[6] = {
+        Rectangle buttons[9];
+        const char* buttonLabels[9] = {
             "Create New School Year",
             "Create New Semester",
             "Add Course",
             "View and Delete Course",
             "Add Student to Course and View",
-            "Change password"
+            "Change password",
+            "Create New Class",
+            "View Class",
+            "View Class"
         };
 
         bool createNewSchoolYearActive = false;
@@ -45,18 +62,16 @@ int main() {
 
         bool createNewSemesterActive = false;
         bool createNewCourseActive = false;
-        bool ViewCourseActive = false;
+        bool viewCourseActive = false;
+        bool addsvInputBoxActive = false;
+        char addsvInput[128] = "\0";
+        Rectangle addsvInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
+        bool classNameBoxActive = false;
+        bool changePasswordActive = false;
+        bool viewClassActive = false;
+        bool createClassActive = false;
 
-        char ViewCourseInput[128] = "\0";
-        bool ViewCourseInputBoxActive = false;
-        bool showsemester = false;
-        bool AddsvInputBoxActive = false;
-        char AddsvInput[128] = "\0";
-        Rectangle AddsvInputBox = { dashboardWidth / 2 - 100, 450, 200, 40 };
-
-        bool ChangepasswordActive = false;
-
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 9; i++) {
             buttons[i].x = (dashboardWidth - 400) / 2;
             buttons[i].y = 50 + i * 60;
             buttons[i].width = 400;
@@ -65,12 +80,12 @@ int main() {
 
         while (!WindowShouldClose()) {
             Vector2 mousePoint = GetMousePosition();
-            bool mouseOverButton[6] = { false };
+            bool mouseOverButton[9] = { false };
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 9; i++) {
                 mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
                 DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
 
@@ -79,10 +94,11 @@ int main() {
                     schoolYearInputBoxActive = false;
                     createNewSemesterActive = false;
                     createNewCourseActive = false;
-                    ViewCourseActive = false;
-                    ViewCourseInputBoxActive = false;
-                    AddsvInputBoxActive = false;
-                    ChangepasswordActive = false;
+                    viewCourseActive = false;
+                    addsvInputBoxActive = false;
+                    changePasswordActive = false;
+                    viewClassActive = false;
+                    createClassActive = false;
 
                     switch (i) {
                     case 0:
@@ -99,12 +115,18 @@ int main() {
                         }
                         else {
                             if (i == 2) createNewCourseActive = true;
-                            if (i == 3) ViewCourseActive = true;
-                            if (i == 4) AddsvInputBoxActive = true;
+                            if (i == 3) viewCourseActive = true;
+                            if (i == 4) addsvInputBoxActive = true;
                         }
                         break;
                     case 5:
-                        ChangepasswordActive = true;
+                        changePasswordActive = true;
+                        break;
+                    case 6:
+                        createClassActive = true;
+                        break;
+                    case 7:
+                        viewClassActive = true;
                         break;
                     }
                 }
@@ -123,11 +145,11 @@ int main() {
             }
 
             if (showsemester) {
-                string hocKyText = "Hoc Ky " + to_string(s->thutu) + " -"+s->namhoc;
+               string hocKyText = "Hoc Ky " + to_string(s->thutu) + " -" + s->namhoc;
                 const char* hocKyChar = hocKyText.c_str();
                 int hocKyWidth = MeasureText(hocKyChar, 20);
-                int hocKyX = 10;  
-                int hocKyY = 10; 
+                int hocKyX = 10;
+                int hocKyY = 10;
                 DrawText(hocKyChar, hocKyX, hocKyY, 20, DARKGRAY);
             }
 
@@ -137,7 +159,7 @@ int main() {
                 createNewCourseActive = false;
             }
 
-            if (ViewCourseActive) {
+            if (viewCourseActive) {
                 int numRows = 0;
                 Course* tempCount = s->lc->head;
 
@@ -148,7 +170,7 @@ int main() {
 
                 Course* courseArray = new Course[numRows];
 
-                Course* temp =s->lc->head;
+                Course* temp = s->lc->head;
                 int i;
                 for (i = 0; i < numRows && temp != nullptr; i++) {
                     courseArray[i] = *temp;
@@ -158,23 +180,32 @@ int main() {
                 viewcourse(s->lc, courseArray, numRows);
                 delete[] courseArray;
 
-                ViewCourseActive = false;
+                viewCourseActive = false;
             }
 
-            if (AddsvInputBoxActive) {
-                AddStudentsbutton(AddsvInput, AddsvInputBox, AddsvInputBoxActive, s->lc, dashboardWidth, dashboardHeight);
+            if (addsvInputBoxActive) {
+                AddStudentsbutton(addsvInput, addsvInputBox, addsvInputBoxActive, s->lc, dashboardWidth, dashboardHeight);
             }
 
-            if (ChangepasswordActive) {
+            if (changePasswordActive) {
                 ChangePassword(LUR, username, password);
                 saveListUser(LUR, "User.csv");
-                ChangepasswordActive = false;
+                changePasswordActive = false;
+            }
+
+            if (createClassActive) {
+                DrawClassNameInputBox(classNameInputBox, classNameInput, mousePoint, mouseOnText, classNameBoxActive, dashboardWidth, dashboardHeight, Lclass, createClassActive);
+            }
+
+            if (viewClassActive) {
+               loadClassesFromCSV(Lclass, "classes.csv");
+                viewClasses(Lclass);
+                viewClassActive = false;
             }
 
             if (showError) {
                 DrawText("Error: No semester created yet!", 10, 10, 20, RED);
-                if (showsemester)
-                {
+                if (showsemester) {
                     showError = false;
                 }
             }
@@ -201,6 +232,7 @@ int main() {
         bool ChangepasswordActive = false;
         bool dangkicourse = false;
         bool ViewCoursesActive = false;
+
         for (int i = 0; i < 4; i++) {
             buttons[i].x = (dashboardWidth - 400) / 2;
             buttons[i].y = 50 + i * 60;
@@ -223,8 +255,7 @@ int main() {
                     viewprofileActive = false;
                     ChangepasswordActive = false;
 
-                    switch (i)
-                    {
+                    switch (i) {
                     case 0:
                         viewprofileActive = true;
                         break;
@@ -267,7 +298,7 @@ int main() {
                 Course* pretemp = NULL;
                 int i;
                 for (i = 0; i < numRows && temp != nullptr; i++) {
-                    courseArray[i] = *temp; 
+                    courseArray[i] = *temp;
                     temp = temp->next;
                 }
                 ViewAvailableSignCourses(LC, courseArray, numRows, List_Courses_SV);
@@ -277,7 +308,6 @@ int main() {
             if (ViewCoursesActive) {
                 int numRows = 0;
                 Course* tempCount = List_Courses_SV->head;
-                // dem sl dong
                 while (tempCount != nullptr) {
                     numRows++;
                     tempCount = tempCount->next;
@@ -286,17 +316,25 @@ int main() {
                 Course* temp = List_Courses_SV->head;
                 int i;
                 for (i = 0; i < numRows && temp != nullptr; i++) {
-                    courseArray[i] = *temp;  
+                    courseArray[i] = *temp;
                     temp = temp->next;
                 }
-                ViewCourses_SV( courseArray, numRows, List_Courses_SV);
+                ViewCourses_SV(courseArray, numRows, List_Courses_SV);
                 delete[] courseArray;
                 ViewCoursesActive = false;
             }
 
             EndDrawing();
         }
-        }
-        CloseWindow();
-        return 0;
+    }
+    clearClassList(Lclass);
+    delete Lclass;
+    delete LC;
+    delete N;
+    delete sm;
+    delete LUR;
+    delete s;
+    delete List_Courses_SV;
+    CloseWindow();
+    return 0;
 }
