@@ -52,7 +52,7 @@ int main() {
             "Change password",
             "Create New Class",
             "View Class",
-            "View Class"
+            "View Class Grade"
         };
 
         bool createNewSchoolYearActive = false;
@@ -70,7 +70,7 @@ int main() {
         bool changePasswordActive = false;
         bool viewClassActive = false;
         bool createClassActive = false;
-
+        bool viewClassGrade = false;
         for (int i = 0; i < 9; i++) {
             buttons[i].x = (dashboardWidth - 400) / 2;
             buttons[i].y = 50 + i * 60;
@@ -127,6 +127,9 @@ int main() {
                         break;
                     case 7:
                         viewClassActive = true;
+                        break;
+                    case 8:
+                        viewClassGrade = true;
                         break;
                     }
                 }
@@ -202,7 +205,16 @@ int main() {
                 viewClasses(Lclass);
                 viewClassActive = false;
             }
-
+            if (viewClassGrade) {
+                // thieu nhap ten file
+                string path= "KTLT_23CTT5.csv";
+                int count = 0;
+                string title= "\0\0\0";
+                docDiem* diem = docDiemTuFile(path,count,title);
+                viewGrade(diem, count,title);
+                viewClassGrade = false;
+                delete[]diem;
+}
             if (showError) {
                 DrawText("Error: No semester created yet!", 10, 10, 20, RED);
                 if (showsemester) {
