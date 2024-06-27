@@ -127,7 +127,7 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
 void saveListUser(ListUser* LUR, const string& path);
 bool Login(ListUser* LUR, char* username, char* password, bool& checkstaff);
 void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearInputBoxActive, char* schoolYearInput, ListNamHoc& LNH, NamHoc*& N, Vector2 mousePoint, bool& showError);
-void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInputBoxActive, ListCourses*& LC, int screenWidth, int screenHeight);
+void AddStudentsbutton(char* AddsvInput, Rectangle& AddsvInputBox, bool& AddsvInputBoxActive, ListCourses*& LC, float screenWidth, float screenHeight);
 User* timnodeuser(ListUser* LUR, string username, string password);
 void DisplayProfileInfo(User* user);
 void ShowImportCoursePage(string& pathC);
@@ -145,4 +145,14 @@ void DisplayCourseDetails(Course* course, ListCourses*& List_Courses_SV);
 void ViewSignCourses(ListCourses* List, Course* courses, int numRows, ListCourses*& SV);
 void ShowSignCoursesDetails(ListCourses*& List, Course& course, ListCourses*& SV);
 void ViewCourses_SV(Course* courses, int numRows,ListCourses*& SV);
+void DrawClassNameInputBox(Rectangle& classNameInputBox, char* classNameInput, Vector2 mousePoint, bool& mouseOnText, bool& classNameBoxActive, float screenWidth, float screenHeight, ListClass*& DS, bool& createClassActive);
+void AddNewClassToList(const char* className, ListClass*& DS);
+void saveClassesToCSV(ListClass* classList, const char* filename);
+void loadClassesFromCSV(ListClass* classList, const char* filename);
+void clearClassList(ListClass* classList);
+void viewClasses(ListClass* classList);
+void showClassFunctions(ListClass* classList, Class& selectedClass);
+void viewListStudent(const Class& selectedClass, int screenWidth, int screenHeight, bool& viewlistsvActive);
+void importListStudent(Class& selectedClass, int screenWidth, int screenHeight, bool& importlistsvActive);
+void deleteClass(ListClass* classList, const Class& selectedClass);
 #endif 
