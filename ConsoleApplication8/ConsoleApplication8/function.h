@@ -169,4 +169,5 @@ void viewListStudent(const Class& selectedClass, int screenWidth, int screenHeig
 void importListStudent(Class& selectedClass, int screenWidth, int screenHeight, bool& importlistsvActive);
 void deleteClass(ListClass* classList, const Class& selectedClass);
 docDiem* docDiemTuFile(string path, int& count, string& title);
+void viewGrade(docDiem* diem, int& numRows,string title);
 #endif 
