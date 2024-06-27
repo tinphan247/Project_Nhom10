@@ -1,4 +1,4 @@
-#include "function.h"
+#include "project.h"
 
 bool IsEmpty(const char* str)
 {
@@ -59,17 +59,17 @@ ListUser* addListUser(const string& path) {
     return LUR;
 }
 
-bool CheckLogin(const char* username, const char* password,bool& checkstaff,ListUser*& LU) 
+bool CheckLogin(const char* username, const char* password, bool& checkstaff, ListUser*& LU)
 {
-    if (!LU) 
+    if (!LU)
     {
         return false;
     }
 
     User* temp = LU->phead;
-    while (temp != nullptr) 
+    while (temp != nullptr)
     {
-        if (temp->id == username && temp->pass == password) 
+        if (temp->id == username && temp->pass == password)
         {
             checkstaff = temp->staff;
             return true;
@@ -79,7 +79,7 @@ bool CheckLogin(const char* username, const char* password,bool& checkstaff,List
     return false;
 }
 
-void DrawButton(Rectangle button, const char* text, bool mouseOverButton) 
+void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
 {
     DrawRectangleRec(button, mouseOverButton ? DARKGRAY : LIGHTGRAY);
     DrawText(text, button.x + button.width / 2 - MeasureText(text, 20) / 2, button.y + button.height / 2 - 10, 20, BLACK);
@@ -87,7 +87,7 @@ void DrawButton(Rectangle button, const char* text, bool mouseOverButton)
 void taonamhoc(ListNamHoc& L, NamHoc*& N, const char* thoigiannamhoc)
 {
     N = new NamHoc();
-    N->ngaybatdau= thoigiannamhoc;
+    N->ngaybatdau = thoigiannamhoc;
     if (L.phead == NULL) {
         L.phead = N;
     }
@@ -302,7 +302,7 @@ Semester* taohocky(Semester*& H, ListNamHoc& L) {
                                 H->lc = new ListCourses;
                                 H->lc->head = NULL;
                                 H->lc->tail = NULL;
-                                H->showsemester=true;
+                                H->showsemester = true;
                                 if (temp->Hocky == NULL) {
                                     temp->Hocky = H;
                                 }
@@ -435,7 +435,7 @@ void showCourseDetails(ListCourses*& List, Course& course) {
         textY += 30 + textPadding;
         DrawText(("Teacher Name: " + course.teacherName).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
-        DrawText(("Academic Year: " +to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
+        DrawText(("Academic Year: " + to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
         DrawText(("Credits: " + to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
@@ -511,7 +511,7 @@ void viewcourse(ListCourses*& List, Course*& courses, int& numRows) {
     const int startY = 100 * screenRatioY;
     const char* headers[numCols] = { "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", " week day", "Session" };
     int scrollBarYOffset = 0;
-    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight; 
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
     int selectedCourse = 0;
 
     while (!WindowShouldClose()) {
@@ -525,8 +525,8 @@ void viewcourse(ListCourses*& List, Course*& courses, int& numRows) {
         if (IsKeyPressed(KEY_ENTER)) {
             showCourseDetails(List, courses[selectedCourse]);
             if (courseWasDeleted) {
-                numRows--;  
-                Course* newCourses = new Course[numRows];  
+                numRows--;
+                Course* newCourses = new Course[numRows];
                 Course* cur = List->head;
                 int index = 0;
                 while (cur != NULL) {
@@ -534,7 +534,7 @@ void viewcourse(ListCourses*& List, Course*& courses, int& numRows) {
                     cur = cur->next;
                     index++;
                 }
-                delete[] courses; 
+                delete[] courses;
                 courses = newCourses;
                 courseWasDeleted = false;
                 CloseWindow();
@@ -562,15 +562,15 @@ void viewcourse(ListCourses*& List, Course*& courses, int& numRows) {
         // In cac thong tin cua tieu de
         for (int i = 0; i < numRows; i++) {
             if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
-                continue; 
+                continue;
             }
             if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
-                break; 
+                break;
             }
             Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
             DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
             const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
-            for (int j = 0; j < 8; j++) { 
+            for (int j = 0; j < 8; j++) {
                 int textWidth = 0;
                 int textX = startX + j * cellWidth + textPadding;
                 string textToDraw;
@@ -616,7 +616,7 @@ void viewcourse(ListCourses*& List, Course*& courses, int& numRows) {
         scrollBar.y = startY + cellHeight + scrollBarY;
         DrawRectangleRec(scrollBar, GRAY);
         int scroll = GetMouseWheelMove();
-        scrollBarYOffset += scroll * 50 * (-1); 
+        scrollBarYOffset += scroll * 50 * (-1);
         if (scrollBarYOffset < 0) {
             scrollBarYOffset = 0;
         }
@@ -650,7 +650,7 @@ Course* InputCourse(string id, string CourseName, string ClassName, string GVNam
     cout << newCourse->session << endl;
     return newCourse;
 }
-void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int &Credits, string& wDay, string& Session) {
+void ShowInputCoursePage(string& id, string& CourseName, string& ClassName, string& GVName, int& AcademicYear, int& Credits, string& wDay, string& Session) {
     const int numFields = 8;
     const char* fieldLabels[numFields] = {
         "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", "Nhap week day(MON / TUE...) :", "Nhap Session [S1 (07:30), S2 (09:30), S3(13:30), S4 (15:30)]:"
@@ -820,6 +820,67 @@ ListSV* addListSV(string path)
     return List;
 
 }
+void RemoveStudent(ListSV* studentList, int index) {
+    if (index < 0) return;
+
+    SinhVien* current = studentList->phead;
+    SinhVien* previous = nullptr;
+    int currentIndex = 0;
+
+    while (current != nullptr && currentIndex < index) {
+        previous = current;
+        current = current->next;
+        currentIndex++;
+    }
+
+    if (current == nullptr) return;
+
+    if (previous == nullptr) {
+        studentList->phead = current->next;
+    }
+    else {
+        previous->next = current->next;
+    }
+
+    delete current;
+}
+void DisplayStudentDetails(SinhVien* student, ListSV* studentList, int studentIndex) {
+    const int detailScreenWidth = 1366;
+    const int detailScreenHeight = 768;
+    InitWindow(detailScreenWidth, detailScreenHeight, "Student Details");
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        DrawText(("MSSV: " + student->mssv).c_str(), 20, 20, 20, DARKGRAY);
+        DrawText(("Ho: " + student->ho).c_str(), 20, 60, 20, DARKGRAY);
+        DrawText(("Ten: " + student->ten).c_str(), 20, 100, 20, DARKGRAY);
+        DrawText(("Lop: " + student->ClassName).c_str(), 20, 140, 20, DARKGRAY);
+        DrawText(("Gioi Tinh: " + student->gender).c_str(), 20, 180, 20, DARKGRAY);
+        string birthday = to_string(student->birth.day) + "/" + to_string(student->birth.month) + "/" + to_string(student->birth.year);
+        DrawText(("Ngay Sinh: " + birthday).c_str(), 20, 220, 20, DARKGRAY);
+        DrawText(("CCCD: " + student->cccd).c_str(), 20, 260, 20, DARKGRAY);
+
+        Rectangle deleteButton = { detailScreenWidth / 2 - 50, detailScreenHeight - 100, 100, 50 };
+        DrawRectangleRec(deleteButton, RED);
+        DrawText("DELETE", detailScreenWidth / 2 - MeasureText("DELETE", 20) / 2, detailScreenHeight - 85, 20, WHITE);
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            Vector2 mousePoint = GetMousePosition();
+            if (CheckCollisionPointRec(mousePoint, deleteButton)) {
+                // Delete the student and close the window
+                RemoveStudent(studentList, studentIndex);
+                CloseWindow();
+                break;
+            }
+        }
+
+        EndDrawing();
+    }
+}
+
+
 void DrawStudentListFromData(ListSV* studentList, int numRows) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
@@ -842,8 +903,43 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
     // Thêm thanh cuộn
     int scrollBarYOffset = 0;
     int maxDisplayedLines = screenHeight / cellHeight - 2; // Trừ 2 cho phần header và phần input
+    int selectedStudentIndex = -1; // Biến lưu chỉ số sinh viên được chọn
 
     while (!WindowShouldClose()) {
+        // Xử lý sự kiện bàn phím
+        if (IsKeyPressed(KEY_DOWN)) {
+            selectedStudentIndex++;
+            if (selectedStudentIndex >= numRows) selectedStudentIndex = numRows - 1;
+            if (selectedStudentIndex >= maxDisplayedLines + scrollBarYOffset / cellHeight) {
+                scrollBarYOffset += cellHeight;
+                if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+                    scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+                }
+            }
+        }
+        if (IsKeyPressed(KEY_UP)) {
+            selectedStudentIndex--;
+            if (selectedStudentIndex < 0) selectedStudentIndex = 0;
+            if (selectedStudentIndex < scrollBarYOffset / cellHeight) {
+                scrollBarYOffset -= cellHeight;
+                if (scrollBarYOffset < 0) scrollBarYOffset = 0;
+            }
+        }
+        if (IsKeyPressed(KEY_ENTER) && selectedStudentIndex >= 0 && selectedStudentIndex < numRows) {
+            // Lấy thông tin sinh viên được chọn
+            int currentIndex = 0;
+            SinhVien* currentSV = studentList->phead;
+            while (currentIndex < selectedStudentIndex && currentSV != nullptr) {
+                currentSV = currentSV->next;
+                currentIndex++;
+            }
+            if (currentSV != nullptr) {
+                // Hiển thị cửa sổ chi tiết sinh viên
+                DisplayStudentDetails(currentSV, studentList, selectedStudentIndex);
+                numRows--; // Giảm số lượng sinh viên khi xóa
+            }
+        }
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -890,7 +986,8 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
         int stt = visibleStartIndex + 1; // Số thứ tự bắt đầu từ vị trí hiển thị đầu tiên
         for (int i = visibleStartIndex; i < visibleEndIndex && currentSV != nullptr; i++) {
             // Vẽ dữ liệu cho hàng hiện tại
-            DrawRectangle(startX, startY + (i - visibleStartIndex + 1) * cellHeight, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, RAYWHITE); // Vẽ hình chữ nhật cho toàn bộ hàng
+            Color rowColor = (i == selectedStudentIndex) ? SKYBLUE : RAYWHITE;
+            DrawRectangle(startX, startY + (i - visibleStartIndex + 1) * cellHeight, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, rowColor); // Vẽ hình chữ nhật cho toàn bộ hàng
             string sttStr = to_string(stt);
             DrawText(sttStr.c_str(), startX + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
             DrawText(currentSV->mssv.c_str(), startX + (cellWidth + columnSpacing) * 1 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
@@ -1087,24 +1184,24 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
             User* temp = userList->phead;
             while (temp != NULL)
             {
-                if (username== temp->id && password== temp->pass) 
+                if (username == temp->id && password == temp->pass)
                 {
                     break;
                 }
                 temp = temp->next;
             }
-            if (currentPassword== temp->pass) {
+            if (currentPassword == temp->pass) {
                 if (strlen(newPassword) > 0 && strcmp(newPassword, confirmedNewPassword) == 0) {
-                    temp->pass= newPassword;
+                    temp->pass = newPassword;
                     confirmPassword = true;
-                    strcpy_s(errorMessage,50, "Password changed successfully!");
+                    strcpy_s(errorMessage, 50, "Password changed successfully!");
                 }
                 else {
-                    strcpy_s(errorMessage,100, "Error: New passwords do not match or are invalid.");
+                    strcpy_s(errorMessage, 100, "Error: New passwords do not match or are invalid.");
                 }
             }
             else {
-                strcpy_s(errorMessage,38, "Error: Current password is incorrect.");
+                strcpy_s(errorMessage, 38, "Error: Current password is incorrect.");
             }
             if (confirmPassword) {
                 changePasswordActive = false;
@@ -1115,7 +1212,7 @@ void ChangePassword(ListUser* userList, const char* username, const char* passwo
         DrawText(errorMessage, dashboardWidth - MeasureText(errorMessage, 20) - 10, dashboardHeight - 30, 20, RED);
         EndDrawing();
     }
-    CloseWindow(); 
+    CloseWindow();
 }
 bool Login(ListUser* LUR, char* username, char* password, bool& checkstaff) {
     const int screenWidth = 1280;
@@ -1289,7 +1386,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle& AddsvInputBox, bool& AddsvIn
     static bool showError = false;
 
     // Thiết lập vị trí cho ô nhập liệu
-     const int inputBoxWidth = 200;
+    const int inputBoxWidth = 200;
     const int inputBoxHeight = 40;
     AddsvInputBox = { screenWidth / 2 - inputBoxWidth / 2, screenHeight - 100, inputBoxWidth, inputBoxHeight };
 
@@ -1352,7 +1449,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle& AddsvInputBox, bool& AddsvIn
     }
 }
 
-User* timnodeuser(ListUser* LUR,string username,string password)
+User* timnodeuser(ListUser* LUR, string username, string password)
 {
     User* temp = LUR->phead;
     while (temp != NULL)
@@ -1382,9 +1479,9 @@ void DisplayProfileInfo(User* user) {
         DrawText(("ID: " + user->id).c_str(), 50, 50, 20, BLACK);
         DrawText(("Full Name: " + user->ho + " " + user->ten).c_str(), 50, 80, 20, BLACK);
         DrawText(("Date of Birth: " +
-           to_string(user->birth.day) + "/" +
-           to_string(user->birth.month) + "/" +
-           to_string(user->birth.year)).c_str(), 50, 110, 20, BLACK);
+            to_string(user->birth.day) + "/" +
+            to_string(user->birth.month) + "/" +
+            to_string(user->birth.year)).c_str(), 50, 110, 20, BLACK);
         DrawText(("Gender: " + user->gender).c_str(), 50, 140, 20, BLACK);
         DrawText(("Academic Year: " + user->academicYear).c_str(), 50, 170, 20, BLACK);
         DrawRectangle(backButtonX, backButtonY, buttonWidth, buttonHeight, LIGHTGRAY);
@@ -1531,11 +1628,11 @@ void CourseDashboard(int screenWidth, int screenHeight, ListCourses*& LC) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             if (inputCourseMouseOver) {
                 inputCourseActive = true;
-                importCourseActive = false; 
+                importCourseActive = false;
             }
             else if (importCourseMouseOver) {
                 importCourseActive = true;
-                inputCourseActive = false; 
+                inputCourseActive = false;
             }
             else if (backMouseOver) {
                 CloseWindow();
@@ -1567,7 +1664,7 @@ void CourseDashboard(int screenWidth, int screenHeight, ListCourses*& LC) {
         EndDrawing();
     }
 
-    CloseWindow(); 
+    CloseWindow();
 }
 
 void add1StudentCourse(Course*& cour, SinhVien*& sv) {
@@ -1664,7 +1761,7 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Co
         }
         else if (importstudentActive) {
             // Vị trí dưới cùng của cửa sổ
-            int bottomMargin = screenHeight - 50; 
+            int bottomMargin = screenHeight - 50;
 
             // Vị trí ô nhập liệu
             Rectangle AddsvInputBox = { screenWidth / 2 - 150, bottomMargin - 60, 300, 40 };
@@ -1851,7 +1948,7 @@ void createnewstudent(Course* cour, bool& studentSaved) {
                             newChar = key - ('a' - 'A');
                         }
                         else if (!shiftPressed && key >= 'A' && key <= 'Z') {
-                            newChar = key + ('a' - 'A'); 
+                            newChar = key + ('a' - 'A');
                         }
                         inputFields[i].text[length] = newChar;
                         inputFields[i].text[length + 1] = '\0';
@@ -1872,7 +1969,7 @@ void createnewstudent(Course* cour, bool& studentSaved) {
                 }
             }
             if (isInputValid) {
-               string gender = inputFields[4].text;
+                string gender = inputFields[4].text;
                 if (gender != "Male" && gender != "Female") {
                     isInputValid = false;
                     errorMessage = "Gender must be Male or Female";
@@ -1880,7 +1977,7 @@ void createnewstudent(Course* cour, bool& studentSaved) {
             }
             if (!isInputValid) {
                 displayErrorMessage = true;
-                isConfirmButtonPressed = false; 
+                isConfirmButtonPressed = false;
             }
             if (isConfirmButtonPressed && isInputValid) {
                 SinhVien* newStudent = new SinhVien;
@@ -1931,7 +2028,7 @@ void ViewAvailableSignCourses(ListCourses* List, Course* courses, int numRows, L
     const char* headers[numCols] = { "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", " week day", "Session" };
 
     int scrollBarYOffset = 0;
-    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight; 
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
 
     int selectedCourse = 0;
 
@@ -1961,10 +2058,10 @@ void ViewAvailableSignCourses(ListCourses* List, Course* courses, int numRows, L
         }
         for (int i = 0; i < numRows; i++) {
             if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
-                continue; 
+                continue;
             }
             if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
-                break; 
+                break;
             }
 
             Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
@@ -2022,7 +2119,7 @@ void ViewAvailableSignCourses(ListCourses* List, Course* courses, int numRows, L
         scrollBar.y = startY + cellHeight + scrollBarY;
         DrawRectangleRec(scrollBar, GRAY);
         int scroll = GetMouseWheelMove();
-        scrollBarYOffset += scroll * 50 * (-1); 
+        scrollBarYOffset += scroll * 50 * (-1);
         if (scrollBarYOffset < 0) {
             scrollBarYOffset = 0;
         }
@@ -2072,7 +2169,7 @@ void ShowSignCoursesDetails(ListCourses*& List, Course& course, ListCourses*& SV
         textY += 30 + textPadding;
         DrawText(("Academic Year: " + to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
-        DrawText(("Credits: " +to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
+        DrawText(("Credits: " + to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
         DrawText(("Week Day: " + course.wDay).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
@@ -2109,7 +2206,7 @@ void ShowSignCoursesDetails(ListCourses*& List, Course& course, ListCourses*& SV
             {
                 showerror = true;
             }
-            if (showerror) 
+            if (showerror)
             {
                 DrawText("Error:Course already signed", 10, 10, 20, RED);
             }
@@ -2118,7 +2215,7 @@ void ShowSignCoursesDetails(ListCourses*& List, Course& course, ListCourses*& SV
         CloseWindow();
     }
 }
-void DisplayCourseDetails(Course* course,ListCourses*& List_Courses_SV)
+void DisplayCourseDetails(Course* course, ListCourses*& List_Courses_SV)
 {
     const int screenWidth = 1366;
     const int screenHeight = 768;
@@ -2209,10 +2306,10 @@ void ViewSignCourses(ListCourses* List, Course* courses, int numRows, ListCourse
         }
         for (int i = 0; i < numRows; i++) {
             if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
-                continue; 
+                continue;
             }
             if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
-                break; 
+                break;
             }
             Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
             DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
@@ -2283,7 +2380,7 @@ void ViewSignCourses(ListCourses* List, Course* courses, int numRows, ListCourse
     CloseWindow();
 }
 
-void ViewCourses_SV(Course* courses, int numRows,ListCourses*& SV) {
+void ViewCourses_SV(Course* courses, int numRows, ListCourses*& SV) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "Danh Sách Khóa Học");
@@ -2323,7 +2420,7 @@ void ViewCourses_SV(Course* courses, int numRows,ListCourses*& SV) {
         if (IsKeyPressed(KEY_ENTER)) {
             selectedCourse = &courses[selectedCourseIndex];
             if (selectedCourse != nullptr) {
-                DisplayCourseDetails(selectedCourse,SV);
+                DisplayCourseDetails(selectedCourse, SV);
                 return;
             }
         }
@@ -2341,7 +2438,7 @@ void ViewCourses_SV(Course* courses, int numRows,ListCourses*& SV) {
                 continue;
             }
             if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
-                break; 
+                break;
             }
             Color rowColor = (i == selectedCourseIndex) ? SKYBLUE : RAYWHITE;
             DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
@@ -2462,12 +2559,12 @@ void saveClassesToCSV(ListClass* classList, const char* filename) {
     ofstream file(filename);
 
     if (!file.is_open()) {
-        cout<< "Không thể mở file: " << filename << endl;
+        cout << "Không thể mở file: " << filename << endl;
         return;
     }
 
     // Ghi tiêu đề cho file CSV
-    file << "ClassName"<<endl;
+    file << "ClassName" << endl;
 
     // Ghi thông tin các lớp học
     Class* current = classList->head;
@@ -2493,14 +2590,14 @@ void loadClassesFromCSV(ListClass* classList, const char* filename) {
     ifstream file(filename);
 
     if (!file.is_open()) {
-       cout << "Không thể mở file: " << filename <<endl;
+        cout << "Không thể mở file: " << filename << endl;
         return;
     }
 
     // Xóa danh sách lớp học hiện tại
     clearClassList(classList);
 
-   string line;
+    string line;
     // Bỏ qua dòng tiêu đề
     getline(file, line);
 
@@ -2522,12 +2619,12 @@ void loadClassesFromCSV(ListClass* classList, const char* filename) {
     }
 
     file.close();
-   cout << "Đọc danh sách lớp học từ file " << filename << " thành công!" << endl;
+    cout << "Đọc danh sách lớp học từ file " << filename << " thành công!" << endl;
 }
 void AddNewClassToList(const char* className, ListClass*& DS)
 {
     Class* CTT = new Class();
-    CTT->ClassName= className;
+    CTT->ClassName = className;
     CTT->next = NULL;
 
     if (DS->head == NULL) {
@@ -2541,7 +2638,7 @@ void AddNewClassToList(const char* className, ListClass*& DS)
         temp->next = CTT;
     }
 
-   cout << "Da them 1 lop moi vao danh sach cac lop" << endl;
+    cout << "Da them 1 lop moi vao danh sach cac lop" << endl;
 }
 void viewClasses(ListClass* classList) {
     const int screenWidth = 1366;
@@ -2685,13 +2782,13 @@ void showClassFunctions(ListClass* classList, Class& selectedClass) {
             if (mouseOverButton[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 switch (i) {
                 case 0:
-                    viewlistsvActive = true;                 
+                    viewlistsvActive = true;
                     break;
                 case 1:
                     importlistsvActive = true;
                     break;
                 case 2:
-                   // deleteClass(classList);
+                    // deleteClass(classList);
                     CloseWindow();
                     return;
                 }
@@ -2703,7 +2800,7 @@ void showClassFunctions(ListClass* classList, Class& selectedClass) {
         }
         if (importlistsvActive)
         {
-            importListStudent(selectedClass, screenWidth, screenHeight,importlistsvActive);
+            importListStudent(selectedClass, screenWidth, screenHeight, importlistsvActive);
         }
         EndDrawing();
     }
@@ -2715,18 +2812,18 @@ void viewListStudent(const Class& selectedClass, int screenWidth, int screenHeig
     int numRows = 0;
     SinhVien* currentSV = selectedClass.ds->phead;
 
-  
-        if (selectedClass.ds->phead == nullptr) {
-            DrawText("Khong the mo file", screenWidth - MeasureText("Khong the mo file", 20) - 10, screenHeight - 30, 20, RED);
+
+    if (selectedClass.ds->phead == nullptr) {
+        DrawText("Khong the mo file", screenWidth - MeasureText("Khong the mo file", 20) - 10, screenHeight - 30, 20, RED);
+    }
+    else {
+        while (currentSV != nullptr) {
+            numRows++;
+            currentSV = currentSV->next;
         }
-        else {
-            while (currentSV != nullptr) {
-                numRows++;
-                currentSV = currentSV->next;
-            }
-            DrawStudentListFromData(selectedClass.ds, numRows);
-            viewlistsvActive = false;
-        }
+        DrawStudentListFromData(selectedClass.ds, numRows);
+        viewlistsvActive = false;
+    }
 
     CloseWindow();
 }
