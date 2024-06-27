@@ -2910,3 +2910,168 @@ void deleteClass(ListClass* classList, const Class& selectedClass) {
     // Hàm xóa lớp được chọn khỏi danh sách
     // Implement this function based on your requirements
 }
+docDiem* docDiemTuFile(string path, int& count, string& title)
+{
+    ifstream ifile;
+    ifile.open(path);
+    if (!ifile.is_open())
+    {
+        cout << "ko mo dc";
+        return NULL;
+    }
+    count = 0;
+    string temp;
+    //3 vi ki tu dau chua Byte Order Mark
+    ifile.seekg(3, ios::beg);
+    getline(ifile, title, ',');
+    getline(ifile, temp);
+    while (ifile.peek() != EOF)
+    {
+        count++;
+        getline(ifile, temp);
+    }
+    // 2 dong (1 chua mon hoc ,1 chu no,id,ho,ten
+    count = count - 1;
+    docDiem* diem = new docDiem[count];
+    ifile.seekg(0, ios::beg);
+    getline(ifile, temp);
+    getline(ifile, temp);
+    int i = 0;
+    while (ifile.peek() != EOF)
+    {
+        getline(ifile, temp, ',');
+
+        diem[i].No = stoi(temp);
+        getline(ifile, diem[i].id, ',');
+        getline(ifile, diem[i].ho, ',');
+        getline(ifile, diem[i].ten, ',');
+
+        getline(ifile, temp, ',');
+        diem[i].other = stod(temp);
+
+        getline(ifile, temp, ',');
+        diem[i].midterm = stod(temp);
+        getline(ifile, temp, ',');
+        diem[i].final = stod(temp);
+        getline(ifile, temp);
+        diem[i].total = stod(temp);
+        i++;
+    }
+    ifile.close();
+    return diem;
+}
+void viewGrade(docDiem* diem, int& numRows,string title) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
+    InitWindow(screenWidth, screenHeight, "");
+
+    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
+    const int numCols = 8;
+    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
+    const int startX = (screenWidth - (numCols * cellWidth)) / 2;
+    const int startY = 100 * screenRatioY;
+
+    const char* headers[numCols] = { "No", "ID", "Ho", "Ten", "Other", "MidTerm", "Final", "Total"};
+
+    int scrollBarYOffset = 0;
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
+    int selectedCourse = 0;
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        ///
+       const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
+        int titleTextWidth = MeasureText(title.c_str(), fontSize);
+       int titleX = (screenWidth - titleTextWidth) / 2;
+       DrawText(title.c_str(), titleX, startY - 40 * screenRatioY, fontSize, BLACK);
+ 
+        // Draw headers
+        for (int i = 0; i < numCols; i++) {
+            DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+            int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+        }
+        // Draw grade data
+        for (int i = 0; i < numRows; i++) {
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
+                continue;
+            }
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
+                break;
+            }
+            Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
+            DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
+
+            const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
+            for (int j = 0; j < 8; j++) {
+                int textWidth = 0;
+                int textX = startX + j * cellWidth + textPadding;
+                string textToDraw;
+
+                switch (j) {
+                case 0:
+                    textToDraw = to_string(diem[i].No);
+                    break;
+                case 1:
+                    textToDraw = diem[i].id;
+                    break;
+                case 2:
+                    textToDraw = diem[i].ho;
+                    break;
+                case 3:
+                    textToDraw = diem[i].ten;
+                    break;
+                case 4:
+                    textToDraw = to_string(diem[i].other);
+                    break;
+                case 5:
+                    textToDraw = to_string(diem[i].midterm);
+                    break;
+                case 6:
+                    textToDraw = to_string(diem[i].final);
+                    break;
+                case 7:
+                    textToDraw = to_string(diem[i].total);
+                    break;
+                default:
+                    break;
+                }
+
+                textWidth = MeasureText(textToDraw.c_str(), fontSize);
+                textX += (cellWidth - textWidth) / 2;
+                DrawText(textToDraw.c_str(), textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, fontSize, DARKGRAY);
+            }
+        }
+
+        // Draw scrollbar
+        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+        scrollBar.height = scrollBarHeight;
+        scrollBar.y = startY + cellHeight + scrollBarY;
+        DrawRectangleRec(scrollBar, GRAY);
+
+        // Handle scrolling
+        int scroll = GetMouseWheelMove();
+        scrollBarYOffset += scroll * 50 * (-1);
+        if (scrollBarYOffset < 0) {
+            scrollBarYOffset = 0;
+        }
+        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+        }
+        
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
+
