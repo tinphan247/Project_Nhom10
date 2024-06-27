@@ -1,4 +1,4 @@
-#include "function.h"
+#include "project.h"
 
 int main() {
     ListClass* Lclass = new ListClass;
@@ -145,7 +145,7 @@ int main() {
             }
 
             if (showsemester) {
-               string hocKyText = "Hoc Ky " + to_string(s->thutu) + " -" + s->namhoc;
+                string hocKyText = "Hoc Ky " + to_string(s->thutu) + " -" + s->namhoc;
                 const char* hocKyChar = hocKyText.c_str();
                 int hocKyWidth = MeasureText(hocKyChar, 20);
                 int hocKyX = 10;
@@ -198,7 +198,7 @@ int main() {
             }
 
             if (viewClassActive) {
-               loadClassesFromCSV(Lclass, "classes.csv");
+                loadClassesFromCSV(Lclass, "classes.csv");
                 viewClasses(Lclass);
                 viewClassActive = false;
             }
