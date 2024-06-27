@@ -830,12 +830,12 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
     const int numCols = 8; // Số cột bao gồm số thứ tự, MSSV, Họ, Tên, Lớp, Giới Tính, Ngày Sinh, CCCD
     const int columnSpacing = 20; // Khoảng cách giữa các cột
 
-    const int cellWidth = (screenWidth - 2 * 50 - (numCols - 1) * columnSpacing) / numCols * screenRatioX; 
-    const int cellHeight = 80 * screenRatioY; 
-    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2); 
+    const int cellWidth = (screenWidth - 2 * 50 - (numCols - 1) * columnSpacing) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
 
-    const int startX = (screenWidth - (numCols * cellWidth + (numCols - 1) * columnSpacing)) / 2; 
-    const int startY = 100 * screenRatioY; 
+    const int startX = (screenWidth - (numCols * cellWidth + (numCols - 1) * columnSpacing)) / 2;
+    const int startY = 100 * screenRatioY;
 
     const char* headers[numCols] = { "STT", "MSSV", "Ho", "Ten", "Lop", "Gioi Tinh", "Ngay Sinh", "CCCD" };
 
@@ -850,7 +850,7 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
         // In tiêu đề
         for (int i = 0; i < numCols; i++) {
             DrawRectangle(startX + (cellWidth + columnSpacing) * i, startY, cellWidth, cellHeight, LIGHTGRAY);
-            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); 
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
             int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
             DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
         }
@@ -887,26 +887,26 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
             currentSV = currentSV->next;
             currentIndex++;
         }
-        int stt = 1;
+        int stt = visibleStartIndex + 1; // Số thứ tự bắt đầu từ vị trí hiển thị đầu tiên
         for (int i = visibleStartIndex; i < visibleEndIndex && currentSV != nullptr; i++) {
             // Vẽ dữ liệu cho hàng hiện tại
             DrawRectangle(startX, startY + (i - visibleStartIndex + 1) * cellHeight, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, RAYWHITE); // Vẽ hình chữ nhật cho toàn bộ hàng
             string sttStr = to_string(stt);
-            DrawText(sttStr.c_str(), startX + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); 
-            DrawText(currentSV->mssv.c_str(), startX + (cellWidth + columnSpacing) * 1 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); 
-            DrawText(currentSV->ho.c_str(), startX + (cellWidth + columnSpacing) * 2 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); 
-            DrawText(currentSV->ten.c_str(), startX + (cellWidth + columnSpacing) * 3 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); 
+            DrawText(sttStr.c_str(), startX + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+            DrawText(currentSV->mssv.c_str(), startX + (cellWidth + columnSpacing) * 1 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+            DrawText(currentSV->ho.c_str(), startX + (cellWidth + columnSpacing) * 2 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+            DrawText(currentSV->ten.c_str(), startX + (cellWidth + columnSpacing) * 3 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
             DrawText(currentSV->ClassName.c_str(), startX + (cellWidth + columnSpacing) * 4 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
-            DrawText(currentSV->gender.c_str(), startX + (cellWidth + columnSpacing) * 5 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); 
-            string birthday = to_string(currentSV->birth.day) + "/" +to_string(currentSV->birth.month) + "/" +to_string(currentSV->birth.year);
-            DrawText(birthday.c_str(), startX + (cellWidth + columnSpacing) * 6 + textPadding,startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); 
-            DrawText(currentSV->cccd.c_str(), startX + (cellWidth + columnSpacing) * 7 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY); 
+            DrawText(currentSV->gender.c_str(), startX + (cellWidth + columnSpacing) * 5 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+            string birthday = to_string(currentSV->birth.day) + "/" + to_string(currentSV->birth.month) + "/" + to_string(currentSV->birth.year);
+            DrawText(birthday.c_str(), startX + (cellWidth + columnSpacing) * 6 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
+            DrawText(currentSV->cccd.c_str(), startX + (cellWidth + columnSpacing) * 7 + textPadding, startY + (i - visibleStartIndex + 1) * cellHeight + textPadding, 15, DARKGRAY);
             stt++;
             currentSV = currentSV->next;
         }
 
         // Vẽ hàng header sau cùng để đảm bảo màu không bị đứt đoạn
-        DrawRectangle(startX, startY, cellWidth* numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
+        DrawRectangle(startX, startY, cellWidth * numCols + columnSpacing * (numCols - 1), cellHeight, LIGHTGRAY);
         for (int i = 0; i < numCols; i++) {
             int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2)); // Adjusted font size based on average screen ratio
             int textX = startX + (cellWidth + columnSpacing) * i + (cellWidth - textWidth) / 2;
@@ -919,6 +919,7 @@ void DrawStudentListFromData(ListSV* studentList, int numRows) {
 
     CloseWindow();
 }
+
 void saveListUser(ListUser* LUR, const string& path) {
     ofstream ofile(path);
     if (!ofile.is_open()) {
@@ -1242,7 +1243,9 @@ bool Login(ListUser* LUR, char* username, char* password, bool& checkstaff) {
 void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearInputBoxActive, char* schoolYearInput, ListNamHoc& LNH, NamHoc*& N, Vector2 mousePoint, bool& showError) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
-    Rectangle schoolYearInputBox = { screenWidth / 2 - 100, 450, 200, 40 };
+    const int inputBoxWidth = 200;
+    const int inputBoxHeight = 40;
+    Rectangle schoolYearInputBox = { screenWidth / 2 - inputBoxWidth / 2, screenHeight - 100, inputBoxWidth, inputBoxHeight };
     DrawRectangleRec(schoolYearInputBox, LIGHTGRAY);
     DrawText(schoolYearInput, schoolYearInputBox.x + 5, schoolYearInputBox.y + 10, 20, DARKGRAY);
     DrawText("Enter School Year (e.g., 2020-2021):", schoolYearInputBox.x, schoolYearInputBox.y - 20, 20, LIGHTGRAY);
@@ -1282,8 +1285,13 @@ void CreateNewSchoolYeabutton(bool& createNewSchoolYearActive, bool& schoolYearI
     }
 }
 
-void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInputBoxActive,ListCourses*& LC, int screenWidth, int screenHeight) {
+void AddStudentsbutton(char* AddsvInput, Rectangle& AddsvInputBox, bool& AddsvInputBoxActive, ListCourses*& LC, float screenWidth, float screenHeight) {
     static bool showError = false;
+
+    // Thiết lập vị trí cho ô nhập liệu
+     const int inputBoxWidth = 200;
+    const int inputBoxHeight = 40;
+    AddsvInputBox = { screenWidth / 2 - inputBoxWidth / 2, screenHeight - 100, inputBoxWidth, inputBoxHeight };
 
     // Vẽ khung nhập liệu và chuỗi ký tự hiện tại
     DrawRectangleRec(AddsvInputBox, LIGHTGRAY);
@@ -1316,27 +1324,23 @@ void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInp
     // Xử lý khi nhấn phím ENTER
     if (IsKeyPressed(KEY_ENTER)) {
         Course* temp = LC->head;
-        while (temp != NULL)
-        {
-            if (temp->courseName == AddsvInput)
-            {
+        while (temp != NULL) {
+            if (temp->courseName == AddsvInput) {
                 break;
             }
             temp = temp->next;
         }
-        if (temp == NULL)
-        {
-            cout << "loi";
+        if (temp == NULL) {
+            cout << "Error: Course not found." << endl;
         }
-        else
-        {
-            AddstudentDashboard(screenWidth, screenHeight, LC,temp);
+        else {
+            AddstudentDashboard(screenWidth, screenHeight, LC, temp);
         }
         memset(AddsvInput, 0, 128);
         AddsvInputBoxActive = false;
     }
 
-    // Vẽ thông báo lỗi nếu không thể mở file
+    // Vẽ thông báo lỗi nếu có
     if (showError) {
         const char* errorMsg = "Unable to open file";
         int fontSize = 20;
@@ -1347,6 +1351,7 @@ void AddStudentsbutton(char* AddsvInput, Rectangle AddsvInputBox, bool& AddsvInp
         DrawText(errorMsg, posX, posY, fontSize, RED);
     }
 }
+
 User* timnodeuser(ListUser* LUR,string username,string password)
 {
     User* temp = LUR->phead;
@@ -1593,45 +1598,58 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Co
     InitWindow(screenWidth, screenHeight, "Add student Dashboard");
 
     char AddsvInput[128] = "\0";
-    Rectangle AddsvInputBox = { screenWidth / 2 - 150, screenHeight / 2 + 160, 300, 40 };
+    Rectangle AddsvInputBox = { screenWidth / 2 - 150, screenHeight / 2 + 120, 300, 40 }; // Điều chỉnh vị trí và kích thước ô nhập liệu
     bool AddsvInputBoxActive = false;
     bool showError = false;
     Rectangle inputstudentButton = { screenWidth / 2 - 110, screenHeight / 2 - 60, 220, 40 };
-    Rectangle importstudentButton = { screenWidth / 2 - 110, screenHeight / 2 + 20, 220, 40 };
-    Rectangle backButton = { screenWidth / 2 - 110, screenHeight / 2 + 100, 220, 40 };
+    Rectangle importstudentButton = { screenWidth / 2 - 110, screenHeight / 2, 220, 40 }; // Điều chỉnh vị trí nút import student
+    Rectangle viewstudentButton = { screenWidth / 2 - 110, screenHeight / 2 + 80, 220, 40 }; // Điều chỉnh vị trí nút view student
+    Rectangle backButton = { screenWidth / 2 - 110, screenHeight / 2 + 160, 220, 40 }; // Điều chỉnh vị trí nút back
     bool inputstudentActive = false;
     bool importstudentActive = false;
+    bool viewstudentActive = false;
     bool studentSaved = false;
     while (!WindowShouldClose()) {
         Vector2 mousePoint = GetMousePosition();
         bool inputstudentMouseOver = CheckCollisionPointRec(mousePoint, inputstudentButton);
         bool importstudentMouseOver = CheckCollisionPointRec(mousePoint, importstudentButton);
+        bool viewstudentMouseOver = CheckCollisionPointRec(mousePoint, viewstudentButton);
         bool backMouseOver = CheckCollisionPointRec(mousePoint, backButton);
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawRectangleRec(inputstudentButton, inputstudentMouseOver ? LIGHTGRAY : GRAY);
-        DrawText("Create New Student", inputstudentButton.x + 10, inputstudentButton.y + 10, 20, DARKGRAY);
+        DrawText("Add New Student", inputstudentButton.x + 10, inputstudentButton.y + 10, 20, DARKGRAY);
         DrawRectangleRec(importstudentButton, importstudentMouseOver ? LIGHTGRAY : GRAY);
         DrawText("Import list Student", importstudentButton.x + 20, importstudentButton.y + 10, 20, DARKGRAY);
+        DrawRectangleRec(viewstudentButton, viewstudentMouseOver ? LIGHTGRAY : GRAY);
+        DrawText("View Student", viewstudentButton.x + 30, viewstudentButton.y + 10, 20, DARKGRAY);
         DrawRectangleRec(backButton, backMouseOver ? LIGHTGRAY : GRAY);
         DrawText("Back", backButton.x + 80, backButton.y + 10, 20, DARKGRAY);
+
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             if (inputstudentMouseOver) {
                 inputstudentActive = true;
                 importstudentActive = false;
+                viewstudentActive = false;
             }
             else if (importstudentMouseOver) {
                 importstudentActive = true;
                 inputstudentActive = false;
-                AddsvInputBoxActive = true; 
+                viewstudentActive = false;
+                AddsvInputBoxActive = true;
+            }
+            else if (viewstudentMouseOver) {
+                viewstudentActive = true;
+                inputstudentActive = false;
+                importstudentActive = false;
             }
             else if (backMouseOver) {
                 CloseWindow();
                 return;
             }
         }
-        if (inputstudentActive)
-        {
+
+        if (inputstudentActive) {
             createnewstudent(cour, studentSaved);
             if (studentSaved) {
                 int numRows = 0;
@@ -1644,10 +1662,18 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Co
             }
             inputstudentActive = false;
         }
-        if (importstudentActive) {
+        else if (importstudentActive) {
+            // Vị trí dưới cùng của cửa sổ
+            int bottomMargin = screenHeight - 50; 
+
+            // Vị trí ô nhập liệu
+            Rectangle AddsvInputBox = { screenWidth / 2 - 150, bottomMargin - 60, 300, 40 };
             DrawRectangleRec(AddsvInputBox, LIGHTGRAY);
-            DrawText(AddsvInput, AddsvInputBox.x + 5, AddsvInputBox.y + 10, 20, DARKGRAY);
-            DrawText("Input file want to read", AddsvInputBox.x, AddsvInputBox.y - 20, 20, LIGHTGRAY);
+            // Vị trí văn bản hướng dẫn
+            DrawText("Input file want to read", AddsvInputBox.x, AddsvInputBox.y - 30, 20, DARKGRAY);
+
+            // Vị trí cho ô nhập liệu
+            DrawText(AddsvInput, AddsvInputBox.x + 10, AddsvInputBox.y + 10, 20, DARKGRAY);
 
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePoint, AddsvInputBox)) {
                 AddsvInputBoxActive = true;
@@ -1673,14 +1699,13 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Co
                     if (length > 0) AddsvInput[length - 1] = '\0';
                 }
             }
-            if (IsKeyPressed(KEY_ENTER))
-            {
+            if (IsKeyPressed(KEY_ENTER)) {
                 ListSV* svList = addListSV(AddsvInput);
                 if (svList == NULL) {
-                    showError = true;  
+                    showError = true;
                 }
                 else {
-                    showError = false;  
+                    showError = false;
                     if (cour->lsv == NULL) {
                         cour->lsv = svList;
                     }
@@ -1705,10 +1730,10 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Co
                         currentSV = currentSV->next;
                     }
                     DrawStudentListFromData(cour->lsv, numRows);
-                    memset(AddsvInput, 0, 128); 
+                    memset(AddsvInput, 0, 128);
                 }
                 importstudentActive = false;
-                AddsvInputBoxActive = false; 
+                AddsvInputBoxActive = false;
             }
             if (showError) {
                 const char* errorMsg = "Unable to open file";
@@ -1720,11 +1745,21 @@ void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Co
                 DrawText(errorMsg, posX, posY, fontSize, RED);
             }
         }
+        else if (viewstudentActive) {
+            int numRows = 0;
+            SinhVien* currentSV = cour->lsv->phead;
+            while (currentSV != nullptr) {
+                numRows++;
+                currentSV = currentSV->next;
+            }
+            DrawStudentListFromData(cour->lsv, numRows);
+            viewstudentActive = false;
+        }
 
         EndDrawing();
     }
 
-    CloseWindow();  
+    CloseWindow();
 }
 
 void createnewstudent(Course* cour, bool& studentSaved) {
@@ -2035,9 +2070,9 @@ void ShowSignCoursesDetails(ListCourses*& List, Course& course, ListCourses*& SV
         textY += 30 + textPadding;
         DrawText(("Teacher Name: " + course.teacherName).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
-        DrawText(("Academic Year: " + std::to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
+        DrawText(("Academic Year: " + to_string(course.academicYear)).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
-        DrawText(("Credits: " + std::to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
+        DrawText(("Credits: " +to_string(course.Credits)).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
         DrawText(("Week Day: " + course.wDay).c_str(), 50, textY, 20, BLACK);
         textY += 30 + textPadding;
@@ -2371,4 +2406,410 @@ void ViewCourses_SV(Course* courses, int numRows,ListCourses*& SV) {
     }
 
     CloseWindow();
+}
+void DrawClassNameInputBox(Rectangle& classNameInputBox, char* classNameInput, Vector2 mousePoint, bool& mouseOnText, bool& classNameBoxActive, float screenWidth, float screenHeight, ListClass*& DS, bool& createClassActive) {
+    const int inputBoxWidth = 300;
+    const int inputBoxHeight = 40;
+
+    // Thiết lập vị trí cho ô nhập liệu
+    classNameInputBox = { screenWidth / 2 - inputBoxWidth / 2, screenHeight - 100, inputBoxWidth, inputBoxHeight };
+
+    // Vẽ chữ "Class Name:" ngay phía trên ô nhập liệu
+    DrawText("Class Name:", classNameInputBox.x + 10, classNameInputBox.y - 30, 20, DARKGRAY);
+
+    // Vẽ ô nhập liệu
+    DrawRectangleRec(classNameInputBox, LIGHTGRAY);
+
+    // Xử lý nhập liệu từ người dùng
+    if (CheckCollisionPointRec(mousePoint, classNameInputBox)) {
+        mouseOnText = true;
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            classNameBoxActive = true;
+        }
+    }
+    else {
+        mouseOnText = false;
+    }
+
+    if (classNameBoxActive) {
+        DrawRectangleLines(classNameInputBox.x, classNameInputBox.y, classNameInputBox.width, classNameInputBox.height, BLUE);
+        int key = GetKeyPressed();
+        int length = strlen(classNameInput);
+        if (key >= 32 && key <= 125 && length < 127) { // Đảm bảo rằng độ dài chuỗi không vượt quá giới hạn
+            classNameInput[length] = (char)key;
+            classNameInput[length + 1] = '\0';
+        }
+        else if (key == KEY_BACKSPACE && length > 0) {
+            classNameInput[length - 1] = '\0';
+        }
+        DrawText(classNameInput, classNameInputBox.x + 10, classNameInputBox.y + 10, 20, DARKGRAY);
+
+        // Kiểm tra việc nhấn phím Enter để tạo lớp mới
+        if (IsKeyPressed(KEY_ENTER)) {
+            AddNewClassToList(classNameInput, DS);
+            classNameBoxActive = false;
+            memset(classNameInput, 0, 128); // Xóa bộ đệm nhập liệu
+            createClassActive = false;
+            saveClassesToCSV(DS, "classes.csv");
+        }
+    }
+    else {
+        DrawRectangleLines(classNameInputBox.x, classNameInputBox.y, classNameInputBox.width, classNameInputBox.height, DARKGRAY);
+        DrawText(classNameInput, classNameInputBox.x + 10, classNameInputBox.y + 10, 20, DARKGRAY);
+    }
+}
+void saveClassesToCSV(ListClass* classList, const char* filename) {
+    ofstream file(filename);
+
+    if (!file.is_open()) {
+        cout<< "Không thể mở file: " << filename << endl;
+        return;
+    }
+
+    // Ghi tiêu đề cho file CSV
+    file << "ClassName"<<endl;
+
+    // Ghi thông tin các lớp học
+    Class* current = classList->head;
+    while (current != nullptr) {
+        file << current->ClassName << "\n";
+        current = current->next;
+    }
+
+    file.close();
+    cout << "Lưu danh sách lớp học vào file " << filename << " thành công!" << endl;
+}
+void clearClassList(ListClass* classList) {
+    Class* current = classList->head;
+    while (current != NULL) {
+        Class* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    classList->head = NULL;
+}
+
+void loadClassesFromCSV(ListClass* classList, const char* filename) {
+    ifstream file(filename);
+
+    if (!file.is_open()) {
+       cout << "Không thể mở file: " << filename <<endl;
+        return;
+    }
+
+    // Xóa danh sách lớp học hiện tại
+    clearClassList(classList);
+
+   string line;
+    // Bỏ qua dòng tiêu đề
+    getline(file, line);
+
+    while (getline(file, line)) {
+        Class* newClass = new Class;
+        newClass->ClassName = line;
+        newClass->next = nullptr;
+
+        if (classList->head == nullptr) {
+            classList->head = newClass;
+        }
+        else {
+            Class* current = classList->head;
+            while (current->next != nullptr) {
+                current = current->next;
+            }
+            current->next = newClass;
+        }
+    }
+
+    file.close();
+   cout << "Đọc danh sách lớp học từ file " << filename << " thành công!" << endl;
+}
+void AddNewClassToList(const char* className, ListClass*& DS)
+{
+    Class* CTT = new Class();
+    CTT->ClassName= className;
+    CTT->next = NULL;
+
+    if (DS->head == NULL) {
+        DS->head = CTT;
+    }
+    else {
+        Class* temp = DS->head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = CTT;
+    }
+
+   cout << "Da them 1 lop moi vao danh sach cac lop" << endl;
+}
+void viewClasses(ListClass* classList) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
+    InitWindow(screenWidth, screenHeight, "View Classes");
+
+    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
+    const int numCols = 1; // Số cột cho thông tin lớp học
+    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
+    const int startX = (screenWidth - (numCols * cellWidth)) / 2;
+    const int startY = 100 * screenRatioY;
+    const char* headers[numCols] = { "Classes" };
+    int scrollBarYOffset = 0;
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
+    int selectedClass = 0;
+
+    int numRows = 0;
+    Class* tempClass = classList->head;
+    while (tempClass != nullptr) {
+        numRows++;
+        tempClass = tempClass->next;
+    }
+
+    Class* classes = new Class[numRows];
+    tempClass = classList->head;
+    for (int i = 0; i < numRows; i++) {
+        classes[i] = *tempClass;
+        tempClass = tempClass->next;
+    }
+
+    while (!WindowShouldClose()) {
+        if (IsKeyPressed(KEY_DOWN) && selectedClass < numRows - 1) {
+            selectedClass++;
+        }
+        if (IsKeyPressed(KEY_UP) && selectedClass > 0) {
+            selectedClass--;
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
+            showClassFunctions(classList, classes[selectedClass]);
+        }
+        if (selectedClass * cellHeight < scrollBarYOffset) {
+            scrollBarYOffset = selectedClass * cellHeight;
+        }
+        if (selectedClass * cellHeight >= scrollBarYOffset + maxDisplayedLines * cellHeight) {
+            scrollBarYOffset = (selectedClass + 1) * cellHeight - maxDisplayedLines * cellHeight;
+        }
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // In tiêu đề
+        for (int i = 0; i < numCols; i++) {
+            DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+            int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+        }
+
+        // In các thông tin lớp học
+        for (int i = 0; i < numRows; i++) {
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
+                continue;
+            }
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
+                break;
+            }
+            Color rowColor = (i == selectedClass) ? SKYBLUE : RAYWHITE;
+            DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
+            const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
+            int textWidth = 0;
+            int textX = startX + textPadding;
+            string textToDraw = classes[i].ClassName;
+            textWidth = MeasureText(textToDraw.c_str(), fontSize);
+            textX += (cellWidth - textWidth) / 2;
+            DrawText(textToDraw.c_str(), textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, fontSize, DARKGRAY);
+        }
+
+        // Vẽ thanh cuộn
+        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+        scrollBar.height = scrollBarHeight;
+        scrollBar.y = startY + cellHeight + scrollBarY;
+        DrawRectangleRec(scrollBar, GRAY);
+
+        int scroll = GetMouseWheelMove();
+        scrollBarYOffset += scroll * 50 * (-1);
+        if (scrollBarYOffset < 0) {
+            scrollBarYOffset = 0;
+        }
+        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+        }
+
+        EndDrawing();
+    }
+
+    delete[] classes;
+    CloseWindow();
+}
+void showClassFunctions(ListClass* classList, Class& selectedClass) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
+    selectedClass.ds = new ListSV;
+    selectedClass.ds->phead = NULL;
+    InitWindow(screenWidth, screenHeight, "Class Functions");
+
+    Rectangle buttons[3];
+    const char* buttonLabels[3] = {
+        "View List Student",
+        "Import List Student",
+        "Delete Class"
+    };
+
+    for (int i = 0; i < 3; i++) {
+        buttons[i].x = (screenWidth - 200) / 2;
+        buttons[i].y = 150 + i * 100;
+        buttons[i].width = 200;
+        buttons[i].height = 50;
+    }
+    bool viewlistsvActive = false;
+    bool importlistsvActive = false;
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        Vector2 mousePoint = GetMousePosition();
+        bool mouseOverButton[3] = { false };
+
+        for (int i = 0; i < 3; i++) {
+            mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
+            DrawRectangleRec(buttons[i], mouseOverButton[i] ? LIGHTGRAY : GRAY);
+            DrawText(buttonLabels[i], buttons[i].x + (buttons[i].width - MeasureText(buttonLabels[i], 20)) / 2, buttons[i].y + 15, 20, BLACK);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (mouseOverButton[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                switch (i) {
+                case 0:
+                    viewlistsvActive = true;                 
+                    break;
+                case 1:
+                    importlistsvActive = true;
+                    break;
+                case 2:
+                   // deleteClass(classList);
+                    CloseWindow();
+                    return;
+                }
+            }
+        }
+        if (viewlistsvActive)
+        {
+            viewListStudent(selectedClass, screenWidth, screenHeight, viewlistsvActive);
+        }
+        if (importlistsvActive)
+        {
+            importListStudent(selectedClass, screenWidth, screenHeight,importlistsvActive);
+        }
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
+
+void viewListStudent(const Class& selectedClass, int screenWidth, int screenHeight, bool& viewlistsvActive) {
+    int numRows = 0;
+    SinhVien* currentSV = selectedClass.ds->phead;
+
+  
+        if (selectedClass.ds->phead == nullptr) {
+            DrawText("Khong the mo file", screenWidth - MeasureText("Khong the mo file", 20) - 10, screenHeight - 30, 20, RED);
+        }
+        else {
+            while (currentSV != nullptr) {
+                numRows++;
+                currentSV = currentSV->next;
+            }
+            DrawStudentListFromData(selectedClass.ds, numRows);
+            viewlistsvActive = false;
+        }
+
+    CloseWindow();
+}
+
+
+void importListStudent(Class& selectedClass, int screenWidth, int screenHeight, bool& importlistsvActive) {
+    bool inputActive = true; // Bắt đầu với việc nhập liệu ngay khi mở cửa sổ
+    bool showError = false;
+    bool fileLoaded = false; // Biến để kiểm tra xem file đã được tải thành công hay chưa
+    char inputText[128] = "";
+    int inputBoxWidth = 300;
+    int inputBoxHeight = 40;
+    Rectangle inputBox = { (screenWidth - inputBoxWidth) / 2, (screenHeight - inputBoxHeight) / 2, inputBoxWidth, inputBoxHeight };
+
+    while (!WindowShouldClose()) {
+        Vector2 mousePoint = GetMousePosition();
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Vẽ ô nhập liệu
+        DrawRectangleRec(inputBox, LIGHTGRAY);
+        DrawText("Input student file name:", inputBox.x, inputBox.y - 30, 20, DARKGRAY);
+        DrawText(inputText, inputBox.x + 10, inputBox.y + 10, 20, DARKGRAY);
+
+        // Xử lý tương tác chuột
+        if (CheckCollisionPointRec(mousePoint, inputBox) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            inputActive = true;
+        }
+
+        // Xử lý nhập liệu từ bàn phím
+        if (inputActive) {
+            int key = GetKeyPressed();
+            if ((key >= 32) && (key <= 125)) {
+                int length = strlen(inputText);
+                if (length < 127) {
+                    char newChar = (char)key;
+                    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+                        newChar = toupper(newChar);
+                    }
+                    else {
+                        newChar = tolower(newChar);
+                    }
+                    inputText[length] = newChar;
+                    inputText[length + 1] = '\0';
+                }
+            }
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                int length = strlen(inputText);
+                if (length > 0) inputText[length - 1] = '\0';
+            }
+        }
+
+        // Xử lý nhập liệu từ file khi nhấn phím Enter
+        if (IsKeyPressed(KEY_ENTER)) {
+            selectedClass.ds = addListSV(inputText);
+            if (selectedClass.ds == nullptr) {
+                showError = true;
+            }
+            else {
+                memset(inputText, 0, 128);
+                inputActive = false; // Ngừng nhập liệu sau khi nhập xong và xử lý thành công
+                importlistsvActive = false;
+                fileLoaded = true; // Đánh dấu là file đã được tải thành công
+            }
+        }
+
+        // Kiểm tra nếu file đã được tải thành công thì đóng cửa sổ nhập
+        if (fileLoaded) {
+            CloseWindow();
+            break; // Thoát khỏi vòng lặp
+        }
+
+        // Vẽ thông báo lỗi nếu cần thiết
+        if (showError) {
+            DrawText("Không thể mở file!", screenWidth / 2 - MeasureText("Không thể mở file!", 20) / 2, inputBox.y + 70, 20, RED);
+        }
+
+        EndDrawing();
+    }
+}
+
+
+void deleteClass(ListClass* classList, const Class& selectedClass) {
+    // Hàm xóa lớp được chọn khỏi danh sách
+    // Implement this function based on your requirements
 }
