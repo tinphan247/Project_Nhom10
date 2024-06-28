@@ -164,10 +164,14 @@ void saveClassesToCSV(ListClass* classList, const char* filename);
 void loadClassesFromCSV(ListClass* classList, const char* filename);
 void clearClassList(ListClass* classList);
 void viewClasses(ListClass* classList);
-void showClassFunctions(ListClass* classList, Class& selectedClass);
+void showClassFunctions(ListClass* classList, Class& selectedClass,bool& deletepress);
 void viewListStudent(const Class& selectedClass, int screenWidth, int screenHeight, bool& viewlistsvActive);
 void importListStudent(Class& selectedClass, int screenWidth, int screenHeight, bool& importlistsvActive);
 void deleteClass(ListClass* classList, const Class& selectedClass);
+void viewGrade(docDiem* diem, int& numRows);
+docDiem* docDiemTuFile(string path);
 docDiem* docDiemTuFile(string path, int& count, string& title);
-void viewGrade(docDiem* diem, int& numRows,string title);
+void viewGrade(docDiem* diem, int& numRows, string title);
+void deletesemester(Semester*& sm);
+void deletelistnamhoc(ListNamHoc& LNH);
 #endif 
