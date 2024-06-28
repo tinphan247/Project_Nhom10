@@ -1,4 +1,4 @@
-#include "project.h"
+#include "function.h"
 
 bool IsEmpty(const char* str)
 {
@@ -36,12 +36,10 @@ ListUser* addListUser(const string& path) {
 
         getline(ifile, u->academicYear, ',');
         getline(ifile, temp, '\n');
-        if (temp == "TRUE")
-        {
+        if (temp == "TRUE") {
             u->staff = true;
         }
-        else
-        {
+        else {
             u->staff = false;
         }
 
@@ -58,7 +56,6 @@ ListUser* addListUser(const string& path) {
     ifile.close();
     return LUR;
 }
-
 bool CheckLogin(const char* username, const char* password, bool& checkstaff, ListUser*& LU)
 {
     if (!LU)
@@ -2574,7 +2571,7 @@ void saveClassesToCSV(ListClass* classList, const char* filename) {
     }
 
     file.close();
-    cout << "Lưu danh sách lớp học vào file " << filename << " thành công!" << endl;
+    cout << "Save file succeed" << endl;
 }
 void clearClassList(ListClass* classList) {
     Class* current = classList->head;
@@ -2664,14 +2661,13 @@ void viewClasses(ListClass* classList) {
         numRows++;
         tempClass = tempClass->next;
     }
-
+    bool deletepress = false;
     Class* classes = new Class[numRows];
     tempClass = classList->head;
     for (int i = 0; i < numRows; i++) {
         classes[i] = *tempClass;
         tempClass = tempClass->next;
     }
-
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_DOWN) && selectedClass < numRows - 1) {
             selectedClass++;
@@ -2680,7 +2676,11 @@ void viewClasses(ListClass* classList) {
             selectedClass--;
         }
         if (IsKeyPressed(KEY_ENTER)) {
-            showClassFunctions(classList, classes[selectedClass]);
+            showClassFunctions(classList, classes[selectedClass],deletepress);
+            if (deletepress)
+            {
+                break;
+            }
         }
         if (selectedClass * cellHeight < scrollBarYOffset) {
             scrollBarYOffset = selectedClass * cellHeight;
@@ -2743,11 +2743,11 @@ void viewClasses(ListClass* classList) {
     delete[] classes;
     CloseWindow();
 }
-void showClassFunctions(ListClass* classList, Class& selectedClass) {
+void showClassFunctions(ListClass* classList, Class& selectedClass,bool& deletepress) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
     selectedClass.ds = new ListSV;
-    selectedClass.ds->phead = NULL;
+    selectedClass.ds->phead = nullptr;
     InitWindow(screenWidth, screenHeight, "Class Functions");
 
     Rectangle buttons[3];
@@ -2763,8 +2763,11 @@ void showClassFunctions(ListClass* classList, Class& selectedClass) {
         buttons[i].width = 200;
         buttons[i].height = 50;
     }
+
     bool viewlistsvActive = false;
     bool importlistsvActive = false;
+    bool deleteclassActive = false;
+
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -2788,25 +2791,34 @@ void showClassFunctions(ListClass* classList, Class& selectedClass) {
                     importlistsvActive = true;
                     break;
                 case 2:
-                    // deleteClass(classList);
-                    CloseWindow();
-                    return;
+                    deleteclassActive = true;
+                    break;
                 }
             }
         }
-        if (viewlistsvActive)
-        {
+
+        if (viewlistsvActive) {
             viewListStudent(selectedClass, screenWidth, screenHeight, viewlistsvActive);
         }
-        if (importlistsvActive)
-        {
+
+        if (importlistsvActive) {
             importListStudent(selectedClass, screenWidth, screenHeight, importlistsvActive);
         }
+
+        if (deleteclassActive) {
+            deleteClass(classList, selectedClass); 
+            deleteclassActive = false; 
+            deletepress = true;
+            CloseWindow();
+            return;
+        }
+
         EndDrawing();
     }
 
     CloseWindow();
 }
+
 
 void viewListStudent(const Class& selectedClass, int screenWidth, int screenHeight, bool& viewlistsvActive) {
     int numRows = 0;
@@ -2904,11 +2916,30 @@ void importListStudent(Class& selectedClass, int screenWidth, int screenHeight, 
         EndDrawing();
     }
 }
-
-
 void deleteClass(ListClass* classList, const Class& selectedClass) {
-    // Hàm xóa lớp được chọn khỏi danh sách
-    // Implement this function based on your requirements
+    if (classList == nullptr || classList->head == nullptr) return;
+
+    Class* prevClass = nullptr;
+    Class* currentClass = classList->head;
+
+    // Find the class to be deleted
+    while (currentClass != nullptr && currentClass->ClassName != selectedClass.ClassName) {
+        prevClass = currentClass;
+        currentClass = currentClass->next;
+    }
+
+    // If the class was found
+    if (currentClass != nullptr) {
+        // If the class to be deleted is the head of the list
+        if (prevClass == nullptr) {
+            classList->head = currentClass->next;
+        }
+        else {
+            prevClass->next = currentClass->next;
+        }
+        delete currentClass;
+    }
+    saveClassesToCSV(classList, "classes.csv");
 }
 docDiem* docDiemTuFile(string path, int& count, string& title)
 {
@@ -2960,7 +2991,7 @@ docDiem* docDiemTuFile(string path, int& count, string& title)
     ifile.close();
     return diem;
 }
-void viewGrade(docDiem* diem, int& numRows,string title) {
+void viewGrade(docDiem* diem, int& numRows, string title) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "");
@@ -2974,7 +3005,7 @@ void viewGrade(docDiem* diem, int& numRows,string title) {
     const int startX = (screenWidth - (numCols * cellWidth)) / 2;
     const int startY = 100 * screenRatioY;
 
-    const char* headers[numCols] = { "No", "ID", "Ho", "Ten", "Other", "MidTerm", "Final", "Total"};
+    const char* headers[numCols] = { "No", "ID", "Ho", "Ten", "Other", "MidTerm", "Final", "Total" };
 
     int scrollBarYOffset = 0;
     int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
@@ -2985,11 +3016,11 @@ void viewGrade(docDiem* diem, int& numRows,string title) {
         ClearBackground(RAYWHITE);
 
         ///
-       const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
+        const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
         int titleTextWidth = MeasureText(title.c_str(), fontSize);
-       int titleX = (screenWidth - titleTextWidth) / 2;
-       DrawText(title.c_str(), titleX, startY - 40 * screenRatioY, fontSize, BLACK);
- 
+        int titleX = (screenWidth - titleTextWidth) / 2;
+        DrawText(title.c_str(), titleX, startY - 40 * screenRatioY, fontSize, BLACK);
+
         // Draw headers
         for (int i = 0; i < numCols; i++) {
             DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
@@ -3005,9 +3036,6 @@ void viewGrade(docDiem* diem, int& numRows,string title) {
             if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
                 break;
             }
-            Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
-            DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
-
             const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
             for (int j = 0; j < 8; j++) {
                 int textWidth = 0;
@@ -3067,11 +3095,33 @@ void viewGrade(docDiem* diem, int& numRows,string title) {
         if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
             scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
         }
-        
+
 
         EndDrawing();
     }
 
     CloseWindow();
 }
-
+void deletesemester(Semester*& sm)
+{
+    Semester* temp = sm;
+    while (temp != NULL)
+    {
+        Semester* next = temp->next;
+        delete temp;
+        temp = next;
+    }
+    sm = NULL;
+}
+void deletelistnamhoc(ListNamHoc& LNH)
+{
+    NamHoc* temp = LNH.phead;
+    while (temp != NULL)
+    {
+        deletesemester(temp->Hocky);
+        NamHoc* pre = temp;
+        temp = temp->next;
+        delete pre;
+    }
+    LNH.phead = NULL;
+}
