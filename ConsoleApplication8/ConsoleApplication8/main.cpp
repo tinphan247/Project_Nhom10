@@ -1,4 +1,4 @@
-#include "project.h"
+#include "function.h"
 
 int main() {
     ListClass* Lclass = new ListClass;
@@ -9,12 +9,12 @@ int main() {
 
     ListNamHoc LNH = { NULL };
 
-    NamHoc* N = new NamHoc; // Sử dụng new để đồng bộ với delete
-    Semester* sm = new Semester; // Sử dụng new để đồng bộ với delete
+    NamHoc* N = new NamHoc; 
+    Semester* sm = NULL; 
 
     ListUser* LUR = addListUser("User.csv");
 
-    Semester* s = new Semester;
+    Semester* s =NULL;
 
     ListCourses* List_Courses_SV = new ListCourses;
     InitList(List_Courses_SV);
@@ -205,23 +205,24 @@ int main() {
                 viewClasses(Lclass);
                 viewClassActive = false;
             }
-            if (viewClassGrade) {
-                // thieu nhap ten file
-                string path= "KTLT_23CTT5.csv";
-                int count = 0;
-                string title= "\0\0\0";
-                docDiem* diem = docDiemTuFile(path,count,title);
-                viewGrade(diem, count,title);
-                viewClassGrade = false;
-                delete[]diem;
-}
+
             if (showError) {
                 DrawText("Error: No semester created yet!", 10, 10, 20, RED);
                 if (showsemester) {
                     showError = false;
                 }
             }
-
+            if (viewClassGrade)
+            { 
+                // thieu nhap ten file
+                string path = "23CTT5_mark.csv";
+                int count = 0;
+                string title = "\0\0\0";
+                docDiem* diem = docDiemTuFile(path, count, title);
+                viewGrade(diem, count, title);
+                viewClassGrade = false;
+                delete[]diem;
+            }
             EndDrawing();
         }
     }
@@ -342,10 +343,8 @@ int main() {
     clearClassList(Lclass);
     delete Lclass;
     delete LC;
-    delete N;
-    delete sm;
+    deletelistnamhoc(LNH);
     delete LUR;
-    delete s;
     delete List_Courses_SV;
     CloseWindow();
     return 0;
