@@ -9,12 +9,12 @@ int main() {
 
     ListNamHoc LNH = { NULL };
 
-    NamHoc* N = new NamHoc; 
-    Semester* sm = NULL; 
+    NamHoc* N = new NamHoc;
+    Semester* sm = NULL;
 
     ListUser* LUR = addListUser("User.csv");
 
-    Semester* s =NULL;
+    Semester* s = NULL;
 
     ListCourses* List_Courses_SV = new ListCourses;
     InitList(List_Courses_SV);
@@ -35,6 +35,8 @@ int main() {
     char classNameInput[128] = "\0"; // Tăng kích thước bộ nhớ
     Rectangle classNameInputBox = { 100, 100, 200, 40 };
 
+    bool courseCreated = false; // Flag to check if a course has been created
+
     if (Login(LUR, username, password, checkstaff) && checkstaff) {
         const int dashboardWidth = 1366;
         const int dashboardHeight = 768;
@@ -42,8 +44,8 @@ int main() {
         SetWindowTitle("staff dashboard");
         SetTargetFPS(60);
 
-        Rectangle buttons[9];
-        const char* buttonLabels[9] = {
+        Rectangle buttons[8];
+        const char* buttonLabels[8] = {
             "Create New School Year",
             "Create New Semester",
             "Add Course",
@@ -51,8 +53,7 @@ int main() {
             "Add Student to Course and View",
             "Change password",
             "Create New Class",
-            "View Class",
-            "View Class Grade"
+            "View Class"
         };
 
         bool createNewSchoolYearActive = false;
@@ -71,7 +72,8 @@ int main() {
         bool viewClassActive = false;
         bool createClassActive = false;
         bool viewClassGrade = false;
-        for (int i = 0; i < 9; i++) {
+
+        for (int i = 0; i < 8; i++) {
             buttons[i].x = (dashboardWidth - 400) / 2;
             buttons[i].y = 50 + i * 60;
             buttons[i].width = 400;
@@ -80,12 +82,12 @@ int main() {
 
         while (!WindowShouldClose()) {
             Vector2 mousePoint = GetMousePosition();
-            bool mouseOverButton[9] = { false };
+            bool mouseOverButton[8] = { false };
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < 8; i++) {
                 mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
                 DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
 
@@ -114,7 +116,10 @@ int main() {
                             showError = true;
                         }
                         else {
-                            if (i == 2) createNewCourseActive = true;
+                            if (i == 2) {
+                                createNewCourseActive = true;
+                                courseCreated = true; 
+                            }
                             if (i == 3) viewCourseActive = true;
                             if (i == 4) addsvInputBoxActive = true;
                         }
@@ -126,10 +131,12 @@ int main() {
                         createClassActive = true;
                         break;
                     case 7:
-                        viewClassActive = true;
-                        break;
-                    case 8:
-                        viewClassGrade = true;
+                        if (courseCreated) { //Kiem tra xem course da duoc tao hay chua
+                            viewClassActive = true;
+                        }
+                        else {
+                            showError = true;
+                        }
                         break;
                     }
                 }
@@ -202,27 +209,17 @@ int main() {
 
             if (viewClassActive) {
                 loadClassesFromCSV(Lclass, "classes.csv");
-                viewClasses(Lclass);
+                viewClasses(Lclass, s->lc);
                 viewClassActive = false;
             }
 
             if (showError) {
-                DrawText("Error: No semester created yet!", 10, 10, 20, RED);
+                DrawText("Error: No semester or course created yet!", 10, 10, 20, RED);
                 if (showsemester) {
                     showError = false;
                 }
             }
-            if (viewClassGrade)
-            { 
-                // thieu nhap ten file
-                string path = "23CTT5_mark.csv";
-                int count = 0;
-                string title = "\0\0\0";
-                docDiem* diem = docDiemTuFile(path, count, title);
-                viewGrade(diem, count, title);
-                viewClassGrade = false;
-                delete[]diem;
-            }
+
             EndDrawing();
         }
     }
@@ -233,20 +230,21 @@ int main() {
         SetWindowTitle("user dashboard");
         SetTargetFPS(60);
 
-        Rectangle buttons[4];
-        const char* buttonLabels[4] = {
+        Rectangle buttons[5];
+        const char* buttonLabels[5] = {
             "Profile",
             "Change Password",
             "Sign a course",
-            "View courses"
+            "View courses",
+            "View score"
         };
 
         bool viewprofileActive = false;
         bool ChangepasswordActive = false;
         bool dangkicourse = false;
         bool ViewCoursesActive = false;
-
-        for (int i = 0; i < 4; i++) {
+        bool ViewscoreActive= false;
+        for (int i = 0; i < 5; i++) {
             buttons[i].x = (dashboardWidth - 400) / 2;
             buttons[i].y = 50 + i * 60;
             buttons[i].width = 400;
@@ -255,12 +253,12 @@ int main() {
 
         while (!WindowShouldClose()) {
             Vector2 mousePoint = GetMousePosition();
-            bool mouseOverButton[4] = { false };
+            bool mouseOverButton[5] = { false };
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 5; i++) {
                 mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
                 DrawButton(buttons[i], buttonLabels[i], mouseOverButton[i]);
 
@@ -280,6 +278,9 @@ int main() {
                         break;
                     case 3:
                         ViewCoursesActive = true;
+                        break;
+                    case 4:
+                        ViewscoreActive = true;
                         break;
                     }
                 }
@@ -336,16 +337,33 @@ int main() {
                 delete[] courseArray;
                 ViewCoursesActive = false;
             }
-
+            if (ViewscoreActive)
+            {
+                int numRows = 0;
+                Course* tempCount = List_Courses_SV->head;
+                while (tempCount != nullptr) {
+                    numRows++;
+                    tempCount = tempCount->next;
+                }
+                Course* courseArray = new Course[numRows];
+                Course* temp = List_Courses_SV->head;
+                int i;
+                for (i = 0; i < numRows && temp != nullptr; i++) {
+                    courseArray[i] = *temp;
+                    temp = temp->next;
+                }
+                viewcoursescore_SV(LC, courseArray, numRows,username);
+                ViewscoreActive = false;
+            }
             EndDrawing();
         }
     }
     clearClassList(Lclass);
     delete Lclass;
-    delete LC;
+    deleteListCourses(LC);
     deletelistnamhoc(LNH);
-    delete LUR;
-    delete List_Courses_SV;
+    deleteListUser(LUR);
+    deleteListCourses(List_Courses_SV);
     CloseWindow();
     return 0;
 }
