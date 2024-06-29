@@ -399,6 +399,9 @@ void InitList(ListCourses* list) {
 
 void AddCourse(ListCourses*& List, Course* newCourse) {
     if (newCourse == NULL) return;
+    newCourse->lsv = new ListSV;
+    newCourse->lsv->phead = NULL;
+    newCourse->lsv->ptail = NULL;
     if (List->head == NULL) {
         List->head = newCourse;
         List->tail = newCourse;
@@ -1660,7 +1663,6 @@ void CourseDashboard(int screenWidth, int screenHeight, ListCourses*& LC) {
 
         EndDrawing();
     }
-
     CloseWindow();
 }
 
@@ -1685,10 +1687,6 @@ void add1StudentCourse(Course*& cour, SinhVien*& sv) {
 }
 
 void AddstudentDashboard(int screenWidth, int screenHeight, ListCourses*& LC, Course* cour) {
-    cour->lsv = new ListSV;
-    cour->lsv->phead = NULL;
-    cour->lsv->ptail = NULL;
-
     InitWindow(screenWidth, screenHeight, "Add student Dashboard");
 
     char AddsvInput[128] = "\0";
@@ -2380,7 +2378,7 @@ void ViewSignCourses(ListCourses* List, Course* courses, int numRows, ListCourse
 void ViewCourses_SV(Course* courses, int numRows, ListCourses*& SV) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
-    InitWindow(screenWidth, screenHeight, "Danh Sách Khóa Học");
+    InitWindow(screenWidth, screenHeight, "Danh sach khoa hoc");
     const float screenRatioX = (float)GetScreenWidth() / screenWidth;
     const float screenRatioY = (float)GetScreenHeight() / screenHeight;
 
@@ -2637,7 +2635,7 @@ void AddNewClassToList(const char* className, ListClass*& DS)
 
     cout << "Da them 1 lop moi vao danh sach cac lop" << endl;
 }
-void viewClasses(ListClass* classList) {
+void viewClasses(ListClass* classList, ListCourses*& List) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "View Classes");
@@ -2668,6 +2666,12 @@ void viewClasses(ListClass* classList) {
         classes[i] = *tempClass;
         tempClass = tempClass->next;
     }
+    for (int i = 0; i < numRows; i++) 
+    {
+        classes[i].ds = new ListSV;
+        classes[i].ds->phead = NULL;
+        classes[i].ds->ptail = NULL;
+    }
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_DOWN) && selectedClass < numRows - 1) {
             selectedClass++;
@@ -2676,7 +2680,8 @@ void viewClasses(ListClass* classList) {
             selectedClass--;
         }
         if (IsKeyPressed(KEY_ENTER)) {
-            showClassFunctions(classList, classes[selectedClass],deletepress);
+
+            showClassFunctions(List,classList, classes[selectedClass],deletepress);
             if (deletepress)
             {
                 break;
@@ -2739,25 +2744,144 @@ void viewClasses(ListClass* classList) {
 
         EndDrawing();
     }
-
-    delete[] classes;
     CloseWindow();
 }
-void showClassFunctions(ListClass* classList, Class& selectedClass,bool& deletepress) {
+void viewcoursescore(ListCourses*& List, Course*& courses, int& numRows, Class& selectedClass) {
     const int screenWidth = 1366;
     const int screenHeight = 768;
-    selectedClass.ds = new ListSV;
-    selectedClass.ds->phead = nullptr;
+    InitWindow(screenWidth, screenHeight, "");
+    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
+    const int numCols = 8;
+    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
+    const int startX = (screenWidth - (numCols * cellWidth)) / 2;
+    const int startY = 100 * screenRatioY;
+    const char* headers[numCols] = { "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", " week day", "Session" };
+    int scrollBarYOffset = 0;
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
+    int selectedCourse = 0;
+
+    while (!WindowShouldClose()) {
+        // Xu ly thong tin nhap vao tu ban phim
+        if (IsKeyPressed(KEY_DOWN) && selectedCourse < numRows - 1) {
+            selectedCourse++;
+        }
+        if (IsKeyPressed(KEY_UP) && selectedCourse > 0) {
+            selectedCourse--;
+        }
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            string path = courses[selectedCourse].courseName + "_mark.csv";
+            int count = 0;
+            string title = "\0\0\0";
+            docDiem* diem = docDiemTuFile(path, count, title);
+            viewGrade(diem, count, title);
+            delete[]diem;
+        }
+        if (selectedCourse * cellHeight < scrollBarYOffset) {
+            scrollBarYOffset = selectedCourse * cellHeight;
+        }
+        if (selectedCourse * cellHeight >= scrollBarYOffset + maxDisplayedLines * cellHeight) {
+            scrollBarYOffset = (selectedCourse + 1) * cellHeight - maxDisplayedLines * cellHeight;
+        }
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // In tieu de
+        for (int i = 0; i < numCols; i++) {
+            DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+            int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+        }
+
+        // In cac thong tin cua tieu de
+        for (int i = 0; i < numRows; i++) {
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
+                continue;
+            }
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
+                break;
+            }
+            Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
+            DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
+            const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
+            for (int j = 0; j < 8; j++) {
+                int textWidth = 0;
+                int textX = startX + j * cellWidth + textPadding;
+                string textToDraw;
+
+                switch (j) {
+                case 0:
+                    textToDraw = courses[i].id;
+                    break;
+                case 1:
+                    textToDraw = courses[i].courseName;
+                    break;
+                case 2:
+                    textToDraw = courses[i].ClassName;
+                    break;
+                case 3:
+                    textToDraw = courses[i].teacherName;
+                    break;
+                case 4:
+                    textToDraw = to_string(courses[i].academicYear);
+                    break;
+                case 5:
+                    textToDraw = to_string(courses[i].Credits);
+                    break;
+                case 6:
+                    textToDraw = courses[i].wDay;
+                    break;
+                case 7:
+                    textToDraw = courses[i].session;
+                    break;
+                default:
+                    break;
+                }
+                textWidth = MeasureText(textToDraw.c_str(), fontSize);
+                textX += (cellWidth - textWidth) / 2;
+                DrawText(textToDraw.c_str(), textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, fontSize, DARKGRAY);
+            }
+        }
+        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+        scrollBar.height = scrollBarHeight;
+        scrollBar.y = startY + cellHeight + scrollBarY;
+        DrawRectangleRec(scrollBar, GRAY);
+        int scroll = GetMouseWheelMove();
+        scrollBarYOffset += scroll * 50 * (-1);
+        if (scrollBarYOffset < 0) {
+            scrollBarYOffset = 0;
+        }
+        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
+void showClassFunctions(ListCourses*& List,ListClass* classList, Class& selectedClass,bool& deletepress) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "Class Functions");
 
-    Rectangle buttons[3];
-    const char* buttonLabels[3] = {
+    Rectangle buttons[4];
+    const char* buttonLabels[4] = {
         "View List Student",
         "Import List Student",
-        "Delete Class"
+        "Delete Class",
+        "View Class Grade"
     };
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         buttons[i].x = (screenWidth - 200) / 2;
         buttons[i].y = 150 + i * 100;
         buttons[i].width = 200;
@@ -2767,21 +2891,21 @@ void showClassFunctions(ListClass* classList, Class& selectedClass,bool& deletep
     bool viewlistsvActive = false;
     bool importlistsvActive = false;
     bool deleteclassActive = false;
-
+    bool viewClassGrade = false;
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
         Vector2 mousePoint = GetMousePosition();
-        bool mouseOverButton[3] = { false };
+        bool mouseOverButton[4] = { false };
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             mouseOverButton[i] = CheckCollisionPointRec(mousePoint, buttons[i]);
             DrawRectangleRec(buttons[i], mouseOverButton[i] ? LIGHTGRAY : GRAY);
             DrawText(buttonLabels[i], buttons[i].x + (buttons[i].width - MeasureText(buttonLabels[i], 20)) / 2, buttons[i].y + 15, 20, BLACK);
         }
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             if (mouseOverButton[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 switch (i) {
                 case 0:
@@ -2793,7 +2917,10 @@ void showClassFunctions(ListClass* classList, Class& selectedClass,bool& deletep
                 case 2:
                     deleteclassActive = true;
                     break;
+                case 3:
+                    viewClassGrade = true;
                 }
+                    break;
             }
         }
 
@@ -2812,21 +2939,41 @@ void showClassFunctions(ListClass* classList, Class& selectedClass,bool& deletep
             CloseWindow();
             return;
         }
+        if (viewClassGrade)
+        {
+            int numRows = 0;
+            Course* tempCount = List->head;
 
+            while (tempCount != nullptr) {
+                numRows++;
+                tempCount = tempCount->next;
+            }
+
+            Course* courseArray = new Course[numRows];
+
+            Course* temp = List->head;
+            int i;
+            for (i = 0; i < numRows && temp != nullptr; i++) {
+                courseArray[i] = *temp;
+                temp = temp->next;
+            }
+
+            viewcoursescore(List, courseArray, numRows, selectedClass);
+            delete[] courseArray;
+            viewClassGrade = false;
+        }
         EndDrawing();
     }
 
     CloseWindow();
 }
-
-
 void viewListStudent(const Class& selectedClass, int screenWidth, int screenHeight, bool& viewlistsvActive) {
     int numRows = 0;
     SinhVien* currentSV = selectedClass.ds->phead;
 
 
     if (selectedClass.ds->phead == nullptr) {
-        DrawText("Khong the mo file", screenWidth - MeasureText("Khong the mo file", 20) - 10, screenHeight - 30, 20, RED);
+        DrawText("Danh sach lop rong", screenWidth - MeasureText("Danh sach lop rong", 20) - 10, screenHeight - 30, 20, RED);
     }
     else {
         while (currentSV != nullptr) {
@@ -2910,27 +3057,233 @@ void importListStudent(Class& selectedClass, int screenWidth, int screenHeight, 
 
         // Vẽ thông báo lỗi nếu cần thiết
         if (showError) {
-            DrawText("Không thể mở file!", screenWidth / 2 - MeasureText("Không thể mở file!", 20) / 2, inputBox.y + 70, 20, RED);
+            DrawText("Khong the mo file!", screenWidth / 2 - MeasureText("Khong the mo file!", 20) / 2, inputBox.y + 70, 20, RED);
         }
 
         EndDrawing();
     }
+}
+void viewcoursescore_SV(ListCourses*& List, Course*& courses, int& numRows,const char* username) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
+    InitWindow(screenWidth, screenHeight, "");
+    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
+    const int numCols = 8;
+    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
+    const int startX = (screenWidth - (numCols * cellWidth)) / 2;
+    const int startY = 100 * screenRatioY;
+    const char* headers[numCols] = { "ID", "Ten khoa hoc", "Lop", "Giao vien", "Nam hoc", "So tin chi", " week day", "Session" };
+    int scrollBarYOffset = 0;
+    int maxDisplayedLines = (screenHeight - startY - cellHeight) / cellHeight;
+    int selectedCourse = 0;
+
+    while (!WindowShouldClose()) {
+        // Xu ly thong tin nhap vao tu ban phim
+        if (IsKeyPressed(KEY_DOWN) && selectedCourse < numRows - 1) {
+            selectedCourse++;
+        }
+        if (IsKeyPressed(KEY_UP) && selectedCourse > 0) {
+            selectedCourse--;
+        }
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            string path = courses[selectedCourse].courseName + "_mark.csv";
+            int count = 0;
+            string title = "\0\0\0";
+            docDiem* diem = docDiemTuFile(path, count, title);
+            viewGrade_SV(diem, count, title,username);
+            delete[]diem;
+        }
+        if (selectedCourse * cellHeight < scrollBarYOffset) {
+            scrollBarYOffset = selectedCourse * cellHeight;
+        }
+        if (selectedCourse * cellHeight >= scrollBarYOffset + maxDisplayedLines * cellHeight) {
+            scrollBarYOffset = (selectedCourse + 1) * cellHeight - maxDisplayedLines * cellHeight;
+        }
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // In tieu de
+        for (int i = 0; i < numCols; i++) {
+            DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+            int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+        }
+
+        // In cac thong tin cua tieu de
+        for (int i = 0; i < numRows; i++) {
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
+                continue;
+            }
+            if (startY + (i + 1) * cellHeight - scrollBarYOffset > screenHeight - cellHeight) {
+                break;
+            }
+            Color rowColor = (i == selectedCourse) ? SKYBLUE : RAYWHITE;
+            DrawRectangle(startX, startY + (i + 1) * cellHeight - scrollBarYOffset, cellWidth * numCols, cellHeight, rowColor);
+            const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
+            for (int j = 0; j < 8; j++) {
+                int textWidth = 0;
+                int textX = startX + j * cellWidth + textPadding;
+                string textToDraw;
+
+                switch (j) {
+                case 0:
+                    textToDraw = courses[i].id;
+                    break;
+                case 1:
+                    textToDraw = courses[i].courseName;
+                    break;
+                case 2:
+                    textToDraw = courses[i].ClassName;
+                    break;
+                case 3:
+                    textToDraw = courses[i].teacherName;
+                    break;
+                case 4:
+                    textToDraw = to_string(courses[i].academicYear);
+                    break;
+                case 5:
+                    textToDraw = to_string(courses[i].Credits);
+                    break;
+                case 6:
+                    textToDraw = courses[i].wDay;
+                    break;
+                case 7:
+                    textToDraw = courses[i].session;
+                    break;
+                default:
+                    break;
+                }
+                textWidth = MeasureText(textToDraw.c_str(), fontSize);
+                textX += (cellWidth - textWidth) / 2;
+                DrawText(textToDraw.c_str(), textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, fontSize, DARKGRAY);
+            }
+        }
+        Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
+        float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
+        float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
+        float scrollBarY = ((float)scrollBarYOffset / (numRows * cellHeight)) * maxScrollBarY;
+        scrollBar.height = scrollBarHeight;
+        scrollBar.y = startY + cellHeight + scrollBarY;
+        DrawRectangleRec(scrollBar, GRAY);
+        int scroll = GetMouseWheelMove();
+        scrollBarYOffset += scroll * 50 * (-1);
+        if (scrollBarYOffset < 0) {
+            scrollBarYOffset = 0;
+        }
+        if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
+            scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
+void viewGrade_SV(docDiem* diem, int& numRows, string title,const char*username) {
+    const int screenWidth = 1366;
+    const int screenHeight = 768;
+    InitWindow(screenWidth, screenHeight, "");
+
+    const float screenRatioX = (float)GetScreenWidth() / screenWidth;
+    const float screenRatioY = (float)GetScreenHeight() / screenHeight;
+    const int numCols = 8;
+    const int cellWidth = (screenWidth - 2 * 50) / numCols * screenRatioX;
+    const int cellHeight = 80 * screenRatioY;
+    const int textPadding = 10 * ((screenRatioX + screenRatioY) / 2);
+    const int startX = (screenWidth - (numCols * cellWidth)) / 2;
+    const int startY = 100 * screenRatioY;
+
+    const char* headers[numCols] = { "No", "ID", "Ho", "Ten", "Other", "MidTerm", "Final", "Total" };
+
+    // Lọc điểm có tên giống với username
+    docDiem* selectedDiem = nullptr;
+    for (int i = 0; i < numRows; i++) {
+        if (diem[i].id == username) {
+            selectedDiem = &diem[i];
+            break;
+        }
+    }
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
+        int titleTextWidth = MeasureText(title.c_str(), fontSize);
+        int titleX = (screenWidth - titleTextWidth) / 2;
+        DrawText(title.c_str(), titleX, startY - 40 * screenRatioY, fontSize, BLACK);
+
+        // Vẽ tiêu đề
+        for (int i = 0; i < numCols; i++) {
+            DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
+            int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
+            int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
+            DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
+        }
+
+        // Vẽ dữ liệu điểm nếu có
+        if (selectedDiem) {
+            for (int j = 0; j < numCols; j++) {
+                int textWidth = 0;
+                int textX = startX + j * cellWidth + textPadding;
+                string textToDraw;
+
+                switch (j) {
+                case 0:
+                    textToDraw = to_string(selectedDiem->No);
+                    break;
+                case 1:
+                    textToDraw = selectedDiem->id;
+                    break;
+                case 2:
+                    textToDraw = selectedDiem->ho;
+                    break;
+                case 3:
+                    textToDraw = selectedDiem->ten;
+                    break;
+                case 4:
+                    textToDraw = to_string(selectedDiem->other);
+                    break;
+                case 5:
+                    textToDraw = to_string(selectedDiem->midterm);
+                    break;
+                case 6:
+                    textToDraw = to_string(selectedDiem->final);
+                    break;
+                case 7:
+                    textToDraw = to_string(selectedDiem->total);
+                    break;
+                default:
+                    break;
+                }
+
+                textWidth = MeasureText(textToDraw.c_str(), fontSize);
+                textX += (cellWidth - textWidth) / 2;
+                DrawText(textToDraw.c_str(), textX, startY + cellHeight + textPadding, fontSize, DARKGRAY);
+            }
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
 }
 void deleteClass(ListClass* classList, const Class& selectedClass) {
     if (classList == nullptr || classList->head == nullptr) return;
 
     Class* prevClass = nullptr;
     Class* currentClass = classList->head;
-
-    // Find the class to be deleted
     while (currentClass != nullptr && currentClass->ClassName != selectedClass.ClassName) {
         prevClass = currentClass;
         currentClass = currentClass->next;
     }
-
-    // If the class was found
     if (currentClass != nullptr) {
-        // If the class to be deleted is the head of the list
         if (prevClass == nullptr) {
             classList->head = currentClass->next;
         }
@@ -2961,7 +3314,7 @@ docDiem* docDiemTuFile(string path, int& count, string& title)
         count++;
         getline(ifile, temp);
     }
-    // 2 dong (1 chua mon hoc ,1 chu no,id,ho,ten
+    // 2 dong (1 chua mon hoc ,1 chu no,id,ho,ten)
     count = count - 1;
     docDiem* diem = new docDiem[count];
     ifile.seekg(0, ios::beg);
@@ -3014,21 +3367,16 @@ void viewGrade(docDiem* diem, int& numRows, string title) {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-
-        ///
         const int fontSize = 15 * ((screenRatioX + screenRatioY) / 2);
         int titleTextWidth = MeasureText(title.c_str(), fontSize);
         int titleX = (screenWidth - titleTextWidth) / 2;
         DrawText(title.c_str(), titleX, startY - 40 * screenRatioY, fontSize, BLACK);
-
-        // Draw headers
         for (int i = 0; i < numCols; i++) {
             DrawRectangle(startX + i * cellWidth, startY, cellWidth, cellHeight, LIGHTGRAY);
             int textWidth = MeasureText(headers[i], 15 * ((screenRatioX + screenRatioY) / 2));
             int textX = startX + i * cellWidth + (cellWidth - textWidth) / 2;
             DrawText(headers[i], textX, startY + textPadding, 15 * ((screenRatioX + screenRatioY) / 2), BLACK);
         }
-        // Draw grade data
         for (int i = 0; i < numRows; i++) {
             if (startY + (i + 1) * cellHeight - scrollBarYOffset < startY + cellHeight) {
                 continue;
@@ -3076,8 +3424,6 @@ void viewGrade(docDiem* diem, int& numRows, string title) {
                 DrawText(textToDraw.c_str(), textX, startY + (i + 1) * cellHeight - scrollBarYOffset + textPadding, fontSize, DARKGRAY);
             }
         }
-
-        // Draw scrollbar
         Rectangle scrollBar = { screenWidth - 20, startY + cellHeight, 20, screenHeight - 2 * cellHeight };
         float scrollBarHeight = screenHeight * screenHeight / ((float)numRows * cellHeight);
         float maxScrollBarY = screenHeight - 2 * cellHeight - scrollBarHeight;
@@ -3085,8 +3431,6 @@ void viewGrade(docDiem* diem, int& numRows, string title) {
         scrollBar.height = scrollBarHeight;
         scrollBar.y = startY + cellHeight + scrollBarY;
         DrawRectangleRec(scrollBar, GRAY);
-
-        // Handle scrolling
         int scroll = GetMouseWheelMove();
         scrollBarYOffset += scroll * 50 * (-1);
         if (scrollBarYOffset < 0) {
@@ -3095,11 +3439,8 @@ void viewGrade(docDiem* diem, int& numRows, string title) {
         if (scrollBarYOffset > (numRows - maxDisplayedLines) * cellHeight) {
             scrollBarYOffset = (numRows - maxDisplayedLines) * cellHeight;
         }
-
-
         EndDrawing();
     }
-
     CloseWindow();
 }
 void deletesemester(Semester*& sm)
@@ -3108,6 +3449,7 @@ void deletesemester(Semester*& sm)
     while (temp != NULL)
     {
         Semester* next = temp->next;
+        deleteListCourses(temp->lc);
         delete temp;
         temp = next;
     }
@@ -3124,4 +3466,35 @@ void deletelistnamhoc(ListNamHoc& LNH)
         delete pre;
     }
     LNH.phead = NULL;
+}
+void deleteListUser(ListUser* list) {
+    if (!list) return;
+    User* current = list->phead;
+    while (current) {
+        User* next = current->next;
+        delete current;
+        current = next;
+    }
+    delete list;
+}
+void deleteListSV(ListSV* list) {
+    if (!list) return;
+    SinhVien* current = list->phead;
+    while (current) {
+        SinhVien* next = current->next;
+        delete current;
+        current = next;
+    }
+    delete list;
+}
+void deleteListCourses(ListCourses* list) {
+    if (!list) return;
+    Course* current = list->head;
+    while (current) {
+        deleteListSV(current->lsv);  
+        Course* next = current->next;
+        delete current;
+        current = next;
+    }
+    delete list;
 }
